@@ -2,15 +2,17 @@
    Base
 ========================= */
 :root{
-  --bg:#eef2ff;
+  --bg:#f4f6fb;
   --card:#ffffff;
   --text:#0f172a;
   --muted:#64748b;
   --line:#e5e7eb;
-  --shadow: 0 12px 30px rgba(15,23,42,.08);
+  --shadow:0 10px 24px rgba(15,23,42,.08);
+
   --blue:#5b5cff;
   --blue2:#2563eb;
   --pill:#eef2ff;
+
   --green:#22c55e;
   --orange:#f97316;
   --red:#ef4444;
@@ -21,7 +23,7 @@
 html,body{height:100%}
 body{
   margin:0;
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
   background:var(--bg);
   color:var(--text);
 }
@@ -29,8 +31,8 @@ body{
 .card{
   background:var(--card);
   border:1px solid var(--line);
-  border-radius:18px;
-  box-shadow: var(--shadow);
+  border-radius:16px;
+  box-shadow:var(--shadow);
 }
 
 button{font-family:inherit}
@@ -39,12 +41,12 @@ button{font-family:inherit}
    Header
 ========================= */
 .app-header{
-  position: sticky;
+  position:sticky;
   top:0;
-  z-index: 100;
+  z-index:9990;
   background:#fff;
   border-bottom:1px solid var(--line);
-  padding:14px 24px;
+  padding:12px 16px;
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -56,81 +58,194 @@ button{font-family:inherit}
 .sub{
   font-size:12px;
   color:var(--muted);
-  font-weight:700;
+  font-weight:800;
 }
 .header-status{
   font-size:12px;
-  font-weight:700;
+  font-weight:900;
   color:var(--muted);
 }
 
 /* =========================
-   Layout
+   Layout（★ 横幅フル）
 ========================= */
 .page-body{
-  padding:24px;
-  max-width:1600px;
-  margin:0 auto;
+  padding:14px 14px 40px;
+  margin:0;
+  max-width:none;          /* ★ 横幅制限を完全解除 */
 }
-
 .items-stack{
   display:flex;
   flex-direction:column;
-  gap:24px;
+  gap:16px;
+}
+
+/* =========================
+   Metrics bar
+========================= */
+.metrics-bar{
+  margin:14px;
+  padding:12px;
+}
+.metrics-bar-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+}
+.metrics-bar-title{
+  font-size:14px;
+  font-weight:1000;
+}
+.metrics-bar-help{
+  font-size:12px;
+  color:var(--muted);
+  font-weight:800;
+}
+
+.metrics-row{
+  margin-top:10px;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+}
+.metrics-zone{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:10px;
+  background:#fbfdff;
+}
+.metrics-zone-title{
+  font-size:12px;
+  font-weight:1000;
+  margin-bottom:8px;
+}
+.metrics-zone-list{
+  min-height:54px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.metric-pill{
+  background:var(--pill);
+  border:1px solid #dbeafe;
+  color:#1d4ed8;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:1000;
+  white-space:nowrap;
+  cursor:grab;
+}
+
+.metrics-bar-foot{
+  margin-top:10px;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+/* =========================
+   ASIN catalog
+========================= */
+.asin-catalog{
+  margin:14px;
+  padding:12px;
+}
+.asin-catalog-title{
+  font-size:13px;
+  font-weight:1000;
+}
+.asin-catalog-body{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.asin-pill{
+  background:var(--pill);
+  border:1px solid #dbeafe;
+  color:#1d4ed8;
+  padding:7px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:1000;
+  cursor:pointer;
+}
+
+/* =========================
+   Cart
+========================= */
+#cartSummary{
+  position:sticky;
+  top:56px;
+  z-index:9980;
+  margin:0 14px 14px;
+}
+.cart-summary{padding:12px}
+.cart-grid{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(160px,1fr));
+  gap:10px;
+}
+.cart-grid > div{
+  background:#fbfdff;
+  border:1px solid #e6efff;
+  border-radius:14px;
+  padding:10px 12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
 /* =========================
    Product card
 ========================= */
 .product-card{
-  padding:20px;
+  margin:0 14px;
+  padding:14px;
 }
 
+/* 上部 */
 .card-top{
   display:flex;
   justify-content:space-between;
-  margin-bottom:14px;
-}
-.card-top .title{
-  font-size:14px;
-  font-weight:900;
-}
-.card-top .remove{
-  border:1px solid var(--line);
-  background:#fff;
-  border-radius:999px;
-  padding:6px 12px;
-  cursor:pointer;
+  align-items:center;
+  margin-bottom:10px;
 }
 
-/* ===== 上段3カラム ===== */
+/* 全体3カラム */
 .summary-row{
   display:grid;
-  grid-template-columns: 1.4fr 1fr 1.6fr;
-  gap:20px;
+  grid-template-columns: 1.3fr 0.9fr 1.5fr;
+  gap:16px;
+  align-items:stretch;
 }
 
 /* =========================
-   LEFT（画像＋入力＋情報 → 1枠に統合）
+   LEFT（★ 1つのカードに統合）
 ========================= */
 .left-wrap{
-  display:flex;
-  gap:16px;
+  display:grid;
+  grid-template-columns:200px 1fr;
+  gap:14px;
+
   border:1px solid var(--line);
   border-radius:16px;
-  padding:16px;
   background:#fff;
+  padding:14px;
 }
 
-/* 画像 */
+/* 画像＋入力 */
 .image-box{
-  width:200px;
-  flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
 }
 .image-box img{
   width:100%;
-  height:200px;
-  object-fit:contain;
+  height:168px;
+  object-fit:cover;
   border-radius:14px;
   border:1px solid var(--line);
   background:#f8fafc;
@@ -138,14 +253,17 @@ button{font-family:inherit}
 
 /* 入力 */
 .field{
-  margin-top:10px;
   display:flex;
   flex-direction:column;
   gap:6px;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fbfdff;
 }
 .field label{
   font-size:11px;
-  font-weight:800;
+  font-weight:1000;
   color:var(--muted);
 }
 .field input,
@@ -153,58 +271,62 @@ button{font-family:inherit}
   border:1px solid var(--line);
   border-radius:12px;
   padding:8px 10px;
-  font-size:13px;
-  font-weight:700;
+  font-size:12px;
+  font-weight:1000;
 }
+
 .cart-btn{
-  margin-top:10px;
+  margin-top:6px;
   height:40px;
-  border-radius:999px;
   border:none;
+  border-radius:999px;
   background:var(--blue);
   color:#fff;
-  font-weight:900;
+  font-weight:1000;
   cursor:pointer;
 }
 
-/* 情報 */
+/* 商品情報（外枠を消して統合） */
 .info-box{
-  flex:1;
+  border:none;
+  background:transparent;
+  padding:0;
   display:flex;
   flex-direction:column;
   gap:8px;
 }
 .info-title{
-  font-size:14px;
-  font-weight:900;
+  font-size:13px;
+  font-weight:1000;
 }
 .info-grid{
   display:grid;
-  grid-template-columns: 120px 1fr;
+  grid-template-columns:140px 1fr;
   gap:6px 10px;
+  font-size:12px;
 }
 .k{
-  font-size:11px;
-  font-weight:800;
   color:var(--muted);
+  font-weight:1000;
 }
 .v{
-  font-size:12px;
-  font-weight:800;
+  font-weight:1000;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
+
+/* 注意タグ */
 .warning-row{
   display:flex;
   gap:6px;
   flex-wrap:wrap;
 }
 .warning-tag{
-  padding:4px 10px;
+  padding:4px 8px;
   border-radius:999px;
   font-size:11px;
-  font-weight:900;
+  font-weight:1000;
   color:#fff;
 }
 .w-export{background:var(--red)}
@@ -217,109 +339,35 @@ button{font-family:inherit}
 .center-box{
   border:1px solid var(--line);
   border-radius:16px;
-  padding:16px;
+  background:#fff;
+  padding:12px;
 }
 .center-head{
-  font-size:13px;
-  font-weight:900;
-  margin-bottom:10px;
+  font-size:12px;
+  font-weight:1000;
+  margin-bottom:8px;
 }
 .center-row{
   display:grid;
-  grid-template-columns: 1fr 120px;
-  gap:10px;
-}
-.center-row .label{
-  font-size:11px;
-  font-weight:800;
-  color:var(--muted);
-}
-.center-row .value{
+  grid-template-columns:1fr 140px;
   font-size:12px;
-  font-weight:900;
-  text-align:right;
 }
 
 /* =========================
-   GRAPH
+   RIGHT（Graph）
 ========================= */
 .graph-box{
   border:1px solid var(--line);
   border-radius:16px;
-  padding:16px;
-}
-.graph-title{
-  font-size:13px;
-  font-weight:900;
-  color:var(--blue2);
+  background:#fff;
+  padding:12px;
 }
 .graph-body{
-  height:260px;
-  margin-top:10px;
-  border-radius:14px;
-  background:#f1f5ff;
+  height:230px;
+  background:#fbfdff;
   border:1px solid #e6efff;
-}
-.canvas-wrap canvas{
-  width:100%!important;
-  height:100%!important;
-}
-
-/* =========================
-   下段テーブル
-========================= */
-.detail-wrap{
-  margin-top:18px;
-  border:1px solid var(--line);
-  border-radius:16px;
+  border-radius:14px;
   overflow:hidden;
-}
-.detail-head{
-  padding:12px 16px;
-  background:#f9fafb;
-  font-size:12px;
-  font-weight:900;
-}
-.detail-scroll{
-  overflow-x:auto;
-}
-.detail-table{
-  min-width:1000px;
-  width:100%;
-  border-collapse:separate;
-  border-spacing:0;
-}
-.detail-table th,
-.detail-table td{
-  padding:10px;
-  font-size:12px;
-  font-weight:800;
-  border-bottom:1px solid var(--line);
-  white-space:nowrap;
-}
-.detail-table th{
-  background:#fff;
-  position:sticky;
-  top:0;
-}
-
-/* =========================
-   Global Tooltip（日本最安値用）
-========================= */
-#globalTip{
-  position: fixed;
-  z-index: 999999;
-  background:#0b1220;
-  color:#fff;
-  border-radius:12px;
-  padding:10px 12px;
-  font-size:11px;
-  font-weight:900;
-  white-space:pre;
-  max-width:320px;
-  display:none;
-  pointer-events:none;
-  box-shadow:0 14px 28px rgba(0,0,0,.28);
 }
 
 /* =========================
@@ -327,6 +375,15 @@ button{font-family:inherit}
 ========================= */
 @media (max-width:1100px){
   .summary-row{
+    grid-template-columns:1fr;
+  }
+  .cart-grid{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media (max-width:680px){
+  .left-wrap{
     grid-template-columns:1fr;
   }
 }
