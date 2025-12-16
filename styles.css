@@ -802,6 +802,3 @@ body.alt-layout .buy-box select{
     min-height:420px;
   }
 }
-
-  document.addEventListener("DOMContentLoaded", init);
-})();
