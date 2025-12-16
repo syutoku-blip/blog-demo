@@ -82,6 +82,30 @@ button{font-family:inherit}
   white-space:nowrap;
 }
 
+.layout-nav{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.layout-link{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  text-decoration:none;
+  font-size:12px;
+  font-weight:1000;
+  color:#1f2937;
+  padding:10px 12px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#fff;
+}
+.layout-link.active{
+  border-color:#c7d2fe;
+  background:var(--pill);
+  color:#1d4ed8;
+}
+
 /* =========================
    Layout
 ========================= */
@@ -202,19 +226,30 @@ button{font-family:inherit}
 .sort-controls{
   display:flex;
   flex-direction:column;
-  gap:8px;
+  gap:10px;
 }
 .sort-row{
-  display:grid;
-  grid-template-columns: 1fr 140px 76px;
-  gap:8px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
 }
-.sort-row select, .sort-row button{
+.sort-row select{
   border:1px solid var(--line);
   border-radius:12px;
-  padding:9px 10px;
-  font-weight:900;
+  padding:10px 12px;
+  font-weight:1000;
+  font-size:12px;
+  min-width: 180px;
+}
+.sort-row button{
+  border:1px solid var(--line);
   background:#fff;
+  border-radius:999px;
+  padding:9px 12px;
+  cursor:pointer;
+  font-weight:1000;
+  font-size:12px;
 }
 .sort-actions{
   display:flex;
@@ -230,9 +265,9 @@ button{font-family:inherit}
   font-weight:1000;
 }
 .sort-actions .primary{
-  background:var(--blue);
-  color:#fff;
-  border-color:transparent;
+  border-color:#c7d2fe;
+  background:var(--pill);
+  color:#1d4ed8;
 }
 
 /* =========================
@@ -246,11 +281,12 @@ button{font-family:inherit}
   display:flex;
   justify-content:space-between;
   align-items:center;
+  gap:12px;
   margin-bottom:10px;
 }
 .asin-catalog-title{
-  font-size:13px;
   font-weight:1000;
+  font-size:14px;
 }
 .asin-catalog-body{
   display:flex;
@@ -258,37 +294,36 @@ button{font-family:inherit}
   gap:10px;
 }
 .asin-pill{
-  background:var(--pill);
-  border:1px solid #dbeafe;
-  color:#1d4ed8;
   padding:8px 12px;
+  background:#fff;
+  border:1px solid var(--line);
   border-radius:999px;
-  font-size:12px;
-  font-weight:1000;
   cursor:pointer;
-  white-space:nowrap;
+  font-weight:1000;
+  font-size:12px;
 }
-.asin-pill:hover{filter:brightness(0.98)}
+.asin-pill:hover{
+  border-color:#c7d2fe;
+  background:var(--pill);
+  color:#1d4ed8;
+}
 
 /* =========================
-   Cart (sticky)
+   Cart summary (sticky)
 ========================= */
-#cartSummary{
-  position: sticky;
-  top: 56px;
-  z-index: 9980;
-  margin: 0 0 14px;
-  background:#fff;
-}
 .cart-summary{
+  position: sticky;
+  top:64px;
+  z-index: 30;
+  margin:14px 0;
   padding:14px;
 }
 .cart-head{
   display:flex;
   justify-content:space-between;
-  align-items:center;
+  align-items:flex-start;
   gap:10px;
-  margin-bottom:12px;
+  margin-bottom:10px;
 }
 .card-title{
   font-size:14px;
@@ -298,43 +333,41 @@ button{font-family:inherit}
   font-size:11px;
   color:var(--muted);
   font-weight:900;
-  white-space:nowrap;
 }
 .cart-grid{
   display:grid;
-  grid-template-columns: repeat(5, minmax(160px, 1fr));
-  gap:12px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap:10px;
 }
-.cart-grid > div{
+.cart-grid div{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:10px 12px;
   background:#fbfdff;
-  border:1px solid #e6efff;
-  border-radius:var(--radius2);
-  padding:12px 14px;
   display:flex;
-  justify-content:space-between;
-  align-items:center;
-  min-height:56px;
+  flex-direction:column;
+  gap:4px;
+  min-width:0;
 }
 .cart-grid span{
-  color:var(--muted);
   font-size:11px;
   font-weight:1000;
-  white-space:nowrap;
+  color:var(--muted);
 }
 .cart-grid b{
-  font-size:15px;
+  font-size:14px;
   font-weight:1000;
-  white-space:nowrap;
 }
 
 /* =========================
    Empty state
 ========================= */
 .empty{
-  margin:14px 0;
-  padding:20px;
-  color:var(--muted);
+  padding:18px;
   font-weight:1000;
+  color:var(--muted);
+  text-align:center;
+  margin: 14px 0;
 }
 
 /* =========================
@@ -440,6 +473,83 @@ button{font-family:inherit}
   visibility:visible !important;
 }
 
+/* =========================
+   Alt layout (2nd page)
+========================= */
+body.alt-layout .items-stack{
+  gap:18px;
+}
+
+body.alt-layout .product-card{
+  padding:18px;
+}
+
+/* 画像の配置/主要項目/グラフ/購入ボックス/その他項目 を画像のように並べる */
+body.alt-layout .alt-grid{
+  display:grid;
+  grid-template-columns: 320px 360px 1fr 280px;
+  grid-template-rows: auto auto;
+  gap:14px;
+  align-items:start;
+}
+
+body.alt-layout .alt-image{
+  grid-column:1;
+  grid-row:1;
+  width:100%;
+}
+body.alt-layout .alt-image img{
+  height:220px;
+}
+
+body.alt-layout .alt-info{
+  grid-column:1;
+  grid-row:2;
+}
+
+body.alt-layout .alt-center{
+  grid-column:2;
+  grid-row:1 / span 1;
+}
+
+body.alt-layout .alt-graph{
+  grid-column:3;
+  grid-row:1 / span 2;
+  min-height:520px;
+}
+body.alt-layout .alt-graph .graph-body{
+  min-height:460px;
+}
+
+body.alt-layout .alt-buy{
+  grid-column:4;
+  grid-row:1;
+}
+
+body.alt-layout .buy-box{
+  border:1px solid var(--line);
+  border-radius:var(--radius2);
+  background:#fff;
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+body.alt-layout .buy-title{
+  font-size:12px;
+  font-weight:1000;
+  color:var(--muted);
+}
+body.alt-layout .buy-box input,
+body.alt-layout .buy-box select{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:10px 10px;
+  font-weight:1000;
+  font-size:13px;
+}
+
 /* info list（読みやすく） */
 .info-box{
   flex:1;
@@ -519,67 +629,25 @@ button{font-family:inherit}
   flex-direction:column;
   gap:10px;
 }
-
-/* ✅ ツールチップのために value 側は overflow を殺す */
-.center-row{
-  display:grid;
-  grid-template-columns: 1fr 150px;
+.metric-row{
+  display:flex;
+  justify-content:space-between;
   gap:12px;
-  align-items:baseline;
+  border:1px solid var(--line);
+  background:#fbfdff;
+  border-radius:14px;
+  padding:10px 12px;
 }
-.center-row .label{
+.metric-row .label{
   font-size:12px;
   font-weight:1000;
   color:var(--muted);
   white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
 }
-
-/* ここが重要：overflowをvisibleにする（tooltipが切れない） */
-.center-row .value{
+.metric-row .value{
   font-size:13px;
   font-weight:1000;
-  text-align:right;
   white-space:nowrap;
-  overflow:visible;
-  position:relative;
-}
-
-/* 省略表示は中の span で担当 */
-.value-text{
-  display:inline-block;
-  max-width: 100%;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  vertical-align:bottom;
-}
-
-/* tooltip */
-.has-tip{
-  position:relative;
-  cursor:help;
-}
-.has-tip::after{
-  content: attr(data-tip);
-  position:absolute;
-  right:0;
-  top:130%;
-  white-space:pre;
-  background:#0b1220;
-  color:#fff;
-  border-radius:12px;
-  padding:10px 12px;
-  font-size:12px;
-  font-weight:900;
-  width:max-content;
-  max-width:360px;
-  display:none;
-  z-index:99999;
-  box-shadow: 0 14px 28px rgba(0,0,0,.28);
-}
-.has-tip:hover::after{
-  display:block;
 }
 
 /* graph */
@@ -597,89 +665,73 @@ button{font-family:inherit}
   justify-content:space-between;
   align-items:center;
   gap:10px;
-  margin-bottom:8px;
+  margin-bottom:10px;
 }
 .graph-title{
   font-size:12px;
   font-weight:1000;
-  color:var(--blue2);
-  white-space:nowrap;
 }
 .switch{
   display:flex;
   gap:8px;
-  flex-wrap:nowrap;
 }
 .switch button{
   border:1px solid var(--line);
   background:#fff;
   border-radius:999px;
-  padding:7px 12px;
+  padding:8px 12px;
+  cursor:pointer;
   font-weight:1000;
   font-size:12px;
-  cursor:pointer;
-  white-space:nowrap;
 }
 .switch button.active{
-  background:var(--blue);
-  color:#fff;
-  border-color:transparent;
+  border-color:#c7d2fe;
+  background:var(--pill);
+  color:#1d4ed8;
 }
 .graph-options{
   display:flex;
-  gap:14px;
-  flex-wrap:nowrap;
+  gap:12px;
   align-items:center;
-  margin-bottom:8px;
+  flex-wrap:wrap;
   font-size:12px;
   font-weight:1000;
-  color:var(--muted);
+  color:#111827;
+  margin-bottom:10px;
 }
 .graph-options label{
   display:flex;
-  align-items:center;
   gap:8px;
-  white-space:nowrap;
+  align-items:center;
 }
 .graph-body{
-  height:280px;
-  width:100%;
-  border-radius:var(--radius2);
-  overflow:hidden;
-  background:#eef2ff;
-  border:1px solid #dbeafe;
+  flex:1;
+  min-height:360px;
+  position:relative;
 }
 .canvas-wrap, .keepa-wrap{
-  height:100%;
-  width:100%;
-}
-.canvas-wrap canvas{
-  height:100% !important;
-  width:100% !important;
-  display:block;
+  position:absolute;
+  inset:0;
 }
 .keepa-wrap iframe{
   width:100%;
   height:100%;
-  border:0;
+  border:1px solid var(--line);
+  border-radius:14px;
 }
 
-/* bottom table */
+/* detail table */
 .detail-wrap{
-  margin-top:12px;
+  margin-top:14px;
   border:1px solid var(--line);
   border-radius:var(--radius2);
-  overflow:hidden;
   background:#fff;
+  overflow:hidden;
 }
 .detail-head{
-  padding:10px 12px;
-  background:#f9fafb;
+  padding:12px 14px;
   border-bottom:1px solid var(--line);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:8px;
+  background:#fbfdff;
 }
 .detail-head .t{
   font-size:12px;
@@ -689,37 +741,59 @@ button{font-family:inherit}
   overflow:auto;
 }
 .detail-table{
-  border-collapse:separate;
-  border-spacing:0;
   width:100%;
-  min-width:840px;
+  border-collapse:collapse;
+  min-width: 780px;
 }
 .detail-table th, .detail-table td{
   border-bottom:1px solid var(--line);
-  padding:11px 12px;
+  padding:12px 14px;
+  text-align:left;
   font-size:12px;
   font-weight:1000;
-  text-align:left;
   white-space:nowrap;
 }
 .detail-table th{
+  color:var(--muted);
+  background:#fff;
   position:sticky;
   top:0;
-  background:#fff;
-  z-index:2;
+  z-index:1;
 }
-.detail-table tbody tr:nth-child(odd) td{ background:#fcfcff; }
-.detail-table tbody tr:last-child td{border-bottom:none}
+.detail-table td{
+  font-weight:1000;
+}
 
-/* responsive */
-@media (max-width: 1100px){
-  .summary-row{ grid-template-columns: 1fr; }
-  #cartSummary{ top: 64px; }
-  .cart-grid{ grid-template-columns: 1fr 1fr; }
-  .metrics-row{ grid-template-columns: 1fr 1fr; }
+/* tooltip */
+.has-tip{
+  border-bottom:2px dotted #94a3b8;
+  cursor:help;
 }
-@media (max-width: 680px){
-  .metrics-row{ grid-template-columns: 1fr; }
-  .left-wrap{ flex-direction:column; }
-  .image-box{ width:100%; }
+
+/* =========================
+   Responsive
+========================= */
+@media (max-width: 1100px){
+  .summary-row{
+    grid-template-columns: 1fr;
+  }
+  .left-wrap{
+    flex-direction:column;
+  }
+  .image-box{
+    width:100%;
+  }
+  .image-box img{
+    height:220px;
+  }
+  .cart-grid{
+    grid-template-columns: 1fr 1fr;
+  }
+
+  body.alt-layout .alt-grid{
+    grid-template-columns: 1fr;
+  }
+  body.alt-layout .alt-graph{
+    min-height:420px;
+  }
 }
