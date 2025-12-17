@@ -1,4 +1,3 @@
-/* ===== styles.css（全文） ===== */
 :root{
   --bg:#f4f6fb;
   --card:#ffffff;
@@ -73,11 +72,35 @@ button{ font-family:inherit; }
   white-space:nowrap;
 }
 
+/* layout switch */
+.layout-nav{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.layout-link{
+  display:inline-flex;
+  align-items:center;
+  text-decoration:none;
+  font-size:12px;
+  font-weight:900;
+  color:#111827;
+  padding:8px 12px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#fff;
+}
+.layout-link.active{
+  border-color:#c7d2fe;
+  background:#eef2ff;
+  color:#1d4ed8;
+}
+
 /* layout */
 .page-body{
-  padding:14px 14px 40px;
-  max-width: 1320px;
-  margin: 0 auto;
+  max-width: 100%;
+  margin: 0;
+  padding: 10px 10px 40px;
 }
 
 .items-stack{
@@ -460,6 +483,33 @@ button{ font-family:inherit; }
   align-items:center;
 }
 
+/* tags */
+.tag{
+  display:inline-flex;
+  align-items:center;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:1000;
+  border:1px solid var(--line);
+  background:#fff;
+}
+.tag.danger{
+  border-color:#fecaca;
+  background:#fee2e2;
+  color:#b91c1c;
+}
+.tag.warn{
+  border-color:#fde68a;
+  background:#fef3c7;
+  color:#92400e;
+}
+.tag.info{
+  border-color:#bfdbfe;
+  background:#dbeafe;
+  color:#1d4ed8;
+}
+
 /* center */
 .center-box{
   border:1px solid var(--line);
@@ -548,11 +598,8 @@ button{ font-family:inherit; }
   color:#111827;
   margin-bottom:10px;
 }
-.graph-options label{
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
+
+/* 通常レイアウトのグラフ領域 */
 .graph-body{
   flex:1;
   min-height:360px;
@@ -609,9 +656,6 @@ button{ font-family:inherit; }
   top:0;
   z-index:1;
 }
-.detail-table td{
-  font-weight:1000;
-}
 .detail-table tbody tr:nth-child(odd) td{ background:#fcfcff; }
 .detail-table tbody tr:last-child td{border-bottom:none}
 
@@ -629,68 +673,46 @@ button{ font-family:inherit; }
 }
 
 /* =========================
-   Header nav (layout switch)
-========================= */
-.layout-nav{
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
-.layout-link{
-  display:inline-flex;
-  align-items:center;
-  text-decoration:none;
-  font-size:12px;
-  font-weight:900;
-  color:#111827;
-  padding:8px 12px;
-  border:1px solid var(--line);
-  border-radius:999px;
-  background:#fff;
-}
-.layout-link.active{
-  border-color:#c7d2fe;
-  background:#eef2ff;
-  color:#1d4ed8;
-}
-
-/* =========================
-   Full width
-========================= */
-.page-body{
-  max-width: 100%;
-  margin: 0;
-  padding: 10px 10px 40px;
-}
-
-/* =========================
    Alt layout (2nd page)
+   ✅左列を「画像＋商品情報」で1つにして空白を消す
+   ✅グラフは「上:Keepa / 下:MES」
 ========================= */
 body.alt-layout .alt-grid{
   display:grid;
   grid-template-columns: 360px 360px 1fr 300px;
-  grid-template-rows: auto auto;
   column-gap:14px;
-  row-gap:0px; /* 画像↔商品情報の間を詰める */
+  row-gap:0;
   align-items:start;
 }
 
-body.alt-layout .alt-image{ grid-column:1; grid-row:1; }
-body.alt-layout .alt-info{ grid-column:1; grid-row:2; margin-top:0; }
-body.alt-layout .alt-center{ grid-column:2; grid-row:1; }
-body.alt-layout .alt-graph{ grid-column:3; grid-row:1 / span 2; }
-body.alt-layout .alt-buy{ grid-column:4; grid-row:1; }
+/* 左カラムを1つにまとめる（ここが空白解消の肝） */
+body.alt-layout .alt-left{
+  grid-column:1;
+  grid-row:1 / span 2;
+  display:flex;
+  flex-direction:column;
+  gap:0;               /* ✅画像と商品情報の間を詰める */
+}
 
-/* alt image */
-body.alt-layout .alt-image img{
+/* alt-image を通常image-boxの幅固定から解放 */
+body.alt-layout .alt-left .image-box{
+  width:100%;
+  gap:0;
+}
+body.alt-layout .alt-left .image-box img{
   width:100%;
   height:220px;
   object-fit:cover;
   border-radius:var(--radius2);
   border:1px solid var(--line);
   background:#f8fafc;
-  margin:0;
+  display:block;
 }
+
+/* 他の配置 */
+body.alt-layout .alt-center{ grid-column:2; grid-row:1; }
+body.alt-layout .alt-graph{ grid-column:3; grid-row:1 / span 2; }
+body.alt-layout .alt-buy{ grid-column:4; grid-row:1; }
 
 /* buy box */
 body.alt-layout .buy-box{
@@ -717,27 +739,29 @@ body.alt-layout .buy-box select{
   font-size:13px;
 }
 
-/* graph: stack 2 parts (MES + Keepa) */
+/* graph: stack 2 parts */
 body.alt-layout .graph-body{
   height:auto;
-  background:transparent;
   border:0;
   overflow:visible;
   display:flex;
   flex-direction:column;
   gap:12px;
+  position:static;
+  min-height:auto;
 }
 body.alt-layout .canvas-wrap,
 body.alt-layout .keepa-wrap{
+  position:static;
   height:260px;
   border-radius:var(--radius2);
   overflow:hidden;
-  background:#eef2ff;
-  border:1px solid #dbeafe;
-}
-body.alt-layout .keepa-wrap{
   background:#fff;
   border:1px solid var(--line);
+}
+body.alt-layout .canvas-wrap{
+  background:#eef2ff;
+  border:1px solid #dbeafe;
 }
 body.alt-layout .keepa-wrap iframe{
   width:100%;
@@ -751,8 +775,10 @@ body.alt-layout .keepa-wrap iframe{
     grid-template-columns: 1fr;
     row-gap:12px;
   }
+  body.alt-layout .alt-left,
   body.alt-layout .alt-graph,
-  body.alt-layout .alt-buy{
+  body.alt-layout .alt-buy,
+  body.alt-layout .alt-center{
     grid-row:auto;
     grid-column:auto;
   }
