@@ -189,6 +189,7 @@ button{ font-family:inherit; }
 /* collapsed */
 #metricsBar.collapsed .sort-bar,
 #metricsBar.collapsed .metrics-row,
+#metricsBar.collapsed .metrics-tabs,
 #metricsBar.collapsed .metrics-bar-foot{
   display:none;
 }
@@ -469,13 +470,29 @@ button{ font-family:inherit; }
   color:var(--muted);
   white-space:nowrap;
 }
+
+/* ✅ 商品情報の値：横スクロール（スライド） */
 .v{
   font-size:13px;
   font-weight:900;
   white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+  overflow-x:auto;
+  overflow-y:hidden;
+  text-overflow:clip;        /* 省略しない */
+  -webkit-overflow-scrolling: touch;
 }
+.v.info-scroll{ padding-bottom:2px; }
+
+/* tags は折り返し優先（横スクロールより読みやすい） */
+.v.v-tags{
+  white-space:normal;
+  overflow:visible;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
 .warning-row{
   display:flex;
   gap:8px;
@@ -508,6 +525,34 @@ button{ font-family:inherit; }
   border-color:#bfdbfe;
   background:#dbeafe;
   color:#1d4ed8;
+}
+
+/* 商品情報 下段テーブル */
+.info-table-wrap{
+  margin-top:8px;
+  border-top:1px dashed var(--line);
+  padding-top:8px;
+}
+.info-table-title{
+  font-size:11px;
+  font-weight:1000;
+  color:var(--muted);
+  margin-bottom:8px;
+}
+.info-table th, .info-table td{
+  font-size:12px;
+}
+.info-td{
+  min-width: 220px;
+}
+.info-td-scroll{
+  white-space:nowrap;
+  overflow-x:auto;
+  overflow-y:hidden;
+  -webkit-overflow-scrolling: touch;
+}
+.info-td-tags{
+  white-space:normal;
 }
 
 /* center */
@@ -674,8 +719,6 @@ button{ font-family:inherit; }
 
 /* =========================
    Alt layout (2nd page)
-   ✅左列を「画像＋商品情報」で1つにして空白を消す
-   ✅グラフは「上:Keepa / 下:MES」
 ========================= */
 body.alt-layout .alt-grid{
   display:grid;
@@ -685,16 +728,14 @@ body.alt-layout .alt-grid{
   align-items:start;
 }
 
-/* 左カラムを1つにまとめる（ここが空白解消の肝） */
+/* 左列：画像と商品情報の間の空白を詰める */
 body.alt-layout .alt-left{
   grid-column:1;
   grid-row:1 / span 2;
   display:flex;
   flex-direction:column;
-  gap:0;               /* ✅画像と商品情報の間を詰める */
+  gap:0;
 }
-
-/* alt-image を通常image-boxの幅固定から解放 */
 body.alt-layout .alt-left .image-box{
   width:100%;
   gap:0;
@@ -709,7 +750,6 @@ body.alt-layout .alt-left .image-box img{
   display:block;
 }
 
-/* 他の配置 */
 body.alt-layout .alt-center{ grid-column:2; grid-row:1; }
 body.alt-layout .alt-graph{ grid-column:3; grid-row:1 / span 2; }
 body.alt-layout .alt-buy{ grid-column:4; grid-row:1; }
@@ -742,7 +782,6 @@ body.alt-layout .buy-box select{
 /* graph: stack 2 parts */
 body.alt-layout .graph-body{
   height:auto;
-  border:0;
   overflow:visible;
   display:flex;
   flex-direction:column;
@@ -808,19 +847,3 @@ body.alt-layout .keepa-wrap iframe{
   color:#1d4ed8;
 }
 .metrics-panel[hidden]{ display:none; }
-
-/* 商品情報パネルは3カラム */
-.metrics-row.info-row{
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-/* info grid: tags は折り返し */
-.v.v-tags{
-  white-space:normal;
-  overflow:visible;
-  text-overflow:clip;
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  align-items:center;
-}
