@@ -1,31 +1,14 @@
 /**************************************************************
  * main.js
  * MES-AI-A デモ（フロントのみ）
- * - ASIN_DATA（asin-data.js）からカード生成
- * - 指標プール（ドラッグ&ドロップ）で真ん中枠/下段テーブルを変更
- * - ソート（真ん中枠の指標）でカード順序入れ替え
- * - カート集計（数量×販売価格/仕入れ）
- * - グラフ（Chart.js）＋ Keepa iframe
- * - alt.html（body.alt-layout）では配置が変わる（2段グラフ）
  **************************************************************/
 
-// =========================
-// Utils
-// =========================
 const $ = (sel, root=document) => root.querySelector(sel);
-const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+const FX_RATE = 155;
 
-const FX_RATE = 155; // 為替（固定）
-const fmtJPY = (n) => {
-  const x = Number(n || 0);
-  return "￥" + x.toLocaleString("ja-JP");
-};
-const fmtUSD = (n) => {
-  const x = Number(n || 0);
-  return "$" + x.toFixed(2);
-};
+const fmtJPY = (n) => "￥" + Number(n || 0).toLocaleString("ja-JP");
 const num = (v) => {
-  const x = Number(String(v ?? "").replace(/[^\d.]/g, ""));
+  const x = Number(String(v ?? "").replace(/[^\d.\-]/g, ""));
   return Number.isFinite(x) ? x : 0;
 };
 const fmtKg = (v) => {
@@ -34,10 +17,6 @@ const fmtKg = (v) => {
   return x.toFixed(2) + "kg";
 };
 
-// =========================
-// 指標定義（プール）
-// 「：より左」のキー（id/sourceKey）を全て含める
-// =========================
 const METRICS_ALL = [
   { id: "過去3月FBA最安値", label: "過去3ヶ月FBA最安値", sourceKey: "過去3月FBA最安値" },
   { id: "FBA最安値", label: "FBA最安値", sourceKey: "FBA最安値" },
@@ -78,9 +57,6 @@ const METRICS_ALL = [
 
 const METRIC_BY_ID = Object.fromEntries(METRICS_ALL.map(m => [m.id, m]));
 
-// =========================
-// 初期配置（主要項目 / その他項目）
-// =========================
 const DEFAULT_ZONES = {
   pool: [
     "複数在庫指数45日分","複数在庫指数60日分","ライバル偏差1","ライバル偏差2","ライバル増加率",
@@ -101,9 +77,6 @@ const DEFAULT_ZONES = {
   hidden: []
 };
 
-// =========================
-// 状態
-// =========================
 const zoneState = {
   pool: [...DEFAULT_ZONES.pool],
   center: [...DEFAULT_ZONES.center],
@@ -111,12 +84,9 @@ const zoneState = {
   hidden: [...DEFAULT_ZONES.hidden],
 };
 
-const cardState = new Map(); // asin -> { el, data, chart }
-const cart = new Map();      // asin -> { qty, sellUSD, costJPY }
+const cardState = new Map();
+const cart = new Map();
 
-// =========================
-// DOM
-// =========================
 const metricsBar = $("#metricsBar");
 const metricsPoolZone = $("#metricsPoolZone");
 const metricsCenterZone = $("#metricsCenterZone");
@@ -139,17 +109,13 @@ const cartTotalProfit = $("#cartTotalProfit");
 const cartAsinCount = $("#cartAsinCount");
 const cartItemCount = $("#cartItemCount");
 
-// sort UI
 const sortControls = $("#sortControls");
 const addSortRuleBtn = $("#addSortRuleBtn");
 const applySortBtn = $("#applySortBtn");
 const clearSortBtn = $("#clearSortBtn");
 
-let sortRules = []; // [{ metricId, order }]
+let sortRules = [];
 
-// =========================
-// Init
-// =========================
 init();
 
 function init(){
@@ -162,53 +128,40 @@ function init(){
 }
 
 function initActions(){
-  if(metricsCollapseBtn){
-    metricsCollapseBtn.addEventListener("click", () => {
-      metricsBar.classList.toggle("collapsed");
-      metricsCollapseBtn.textContent = metricsBar.classList.contains("collapsed") ? "展開する" : "折りたたむ";
-    });
-  }
+  metricsCollapseBtn?.addEventListener("click", () => {
+    metricsBar.classList.toggle("collapsed");
+    metricsCollapseBtn.textContent = metricsBar.classList.contains("collapsed") ? "展開する" : "折りたたむ";
+  });
 
-  if(metricsResetBtn){
-    metricsResetBtn.addEventListener("click", () => {
-      zoneState.pool = [...DEFAULT_ZONES.pool];
-      zoneState.center = [...DEFAULT_ZONES.center];
-      zoneState.table = [...DEFAULT_ZONES.table];
-      zoneState.hidden = [...DEFAULT_ZONES.hidden];
-      renderMetricsZones();
-      rerenderAllCards();
-    });
-  }
+  metricsResetBtn?.addEventListener("click", () => {
+    zoneState.pool = [...DEFAULT_ZONES.pool];
+    zoneState.center = [...DEFAULT_ZONES.center];
+    zoneState.table = [...DEFAULT_ZONES.table];
+    zoneState.hidden = [...DEFAULT_ZONES.hidden];
+    renderMetricsZones();
+    rerenderAllCards();
+  });
 
-  if(clearCardsBtn){
-    clearCardsBtn.addEventListener("click", () => {
-      // remove all cards
-      cardState.forEach((v, asin) => {
-        if(v.chart) v.chart.destroy();
-        v.el.remove();
-      });
-      cardState.clear();
-      itemsContainer.innerHTML = "";
-      emptyState.style.display = "block";
-      updateHeaderStatus();
+  clearCardsBtn?.addEventListener("click", () => {
+    cardState.forEach((v) => {
+      if(v.chart) v.chart.destroy();
+      v.el.remove();
     });
-  }
+    cardState.clear();
+    itemsContainer.innerHTML = "";
+    emptyState.style.display = "block";
+    updateHeaderStatus();
+  });
 
-  if(clearCartBtn){
-    clearCartBtn.addEventListener("click", () => {
-      cart.clear();
-      updateCartSummary();
-    });
-  }
+  clearCartBtn?.addEventListener("click", () => {
+    cart.clear();
+    updateCartSummary();
+  });
 }
 
-// =========================
-// Catalog (ASIN list)
-// =========================
 function initCatalog(){
   const asins = Object.keys(window.ASIN_DATA || {});
   asinCatalog.innerHTML = "";
-
   asins.forEach(asin => {
     const b = document.createElement("button");
     b.className = "asin-pill";
@@ -244,9 +197,6 @@ function updateHeaderStatus(){
   }
 }
 
-// =========================
-// Metrics Bar (Drag & Drop)
-// =========================
 function initMetricsBar(){
   renderMetricsZones();
   attachZoneDnD(metricsPoolZone, "pool");
@@ -260,8 +210,6 @@ function renderMetricsZones(){
   renderZone(metricsCenterZone, zoneState.center);
   renderZone(metricsTableZone, zoneState.table);
   renderZone(metricsHiddenZone, zoneState.hidden);
-
-  // sort dropdown options refresh
   refreshSortRuleOptions();
 }
 
@@ -295,27 +243,21 @@ function attachZoneDnD(zoneEl, zoneKey){
     e.preventDefault();
     const metricId = e.dataTransfer.getData("text/plain");
     if(!metricId) return;
-
     moveMetricToZone(metricId, zoneKey);
   });
 }
 
 function moveMetricToZone(metricId, toZone){
-  // Remove from all zones
   for(const z of ["pool","center","table","hidden"]){
     const idx = zoneState[z].indexOf(metricId);
     if(idx >= 0) zoneState[z].splice(idx, 1);
   }
-  // Add to destination at end
   zoneState[toZone].push(metricId);
 
   renderMetricsZones();
   rerenderAllCards();
 }
 
-// =========================
-// Sort UI
-// =========================
 function initSortUI(){
   sortRules = [];
   renderSortControls();
@@ -325,14 +267,11 @@ function initSortUI(){
     renderSortControls();
   });
 
-  applySortBtn?.addEventListener("click", () => {
-    applySort();
-  });
+  applySortBtn?.addEventListener("click", () => applySort());
 
   clearSortBtn?.addEventListener("click", () => {
     sortRules = [];
     renderSortControls();
-    // restore insertion order? keep DOM order as-is
   });
 }
 
@@ -349,18 +288,14 @@ function renderSortControls(){
       const m = METRIC_BY_ID[id];
       return `<option value="${id}" ${id===r.metricId ? "selected":""}>${m?.label || id}</option>`;
     }).join("");
-    selMetric.addEventListener("change", () => {
-      r.metricId = selMetric.value;
-    });
+    selMetric.addEventListener("change", () => { r.metricId = selMetric.value; });
 
     const selOrder = document.createElement("select");
     selOrder.innerHTML = `
       <option value="desc" ${r.order==="desc"?"selected":""}>降順</option>
       <option value="asc" ${r.order==="asc"?"selected":""}>昇順</option>
     `;
-    selOrder.addEventListener("change", () => {
-      r.order = selOrder.value;
-    });
+    selOrder.addEventListener("change", () => { r.order = selOrder.value; });
 
     const del = document.createElement("button");
     del.type = "button";
@@ -378,7 +313,6 @@ function renderSortControls(){
 }
 
 function refreshSortRuleOptions(){
-  // if rule metricId is no longer available in center, fallback
   sortRules.forEach(r => {
     if(!zoneState.center.includes(r.metricId)){
       r.metricId = zoneState.center[0] || METRICS_ALL[0].id;
@@ -390,18 +324,14 @@ function refreshSortRuleOptions(){
 function applySort(){
   if(sortRules.length === 0) return;
 
-  const entries = Array.from(cardState.entries()); // [asin, {el,data,chart}]
+  const entries = Array.from(cardState.entries());
   const score = (data, metricId) => {
     const m = METRIC_BY_ID[metricId];
     if(!m) return -Infinity;
     const v = data[m.sourceKey];
     if(v == null) return -Infinity;
-
-    // numeric parse (accept ￥, $, %, commas)
-    const s = String(v).trim();
-    const n = Number(s.replace(/[^\d.\-]/g, ""));
-    if(Number.isFinite(n)) return n;
-    return -Infinity;
+    const n = Number(String(v).trim().replace(/[^\d.\-]/g, ""));
+    return Number.isFinite(n) ? n : -Infinity;
   };
 
   entries.sort((a, b) => {
@@ -418,13 +348,9 @@ function applySort(){
     return 0;
   });
 
-  // reattach in new order
-  entries.forEach(([asin, v]) => itemsContainer.appendChild(v.el));
+  entries.forEach(([_, v]) => itemsContainer.appendChild(v.el));
 }
 
-// =========================
-// Card rendering (center/table)
-// =========================
 function buildCenterMetrics(container, data){
   container.innerHTML = "";
   zoneState.center.forEach(id => {
@@ -442,8 +368,8 @@ function buildCenterMetrics(container, data){
 }
 
 function buildDetailTable(tableEl, data){
-  const theadRow = $("thead tr", tableEl);
-  const tbodyRow = $("tbody tr", tableEl);
+  const theadRow = tableEl.querySelector("thead tr");
+  const tbodyRow = tableEl.querySelector("tbody tr");
 
   theadRow.innerHTML = "";
   tbodyRow.innerHTML = "";
@@ -461,26 +387,21 @@ function buildDetailTable(tableEl, data){
   });
 }
 
-// ✅ DOMを拾い直して再描画（参照切れ防止）
 function rerenderAllCards(){
   cardState.forEach((v) => {
     const center = v.el.querySelector(".js-center");
     const table = v.el.querySelector(".js-detailTable");
-    if (center) buildCenterMetrics(center, v.data);
-    if (table) buildDetailTable(table, v.data);
+    if(center) buildCenterMetrics(center, v.data);
+    if(table) buildDetailTable(table, v.data);
   });
 }
 
-// =========================
-// Warning tags
-// =========================
 function renderWarningTags(str){
   const s = (str || "").toString();
   const parts = s.split(/[,\s、]+/).map(x => x.trim()).filter(Boolean);
   if(parts.length === 0) return "";
 
   return parts.map(p => {
-    // quick styling by keywords
     let cls = "tag";
     if(p.includes("輸出不可") || p.includes("出荷禁止")) cls += " danger";
     else if(p.includes("知財")) cls += " info";
@@ -489,12 +410,8 @@ function renderWarningTags(str){
   }).join("");
 }
 
-// =========================
-// Chart
-// =========================
-function renderChart(canvas, asin){
+function renderChart(canvas){
   const labels = Array.from({length: 180}, (_,i)=> `${180-i}日`);
-  // dummy data
   const rank = labels.map(() => 52000 + (Math.random()-0.5)*8000);
   const sellers = labels.map(() => Math.max(1, Math.round(1 + Math.random()*8)));
   const price = labels.map(() => 22 + (Math.random()-0.5)*8);
@@ -513,13 +430,11 @@ function renderChart(canvas, asin){
       responsive: true,
       maintainAspectRatio: false,
       interaction: { mode: "index", intersect: false },
-      plugins: {
-        legend: { display: true },
-      },
+      plugins: { legend: { display: true } },
       scales: {
-        y: { position:"left", ticks:{}, grid:{} },
-        y1: { position:"right", ticks:{}, grid:{ drawOnChartArea:false } },
-        y2: { position:"right", ticks:{}, grid:{ drawOnChartArea:false } },
+        y: { position:"left", grid:{} },
+        y1: { position:"right", grid:{ drawOnChartArea:false } },
+        y2: { position:"right", grid:{ drawOnChartArea:false } },
       }
     }
   });
@@ -528,8 +443,6 @@ function renderChart(canvas, asin){
 }
 
 function updateChartVisibility(chart, showDS, showSP){
-  // showDS = needs & supply (ランキング + セラー数)
-  // showSP = supply & price (セラー数 + 価格)
   chart.data.datasets.forEach(ds => {
     if(ds.label === "ランキング") ds.hidden = !showDS;
     if(ds.label === "セラー数") ds.hidden = !(showDS || showSP);
@@ -538,13 +451,9 @@ function updateChartVisibility(chart, showDS, showSP){
   chart.update();
 }
 
-// =========================
-// Cart summary
-// =========================
 function updateCartSummary(){
   let totalCost = 0;
   let totalRevenueJPY = 0;
-
   let asinCount = cart.size;
   let itemCount = 0;
 
@@ -567,12 +476,6 @@ function updateCartSummary(){
   cartItemCount.textContent = String(itemCount);
 }
 
-// =========================
-// Create product card
-// - alt-layout：画像(左上) / 商品情報(左下) / 主要項目(中) / グラフ(中央) / 購入(右)
-//   グラフは上下2段（上: MES、下: Keepa）
-// - 通常：現行レイアウトのまま（Keepaはタブ切替）
-// =========================
 function createProductCard(asin, data){
   const card = document.createElement("section");
   card.className = "product-card card";
@@ -596,26 +499,29 @@ function createProductCard(asin, data){
     </div>
 
     <div class="alt-grid">
-      <div class="alt-image image-box">
-        <img src="${data["商品画像"] || ""}" alt="商品画像" onerror="this.style.display='none';" />
-      </div>
+      <!-- ✅左列を1つにまとめる（空白をなくす） -->
+      <div class="alt-left">
+        <div class="alt-image image-box">
+          <img src="${data["商品画像"] || ""}" alt="商品画像" onerror="this.style.display='none';" />
+        </div>
 
-      <div class="alt-info info-box">
-        <h3 class="info-title">${data["品名"] || "－"}</h3>
+        <div class="alt-info info-box">
+          <h3 class="info-title">${data["品名"] || "－"}</h3>
 
-        <div class="info-grid">
-          <div class="k">ブランド</div><div class="v">${data["ブランド"] || "－"}</div>
-          <div class="k">評価</div><div class="v">${data["レビュー評価"] || "－"}</div>
-          <div class="k">ASIN</div><div class="v">${asin}</div>
-          <div class="k">各種ASIN</div><div class="v">日本: ${jpAsin} / US: ${usAsin}</div>
-          <div class="k">JAN</div><div class="v">${data["JAN"] || "－"}</div>
-          <div class="k">SKU</div><div class="v">${data["SKU"] || "－"}</div>
-          <div class="k">サイズ</div><div class="v">${size}</div>
-          <div class="k">重量（容積重量）</div><div class="v">${weight}</div>
-          <div class="k">材質</div><div class="v">${data["材質"] || "－"}</div>
-          <div class="k">カテゴリ</div><div class="v">${data["親カテゴリ"] || "－"} / ${data["サブカテゴリ"] || "－"}</div>
-          <div class="k">注意事項</div>
-          <div class="warning-row">${renderWarningTags(data["注意事項（警告系）"])}</div>
+          <div class="info-grid">
+            <div class="k">ブランド</div><div class="v">${data["ブランド"] || "－"}</div>
+            <div class="k">評価</div><div class="v">${data["レビュー評価"] || "－"}</div>
+            <div class="k">ASIN</div><div class="v">${asin}</div>
+            <div class="k">各種ASIN</div><div class="v">日本: ${jpAsin} / US: ${usAsin}</div>
+            <div class="k">JAN</div><div class="v">${data["JAN"] || "－"}</div>
+            <div class="k">SKU</div><div class="v">${data["SKU"] || "－"}</div>
+            <div class="k">サイズ</div><div class="v">${size}</div>
+            <div class="k">重量（容積重量）</div><div class="v">${weight}</div>
+            <div class="k">材質</div><div class="v">${data["材質"] || "－"}</div>
+            <div class="k">カテゴリ</div><div class="v">${data["親カテゴリ"] || "－"} / ${data["サブカテゴリ"] || "－"}</div>
+            <div class="k">注意事項</div>
+            <div class="warning-row">${renderWarningTags(data["注意事項（警告系）"])}</div>
+          </div>
         </div>
       </div>
 
@@ -634,13 +540,14 @@ function createProductCard(asin, data){
           <label><input type="checkbox" class="js-chkSP" />《供給＆価格》</label>
         </div>
 
+        <!-- ✅順番：上Keepa / 下MES（需要供給） -->
         <div class="graph-body">
-          <div class="canvas-wrap js-mesWrap">
-            <canvas class="js-chart"></canvas>
-          </div>
-
           <div class="keepa-wrap js-keepaWrap">
             <iframe class="js-keepaFrame" src="" loading="lazy"></iframe>
+          </div>
+
+          <div class="canvas-wrap js-mesWrap">
+            <canvas class="js-chart"></canvas>
           </div>
         </div>
       </div>
@@ -683,7 +590,6 @@ function createProductCard(asin, data){
     </div>
 
     <div class="summary-row">
-      <!-- LEFT -->
       <div class="left-wrap">
         <div class="image-box">
           <img src="${data["商品画像"] || ""}" alt="商品画像" onerror="this.style.display='none';" />
@@ -728,13 +634,11 @@ function createProductCard(asin, data){
         </div>
       </div>
 
-      <!-- CENTER -->
       <div class="center-box">
         <div class="center-head">主要項目</div>
         <div class="center-list js-center"></div>
       </div>
 
-      <!-- RIGHT -->
       <div class="graph-box">
         <div class="graph-head">
           <div class="graph-title">グラフ（180日）</div>
@@ -790,7 +694,6 @@ function createProductCard(asin, data){
       cart.delete(asin);
       updateCartSummary();
     }
-    // chart destroy
     if(card.__chart) card.__chart.destroy();
     card.remove();
     cardState.delete(asin);
@@ -813,14 +716,11 @@ function createProductCard(asin, data){
     updateCartSummary();
   });
 
-  const centerBox = card.querySelector(".js-center");
-  buildCenterMetrics(centerBox, data);
-
-  const tableEl = card.querySelector(".js-detailTable");
-  buildDetailTable(tableEl, data);
+  buildCenterMetrics(card.querySelector(".js-center"), data);
+  buildDetailTable(card.querySelector(".js-detailTable"), data);
 
   const canvas = card.querySelector(".js-chart");
-  const chart = renderChart(canvas, asin);
+  const chart = renderChart(canvas);
   card.__chart = chart;
 
   const chkDS = card.querySelector(".js-chkDS");
@@ -830,19 +730,23 @@ function createProductCard(asin, data){
   chkSP.addEventListener("change", refreshVis);
   updateChartVisibility(chart, true, false);
 
-  // keepa表示制御（通常レイアウトはタブ切替 / alt-layoutは上下2段で常時表示）
   const keepaWrap = card.querySelector(".js-keepaWrap");
   const keepaFrame = card.querySelector(".js-keepaFrame");
   const mesWrap = card.querySelector(".js-mesWrap");
   const graphOptions = card.querySelector(".js-graphOptions");
 
-  if (keepaFrame) {
-    keepaFrame.src = `https://keepa.com/#!product/1-${asin}`;
-  }
+  if (keepaFrame) keepaFrame.src = `https://keepa.com/#!product/1-${asin}`;
 
-  if (!isAltLayout) {
+  // alt-layoutは常時2段表示（keepa上 / mes下）
+  if (isAltLayout) {
+    if (graphOptions) graphOptions.style.display = "flex";
+    if (mesWrap) mesWrap.style.display = "block";
+    if (keepaWrap) keepaWrap.style.display = "block";
+  } else {
+    // 通常レイアウトはタブ切替
     const btnMes = card.querySelector(".js-btnMes");
     const btnKeepa = card.querySelector(".js-btnKeepa");
+
     function setMode(mode){
       if(mode === "MES"){
         btnMes.classList.add("active");
@@ -858,14 +762,10 @@ function createProductCard(asin, data){
         keepaWrap.style.display = "block";
       }
     }
+
     btnMes.addEventListener("click", () => setMode("MES"));
     btnKeepa.addEventListener("click", () => setMode("KEEPA"));
     setMode("MES");
-  } else {
-    // alt-layout：グラフは上(需要供給)＋下(Keepa)の2部構成
-    if (graphOptions) graphOptions.style.display = "flex";
-    if (mesWrap) mesWrap.style.display = "block";
-    if (keepaWrap) keepaWrap.style.display = "block";
   }
 
   return card;
