@@ -131,10 +131,20 @@ button{ font-family:inherit; }
   font-weight:800;
 }
 
+.section-title{
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px dashed var(--line);
+  font-size:12px;
+  font-weight:1000;
+  color:#111827;
+}
+
+/* ✅ 5枠 */
 .metrics-row{
   margin-top:12px;
   display:grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap:12px;
 }
 .metrics-zone{
@@ -189,8 +199,8 @@ button{ font-family:inherit; }
 /* collapsed */
 #metricsBar.collapsed .sort-bar,
 #metricsBar.collapsed .metrics-row,
-#metricsBar.collapsed .metrics-tabs,
-#metricsBar.collapsed .metrics-bar-foot{
+#metricsBar.collapsed .metrics-bar-foot,
+#metricsBar.collapsed .section-title{
   display:none;
 }
 
@@ -471,19 +481,19 @@ button{ font-family:inherit; }
   white-space:nowrap;
 }
 
-/* ✅ 商品情報の値：横スクロール（スライド） */
+/* ✅ 商品情報の値：横スクロール */
 .v{
   font-size:13px;
   font-weight:900;
   white-space:nowrap;
   overflow-x:auto;
   overflow-y:hidden;
-  text-overflow:clip;        /* 省略しない */
+  text-overflow:clip;
   -webkit-overflow-scrolling: touch;
 }
 .v.info-scroll{ padding-bottom:2px; }
 
-/* tags は折り返し優先（横スクロールより読みやすい） */
+/* tags は折り返し */
 .v.v-tags{
   white-space:normal;
   overflow:visible;
@@ -493,11 +503,30 @@ button{ font-family:inherit; }
   align-items:center;
 }
 
-.warning-row{
+/* ✅ 商品情報枠に出す「指標」 */
+.info-metrics{
   display:flex;
-  gap:8px;
   flex-wrap:wrap;
-  align-items:center;
+  gap:8px;
+  padding-top:10px;
+  border-top:1px dashed var(--line);
+}
+.info-metric-chip{
+  border:1px solid var(--line);
+  background:#fbfdff;
+  border-radius:14px;
+  padding:8px 10px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  min-width: 160px;
+  max-width: 100%;
+}
+.info-metric-chip .k{
+  font-size:11px;
+}
+.info-metric-chip .v{
+  font-size:13px;
 }
 
 /* tags */
@@ -705,11 +734,13 @@ button{ font-family:inherit; }
 .detail-table tbody tr:last-child td{border-bottom:none}
 
 /* responsive */
+@media (max-width: 1200px){
+  .metrics-row{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 @media (max-width: 1100px){
   .summary-row{ grid-template-columns: 1fr; }
   #cartSummary{ top: 64px; }
   .cart-grid{ grid-template-columns: 1fr 1fr; }
-  .metrics-row{ grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 680px){
   .metrics-row{ grid-template-columns: 1fr; }
@@ -822,28 +853,3 @@ body.alt-layout .keepa-wrap iframe{
     grid-column:auto;
   }
 }
-
-/* =========================
-   Metrics tabs (指標 / 商品情報)
-========================= */
-.metrics-tabs{
-  margin-top:12px;
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-.metrics-tab{
-  border:1px solid var(--line);
-  background:#fff;
-  border-radius:999px;
-  padding:8px 12px;
-  cursor:pointer;
-  font-weight:1000;
-  font-size:12px;
-}
-.metrics-tab.active{
-  border-color:#c7d2fe;
-  background:var(--pill);
-  color:#1d4ed8;
-}
-.metrics-panel[hidden]{ display:none; }
