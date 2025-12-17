@@ -1,12 +1,10 @@
 /**************************************************************
  * main.js
- * - 上部5枠を共通UIとして使用（タブ切替）
- *   [指標]   プール/商品情報/真ん中/下段/非表示
- *   [商品情報] 同じ5枠を利用（重複不可）
- * - 赤枠の「商品情報カスタマイズ下段UI」は撤去（HTML側）
- * - 商品情報枠は固定項目ゼロ（全部カスタム表示）
- *   デフォルトで指定項目は「真ん中の枠」に配置して表示
- * - 商品情報枠：値が横幅に入りきらない場合は横スクロール（CSS側）
+ * - タブ廃止（指標画面のみ）
+ * - 上の5枠で「指標 + 商品情報項目」をすべてカスタム配置
+ * - 重複配置不可（同じ項目はどこか1枠のみ）
+ * - デフォルトで商品情報項目は「商品情報」枠に設置
+ * - 商品情報の値は横スクロール可（CSS側）
  **************************************************************/
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -88,73 +86,84 @@ const INFO_FIELDS_ALL = [
 const INFO_BY_ID = Object.fromEntries(INFO_FIELDS_ALL.map((f) => [f.id, f]));
 
 /* =========================
-   指標の初期配置（5枠）
+   統一アイテム（type付き）
 ========================= */
-const DEFAULT_METRIC_ZONES = {
-  pool: [
-    "複数在庫指数45日分",
-    "複数在庫指数60日分",
-    "ライバル偏差1",
-    "ライバル偏差2",
-    "ライバル増加率",
-    "在庫数",
-    "返品率",
-    "販売額（ドル）",
-    "入金額（円）",
-    "入金額計（円）",
-    "仕入れ目安単価",
-    "想定送料",
-    "送料",
-    "関税",
-    "粗利益",
-    "粗利益率",
-    "日本最安値"
-  ],
-  info: ["想定送料", "送料", "関税", "ライバル増加率"],
-  center: ["過去3月FBA最安値", "FBA最安値", "入金額予測", "180日販売数", "90日販売数", "粗利益率予測", "30日販売数", "日本最安値", "粗利益予測"],
-  table: ["在庫数", "想定送料", "返品率", "仕入れ目安単価", "販売額（ドル）", "送料", "関税", "予測30日販売数", "入金額（円）"],
-  hidden: []
-};
+const tokM = (id) => `M:${id}`; // metric
+const tokI = (id) => `I:${id}`; // info
 
-const metricZoneState = {
-  pool: [...DEFAULT_METRIC_ZONES.pool],
-  info: [...DEFAULT_METRIC_ZONES.info],
-  center: [...DEFAULT_METRIC_ZONES.center],
-  table: [...DEFAULT_METRIC_ZONES.table],
-  hidden: [...DEFAULT_METRIC_ZONES.hidden]
-};
+function parseToken(token) {
+  const [t, ...rest] = String(token).split(":");
+  const id = rest.join(":");
+  return { type: t, id };
+}
+function labelOf(token) {
+  const { type, id } = parseToken(token);
+  if (type === "M") return METRIC_BY_ID[id]?.label || id;
+  if (type === "I") return INFO_BY_ID[id]?.label || id;
+  return id;
+}
 
 /* =========================
-   商品情報の初期配置（5枠）
-   ✅ デフォルトで指定の項目を最初から設置
-   ※固定表示はゼロ
-   ※ここでは「真ん中の枠」に最初から並べる
+   初期配置（上の5枠）
 ========================= */
-const DEFAULT_INFO_ZONES = {
-  pool: [], // 初期は空でOK（必要なら他項目を追加していく）
-  info: [], // 商品情報枠内の「チップ段」（任意）
-  center: [
-    "商品名",
-    "ブランド",
-    "評価",
-    "各種ASIN",
-    "JAN",
-    "SKU",
-    "サイズ",
-    "重量（容積重量）",
-    "カテゴリ",
-    "材質"
+const DEFAULT_ZONES = {
+  pool: [
+    // 指標・商品情報を全部ここに集約（初期で枠に置いたものは除外する）
+    ...METRICS_ALL.map((m) => tokM(m.id)),
+    ...INFO_FIELDS_ALL.map((f) => tokI(f.id))
   ],
-  table: ["注意事項"],
+  info: [
+    // ✅ デフォルトで商品情報項目は「商品情報」枠に設置
+    tokI("商品名"),
+    tokI("ブランド"),
+    tokI("評価"),
+    tokI("各種ASIN"),
+    tokI("JAN"),
+    tokI("SKU"),
+    tokI("サイズ"),
+    tokI("重量（容積重量）"),
+    tokI("カテゴリ"),
+    tokI("注意事項"),
+    tokI("材質")
+  ],
+  center: [
+    tokM("過去3月FBA最安値"),
+    tokM("FBA最安値"),
+    tokM("入金額予測"),
+    tokM("180日販売数"),
+    tokM("90日販売数"),
+    tokM("粗利益率予測"),
+    tokM("30日販売数"),
+    tokM("日本最安値"),
+    tokM("粗利益予測")
+  ],
+  table: [
+    tokM("在庫数"),
+    tokM("想定送料"),
+    tokM("返品率"),
+    tokM("仕入れ目安単価"),
+    tokM("販売額（ドル）"),
+    tokM("送料"),
+    tokM("関税"),
+    tokM("予測30日販売数"),
+    tokM("入金額（円）")
+  ],
   hidden: []
 };
 
-const infoZoneState = {
-  pool: [...DEFAULT_INFO_ZONES.pool],
-  info: [...DEFAULT_INFO_ZONES.info],
-  center: [...DEFAULT_INFO_ZONES.center],
-  table: [...DEFAULT_INFO_ZONES.table],
-  hidden: [...DEFAULT_INFO_ZONES.hidden]
+function normalizeDefaultZones() {
+  // pool から、info/center/table/hidden に置かれてるものを除外
+  const used = new Set([...DEFAULT_ZONES.info, ...DEFAULT_ZONES.center, ...DEFAULT_ZONES.table, ...DEFAULT_ZONES.hidden]);
+  DEFAULT_ZONES.pool = DEFAULT_ZONES.pool.filter((t) => !used.has(t));
+}
+normalizeDefaultZones();
+
+const zoneState = {
+  pool: [...DEFAULT_ZONES.pool],
+  info: [...DEFAULT_ZONES.info],
+  center: [...DEFAULT_ZONES.center],
+  table: [...DEFAULT_ZONES.table],
+  hidden: [...DEFAULT_ZONES.hidden]
 };
 
 const cardState = new Map();
@@ -163,24 +172,19 @@ const cart = new Map();
 /* ===== DOM refs ===== */
 const metricsBar = $("#metricsBar");
 
-/* 上部5枠（共通） */
 const zonePool = $("#metricsPoolZone");
 const zoneInfo = $("#metricsInfoZone");
 const zoneCenter = $("#metricsCenterZone");
 const zoneTable = $("#metricsTableZone");
 const zoneHidden = $("#metricsHiddenZone");
 
-/* tabs */
-const tabMetricBtn = $("#tabMetricBtn");
-const tabInfoBtn = $("#tabInfoBtn");
-
 /* buttons */
 const metricsCollapseBtn = $("#metricsCollapseBtn");
-const resetCurrentBtn = $("#resetCurrentBtn");
+const resetBtn = $("#resetCurrentBtn");
 const clearCardsBtn = $("#clearCardsBtn");
 const clearCartBtn = $("#clearCartBtn");
 
-/* content */
+/* catalog */
 const asinCatalog = $("#asinCatalog");
 const itemsContainer = $("#itemsContainer");
 const emptyState = $("#emptyState");
@@ -193,16 +197,13 @@ const cartTotalProfit = $("#cartTotalProfit");
 const cartAsinCount = $("#cartAsinCount");
 const cartItemCount = $("#cartItemCount");
 
-/* sort（指標タブのみ有効） */
+/* sort */
 const sortBar = $("#sortBar");
 const sortControls = $("#sortControls");
 const addSortRuleBtn = $("#addSortRuleBtn");
 const applySortBtn = $("#applySortBtn");
 const clearSortBtn = $("#clearSortBtn");
 let sortRules = [];
-
-/* mode */
-let currentMode = "metric"; // "metric" | "info"
 
 init();
 
@@ -222,20 +223,6 @@ function initPoolUI() {
   attachZoneDnD(zoneCenter, { zoneKey: "center" });
   attachZoneDnD(zoneTable, { zoneKey: "table" });
   attachZoneDnD(zoneHidden, { zoneKey: "hidden" });
-
-  tabMetricBtn?.addEventListener("click", () => {
-    currentMode = "metric";
-    tabMetricBtn.classList.add("active");
-    tabInfoBtn.classList.remove("active");
-    renderTopZones();
-  });
-
-  tabInfoBtn?.addEventListener("click", () => {
-    currentMode = "info";
-    tabInfoBtn.classList.add("active");
-    tabMetricBtn.classList.remove("active");
-    renderTopZones();
-  });
 }
 
 function initActions() {
@@ -244,22 +231,15 @@ function initActions() {
     metricsCollapseBtn.textContent = metricsBar.classList.contains("collapsed") ? "展開する" : "折りたたむ";
   });
 
-  resetCurrentBtn?.addEventListener("click", () => {
-    if (currentMode === "metric") {
-      metricZoneState.pool = [...DEFAULT_METRIC_ZONES.pool];
-      metricZoneState.info = [...DEFAULT_METRIC_ZONES.info];
-      metricZoneState.center = [...DEFAULT_METRIC_ZONES.center];
-      metricZoneState.table = [...DEFAULT_METRIC_ZONES.table];
-      metricZoneState.hidden = [...DEFAULT_METRIC_ZONES.hidden];
-      sortRules = [];
-      renderSortControls();
-    } else {
-      infoZoneState.pool = [...DEFAULT_INFO_ZONES.pool];
-      infoZoneState.info = [...DEFAULT_INFO_ZONES.info];
-      infoZoneState.center = [...DEFAULT_INFO_ZONES.center];
-      infoZoneState.table = [...DEFAULT_INFO_ZONES.table];
-      infoZoneState.hidden = [...DEFAULT_INFO_ZONES.hidden];
-    }
+  resetBtn?.addEventListener("click", () => {
+    zoneState.pool = [...DEFAULT_ZONES.pool];
+    zoneState.info = [...DEFAULT_ZONES.info];
+    zoneState.center = [...DEFAULT_ZONES.center];
+    zoneState.table = [...DEFAULT_ZONES.table];
+    zoneState.hidden = [...DEFAULT_ZONES.hidden];
+
+    sortRules = [];
+    renderSortControls();
     renderTopZones();
     rerenderAllCards();
   });
@@ -314,69 +294,46 @@ function addOrFocusCard(asin) {
 
 function updateHeaderStatus() {
   const count = cardState.size;
-  if (headerStatus) {
-    headerStatus.textContent = count ? `表示中: ${count} ASIN` : "";
-  }
+  if (headerStatus) headerStatus.textContent = count ? `表示中: ${count} ASIN` : "";
 }
 
 /* =========================
-   上部5枠：レンダリング（モードで切替）
+   上部5枠：レンダリング
 ========================= */
-function getActiveState() {
-  return currentMode === "metric" ? metricZoneState : infoZoneState;
-}
 function renderTopZones() {
-  const st = getActiveState();
-
   zonePool.innerHTML = "";
   zoneInfo.innerHTML = "";
   zoneCenter.innerHTML = "";
   zoneTable.innerHTML = "";
   zoneHidden.innerHTML = "";
 
-  st.pool.forEach((id) => zonePool.appendChild(makePill(id)));
-  st.info.forEach((id) => zoneInfo.appendChild(makePill(id)));
-  st.center.forEach((id) => zoneCenter.appendChild(makePill(id)));
-  st.table.forEach((id) => zoneTable.appendChild(makePill(id)));
-  st.hidden.forEach((id) => zoneHidden.appendChild(makePill(id)));
+  zoneState.pool.forEach((t) => zonePool.appendChild(makePill(t)));
+  zoneState.info.forEach((t) => zoneInfo.appendChild(makePill(t)));
+  zoneState.center.forEach((t) => zoneCenter.appendChild(makePill(t)));
+  zoneState.table.forEach((t) => zoneTable.appendChild(makePill(t)));
+  zoneState.hidden.forEach((t) => zoneHidden.appendChild(makePill(t)));
 
-  // sortは指標タブのみ表示/有効
-  if (sortBar) {
-    sortBar.style.display = currentMode === "metric" ? "grid" : "none";
-  }
   refreshSortRuleOptions();
 }
 
-function makePill(id) {
+function makePill(token) {
   const pill = document.createElement("div");
   pill.className = "metric-pill";
   pill.draggable = true;
+  pill.dataset.token = token;
+  pill.textContent = labelOf(token);
 
-  if (currentMode === "metric") {
-    pill.dataset.metricId = id;
-    pill.textContent = METRIC_BY_ID[id]?.label || id;
-
-    pill.addEventListener("dragstart", (e) => {
-      e.dataTransfer.setData("text/plain", `metric:${id}`);
-      e.dataTransfer.effectAllowed = "move";
-    });
-  } else {
-    pill.dataset.infoId = id;
-    pill.textContent = INFO_BY_ID[id]?.label || id;
-
-    pill.addEventListener("dragstart", (e) => {
-      e.dataTransfer.setData("text/plain", `info:${id}`);
-      e.dataTransfer.effectAllowed = "move";
-    });
-  }
+  pill.addEventListener("dragstart", (e) => {
+    e.dataTransfer.setData("text/plain", `item:${token}`);
+    e.dataTransfer.effectAllowed = "move";
+  });
 
   return pill;
 }
 
 /* =========================
    DnD（共通5枠）
-   - 現在のタブと同じtypeだけ受け付ける
-   - 同一項目の重複不可（どこか1枠のみ）
+   - 重複不可（同じtokenはどこか1枠のみ）
 ========================= */
 function attachZoneDnD(zoneEl, { zoneKey }) {
   if (!zoneEl) return;
@@ -390,39 +347,33 @@ function attachZoneDnD(zoneEl, { zoneKey }) {
     e.preventDefault();
     const raw = e.dataTransfer.getData("text/plain");
     if (!raw) return;
-    const [type, id] = raw.split(":");
-    if (!type || !id) return;
+    const [kind, token] = raw.split(":");
+    if (kind !== "item" || !token) return;
 
-    // 現在のタブ以外のドロップは無視
-    if ((currentMode === "metric" && type !== "metric") || (currentMode === "info" && type !== "info")) {
-      return;
-    }
-
-    if (type === "metric") moveItemToZone(metricZoneState, id, zoneKey);
-    if (type === "info") moveItemToZone(infoZoneState, id, zoneKey);
-
+    moveTokenToZone(token, zoneKey);
     renderTopZones();
     rerenderAllCards();
   });
 }
 
-function moveItemToZone(stateObj, itemId, toZone) {
+function moveTokenToZone(token, toZone) {
   for (const z of ["pool", "info", "center", "table", "hidden"]) {
-    const idx = stateObj[z].indexOf(itemId);
-    if (idx >= 0) stateObj[z].splice(idx, 1);
+    const idx = zoneState[z].indexOf(token);
+    if (idx >= 0) zoneState[z].splice(idx, 1);
   }
-  stateObj[toZone].push(itemId);
+  zoneState[toZone].push(token);
 }
 
 /* =========================
-   Sort（指標タブのみ）
+   Sort（真ん中枠：指標のみ対象）
 ========================= */
 function initSortUI() {
   sortRules = [];
   renderSortControls();
 
   addSortRuleBtn?.addEventListener("click", () => {
-    sortRules.push({ metricId: metricZoneState.center[0] || METRICS_ALL[0].id, order: "desc" });
+    const firstMetric = zoneState.center.find((t) => parseToken(t).type === "M") || tokM(METRICS_ALL[0].id);
+    sortRules.push({ metricToken: firstMetric, order: "desc" });
     renderSortControls();
   });
 
@@ -441,25 +392,21 @@ function renderSortControls() {
     const row = document.createElement("div");
     row.className = "sort-row";
 
-    const selMetric = document.createElement("select");
-    selMetric.innerHTML = metricZoneState.center
-      .map((id) => {
-        const m = METRIC_BY_ID[id];
-        return `<option value="${id}" ${id === r.metricId ? "selected" : ""}>${m?.label || id}</option>`;
-      })
+    const metricOptions = zoneState.center
+      .filter((t) => parseToken(t).type === "M")
+      .map((t) => `<option value="${t}" ${t === r.metricToken ? "selected" : ""}>${labelOf(t)}</option>`)
       .join("");
-    selMetric.addEventListener("change", () => {
-      r.metricId = selMetric.value;
-    });
+
+    const selMetric = document.createElement("select");
+    selMetric.innerHTML = metricOptions || `<option value="${tokM(METRICS_ALL[0].id)}">${METRICS_ALL[0].label}</option>`;
+    selMetric.addEventListener("change", () => (r.metricToken = selMetric.value));
 
     const selOrder = document.createElement("select");
     selOrder.innerHTML = `
       <option value="desc" ${r.order === "desc" ? "selected" : ""}>降順</option>
       <option value="asc" ${r.order === "asc" ? "selected" : ""}>昇順</option>
     `;
-    selOrder.addEventListener("change", () => {
-      r.order = selOrder.value;
-    });
+    selOrder.addEventListener("change", () => (r.order = selOrder.value));
 
     const del = document.createElement("button");
     del.type = "button";
@@ -477,11 +424,10 @@ function renderSortControls() {
 }
 
 function refreshSortRuleOptions() {
-  if (currentMode !== "metric") return;
-
+  const centerMetrics = zoneState.center.filter((t) => parseToken(t).type === "M");
   sortRules.forEach((r) => {
-    if (!metricZoneState.center.includes(r.metricId)) {
-      r.metricId = metricZoneState.center[0] || METRICS_ALL[0].id;
+    if (!centerMetrics.includes(r.metricToken)) {
+      r.metricToken = centerMetrics[0] || tokM(METRICS_ALL[0].id);
     }
   });
   renderSortControls();
@@ -491,8 +437,9 @@ function applySort() {
   if (sortRules.length === 0) return;
 
   const entries = Array.from(cardState.entries());
-  const score = (data, metricId) => {
-    const m = METRIC_BY_ID[metricId];
+  const score = (data, metricToken) => {
+    const { id } = parseToken(metricToken);
+    const m = METRIC_BY_ID[id];
     if (!m) return -Infinity;
     const v = data[m.sourceKey];
     if (v == null) return -Infinity;
@@ -505,8 +452,8 @@ function applySort() {
     const db = b[1].data;
 
     for (const r of sortRules) {
-      const va = score(da, r.metricId);
-      const vb = score(db, r.metricId);
+      const va = score(da, r.metricToken);
+      const vb = score(db, r.metricToken);
       if (va === vb) continue;
       if (r.order === "asc") return va - vb;
       return vb - va;
@@ -518,72 +465,7 @@ function applySort() {
 }
 
 /* =========================
-   指標：カード描画
-========================= */
-function buildCenterMetrics(container, data) {
-  container.innerHTML = "";
-  metricZoneState.center.forEach((id) => {
-    const m = METRIC_BY_ID[id];
-    if (!m) return;
-    const val = data[m.sourceKey];
-    const row = document.createElement("div");
-    row.className = "metric-row";
-    row.innerHTML = `
-      <div class="label">${m.label}</div>
-      <div class="value">${val ?? "－"}</div>
-    `;
-    container.appendChild(row);
-  });
-}
-
-function buildDetailTable(tableEl, data) {
-  const theadRow = tableEl.querySelector("thead tr");
-  const tbodyRow = tableEl.querySelector("tbody tr");
-
-  theadRow.innerHTML = "";
-  tbodyRow.innerHTML = "";
-
-  metricZoneState.table.forEach((id) => {
-    const m = METRIC_BY_ID[id];
-    if (!m) return;
-
-    const th = document.createElement("th");
-    th.textContent = m.label;
-    theadRow.appendChild(th);
-
-    const td = document.createElement("td");
-    td.textContent = data[m.sourceKey] ?? "－";
-    tbodyRow.appendChild(td);
-  });
-}
-
-/* ✅ 指標を「商品情報枠」に表示するチップ段 */
-function buildInfoMetrics(container, data) {
-  if (!container) return;
-  container.innerHTML = "";
-
-  if (metricZoneState.info.length === 0) {
-    container.style.display = "none";
-    return;
-  }
-  container.style.display = "flex";
-
-  metricZoneState.info.forEach((id) => {
-    const m = METRIC_BY_ID[id];
-    if (!m) return;
-
-    const chip = document.createElement("div");
-    chip.className = "info-metric-chip";
-    chip.innerHTML = `
-      <div class="k">${m.label}</div>
-      <div class="v info-scroll">${data[m.sourceKey] ?? "－"}</div>
-    `;
-    container.appendChild(chip);
-  });
-}
-
-/* =========================
-   商品情報（値の解決）
+   値の解決（token）
 ========================= */
 function renderWarningTags(str) {
   const s = (str || "").toString();
@@ -601,7 +483,7 @@ function renderWarningTags(str) {
     .join("");
 }
 
-function resolveInfoValue(id, ctx) {
+function resolveInfoValueById(id, ctx) {
   const f = INFO_BY_ID[id];
   if (!f) return { type: "text", text: "－" };
 
@@ -616,109 +498,116 @@ function resolveInfoValue(id, ctx) {
     注意事項: renderWarningTags(data["注意事項（警告系）"])
   };
 
-  if (f.kind === "computedTags") {
-    return { type: "tags", html: computed[id] || "－" };
-  }
-  if (f.kind === "computed" || f.kind === "computedTitle") {
-    return { type: "text", text: computed[id] || "－" };
-  }
+  if (f.kind === "computedTags") return { type: "tags", html: computed[id] || "－" };
+  if (f.kind === "computed" || f.kind === "computedTitle") return { type: "text", text: computed[id] || "－" };
 
   const sourceKey = f.sourceKey || f.id;
   return { type: "text", text: data[sourceKey] ?? "－" };
 }
 
-/* 商品情報（真ん中の枠）＝メイン行 */
-function buildInfoCenterList(container, ctx) {
+function resolveTokenValue(token, ctx, data) {
+  const { type, id } = parseToken(token);
+
+  if (type === "M") {
+    const m = METRIC_BY_ID[id];
+    return { kind: "text", label: m?.label || id, text: data?.[m?.sourceKey] ?? "－" };
+  }
+
+  if (type === "I") {
+    const rv = resolveInfoValueById(id, ctx);
+    if (rv.type === "tags") return { kind: "tags", label: INFO_BY_ID[id]?.label || id, html: rv.html };
+    return { kind: "text", label: INFO_BY_ID[id]?.label || id, text: rv.text };
+  }
+
+  return { kind: "text", label: id, text: "－" };
+}
+
+/* =========================
+   カード内描画（枠ごと）
+   - 商品情報枠(info)：ラベル＋値の一覧
+   - 真ん中(center)：ラベル＋値のカード行
+   - 下段(table)：列テーブル
+========================= */
+function buildInfoGrid(container, ctx, data) {
   if (!container) return;
   container.innerHTML = "";
 
-  if (infoZoneState.center.length === 0) {
+  if (zoneState.info.length === 0) {
     container.style.display = "none";
     return;
   }
   container.style.display = "grid";
 
-  infoZoneState.center.forEach((id) => {
+  zoneState.info.forEach((tok) => {
+    const v = resolveTokenValue(tok, ctx, data);
+
     const k = document.createElement("div");
     k.className = "k";
-    k.textContent = INFO_BY_ID[id]?.label || id;
+    k.textContent = v.label;
 
-    const v = document.createElement("div");
-    v.className = "v info-scroll";
+    const val = document.createElement("div");
+    val.className = "v info-scroll";
 
-    const rv = resolveInfoValue(id, ctx);
-    if (rv.type === "tags") {
-      v.classList.add("v-tags");
-      v.innerHTML = rv.html;
+    if (v.kind === "tags") {
+      val.classList.add("v-tags");
+      val.innerHTML = v.html;
     } else {
-      v.textContent = rv.text;
+      val.textContent = v.text;
     }
 
     container.appendChild(k);
-    container.appendChild(v);
+    container.appendChild(val);
   });
 }
 
-/* 商品情報（商品情報）＝チップ段（任意で使う） */
-function buildInfoChipFields(container, ctx) {
+function buildCenterList(container, ctx, data) {
   if (!container) return;
   container.innerHTML = "";
 
-  if (infoZoneState.info.length === 0) {
-    container.style.display = "none";
-    return;
-  }
-  container.style.display = "flex";
+  zoneState.center.forEach((tok) => {
+    const v = resolveTokenValue(tok, ctx, data);
 
-  infoZoneState.info.forEach((id) => {
-    const chip = document.createElement("div");
-    chip.className = "info-field-chip";
-
-    const rv = resolveInfoValue(id, ctx);
-    chip.innerHTML = `
-      <div class="k">${INFO_BY_ID[id]?.label || id}</div>
-      <div class="v info-scroll">${rv.type === "tags" ? "" : (rv.text ?? "－")}</div>
+    const row = document.createElement("div");
+    row.className = "metric-row";
+    row.innerHTML = `
+      <div class="label">${v.label}</div>
+      <div class="value">${v.kind === "tags" ? "" : (v.text ?? "－")}</div>
     `;
-    if (rv.type === "tags") {
-      chip.querySelector(".v").classList.add("v-tags");
-      chip.querySelector(".v").innerHTML = rv.html;
+
+    if (v.kind === "tags") {
+      const valueEl = row.querySelector(".value");
+      valueEl.classList.add("v-tags");
+      valueEl.innerHTML = v.html;
     }
-    container.appendChild(chip);
+
+    container.appendChild(row);
   });
 }
 
-/* 商品情報（下段テーブル） */
-function buildInfoTable(tableEl, ctx) {
+function buildDetailTable(tableEl, ctx, data) {
   if (!tableEl) return;
-
-  const wrap = tableEl.closest(".info-table-wrap");
-  if (infoZoneState.table.length === 0) {
-    if (wrap) wrap.style.display = "none";
-    return;
-  }
-  if (wrap) wrap.style.display = "block";
-
   const theadRow = tableEl.querySelector("thead tr");
   const tbodyRow = tableEl.querySelector("tbody tr");
   theadRow.innerHTML = "";
   tbodyRow.innerHTML = "";
 
-  infoZoneState.table.forEach((id) => {
+  zoneState.table.forEach((tok) => {
+    const v = resolveTokenValue(tok, ctx, data);
+
     const th = document.createElement("th");
-    th.textContent = INFO_BY_ID[id]?.label || id;
+    th.textContent = v.label;
     theadRow.appendChild(th);
 
     const td = document.createElement("td");
     td.className = "info-td";
-    const rv = resolveInfoValue(id, ctx);
 
-    if (rv.type === "tags") {
+    if (v.kind === "tags") {
       td.classList.add("info-td-tags");
-      td.innerHTML = rv.html;
+      td.innerHTML = v.html;
     } else {
       const span = document.createElement("div");
       span.className = "info-td-scroll";
-      span.textContent = rv.text;
+      span.textContent = v.text;
       td.appendChild(span);
     }
 
@@ -728,12 +617,6 @@ function buildInfoTable(tableEl, ctx) {
 
 function rerenderAllCards() {
   cardState.forEach((v) => {
-    const center = v.el.querySelector(".js-center");
-    const table = v.el.querySelector(".js-detailTable");
-    if (center) buildCenterMetrics(center, v.data);
-    if (table) buildDetailTable(table, v.data);
-
-    // 商品情報 ctx
     const asin = v.el.dataset.asin;
     const jpAsin = v.data["日本ASIN"] || "－";
     const usAsin = v.data["アメリカASIN"] || asin || "－";
@@ -743,22 +626,14 @@ function rerenderAllCards() {
     const weight = `${fmtKg(realW)}（${fmtKg(volW)}）`;
     const ctx = { asin, jpAsin, usAsin, size, weight, data: v.data };
 
-    const infoCenter = v.el.querySelector(".js-infoCenter");
-    const infoChips = v.el.querySelector(".js-infoChips");
-    const infoTable = v.el.querySelector(".js-infoTable");
-
-    if (infoCenter) buildInfoCenterList(infoCenter, ctx);
-    if (infoChips) buildInfoChipFields(infoChips, ctx);
-    if (infoTable) buildInfoTable(infoTable, ctx);
-
-    // 指標 in 商品情報
-    const infoMetrics = v.el.querySelector(".js-infoMetrics");
-    if (infoMetrics) buildInfoMetrics(infoMetrics, v.data);
+    buildInfoGrid(v.el.querySelector(".js-infoGrid"), ctx, v.data);
+    buildCenterList(v.el.querySelector(".js-center"), ctx, v.data);
+    buildDetailTable(v.el.querySelector(".js-detailTable"), ctx, v.data);
   });
 }
 
 /* =========================
-   チャート
+   チャート（そのまま）
 ========================= */
 function renderChart(canvas) {
   const labels = Array.from({ length: 180 }, (_, i) => `${180 - i}日`);
@@ -782,7 +657,7 @@ function renderChart(canvas) {
       interaction: { mode: "index", intersect: false },
       plugins: { legend: { display: true } },
       scales: {
-        y: { position: "left", grid: {} },
+        y: { position: "left" },
         y1: { position: "right", grid: { drawOnChartArea: false } },
         y2: { position: "right", grid: { drawOnChartArea: false } }
       }
@@ -853,23 +728,7 @@ function createProductCard(asin, data) {
         </div>
 
         <div class="alt-info info-box">
-          <div class="info-grid js-infoCenter"></div>
-
-          <!-- ✅ 指標(商品情報枠) -->
-          <div class="info-metrics js-infoMetrics"></div>
-
-          <!-- ✅ 商品情報(チップ段) 任意 -->
-          <div class="info-field-chips js-infoChips"></div>
-
-          <div class="info-table-wrap">
-            <div class="info-table-title">商品情報（下段）</div>
-            <div class="detail-scroll">
-              <table class="detail-table info-table js-infoTable">
-                <thead><tr></tr></thead>
-                <tbody><tr></tr></tbody>
-              </table>
-            </div>
-          </div>
+          <div class="info-grid js-infoGrid"></div>
         </div>
       </div>
 
@@ -920,9 +779,7 @@ function createProductCard(asin, data) {
     </div>
 
     <div class="detail-wrap">
-      <div class="detail-head">
-        <div class="t">その他項目</div>
-      </div>
+      <div class="detail-head"><div class="t">その他項目</div></div>
       <div class="detail-scroll">
         <table class="detail-table js-detailTable">
           <thead><tr></tr></thead>
@@ -963,23 +820,7 @@ function createProductCard(asin, data) {
         </div>
 
         <div class="info-box">
-          <div class="info-grid js-infoCenter"></div>
-
-          <!-- ✅ 指標(商品情報枠) -->
-          <div class="info-metrics js-infoMetrics"></div>
-
-          <!-- ✅ 商品情報(チップ段) 任意 -->
-          <div class="info-field-chips js-infoChips"></div>
-
-          <div class="info-table-wrap">
-            <div class="info-table-title">商品情報（下段）</div>
-            <div class="detail-scroll">
-              <table class="detail-table info-table js-infoTable">
-                <thead><tr></tr></thead>
-                <tbody><tr></tr></tbody>
-              </table>
-            </div>
-          </div>
+          <div class="info-grid js-infoGrid"></div>
         </div>
       </div>
 
@@ -1014,9 +855,7 @@ function createProductCard(asin, data) {
     </div>
 
     <div class="detail-wrap">
-      <div class="detail-head">
-        <div class="t">その他項目</div>
-      </div>
+      <div class="detail-head"><div class="t">その他項目</div></div>
       <div class="detail-scroll">
         <table class="detail-table js-detailTable">
           <thead><tr></tr></thead>
@@ -1047,9 +886,7 @@ function createProductCard(asin, data) {
     card.remove();
     cardState.delete(asin);
 
-    if (cardState.size === 0) {
-      emptyState.style.display = "block";
-    }
+    if (cardState.size === 0) emptyState.style.display = "block";
     updateHeaderStatus();
   });
 
@@ -1065,11 +902,7 @@ function createProductCard(asin, data) {
     updateCartSummary();
   });
 
-  // 指標
-  buildCenterMetrics(card.querySelector(".js-center"), data);
-  buildDetailTable(card.querySelector(".js-detailTable"), data);
-
-  // 商品情報 ctx
+  // ctx
   const jpAsin = data["日本ASIN"] || "－";
   const usAsin = data["アメリカASIN"] || asin;
   const realW = data["重量kg"] ?? data["重量（kg）"] ?? data["重量"] ?? "";
@@ -1078,12 +911,9 @@ function createProductCard(asin, data) {
   const weight = `${fmtKg(realW)}（${fmtKg(volW)}）`;
   const ctx = { asin, jpAsin, usAsin, size, weight, data };
 
-  buildInfoCenterList(card.querySelector(".js-infoCenter"), ctx);
-  buildInfoChipFields(card.querySelector(".js-infoChips"), ctx);
-  buildInfoTable(card.querySelector(".js-infoTable"), ctx);
-
-  // 指標 in 商品情報
-  buildInfoMetrics(card.querySelector(".js-infoMetrics"), data);
+  buildInfoGrid(card.querySelector(".js-infoGrid"), ctx, data);
+  buildCenterList(card.querySelector(".js-center"), ctx, data);
+  buildDetailTable(card.querySelector(".js-detailTable"), ctx, data);
 
   // chart
   const canvas = card.querySelector(".js-chart");
