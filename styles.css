@@ -1,6 +1,4 @@
-/* =========================
-   Base
-========================= */
+/* ===== styles.css（全文） ===== */
 :root{
   --bg:#f4f6fb;
   --card:#ffffff;
@@ -9,19 +7,14 @@
   --line:#e5e7eb;
   --shadow: 0 10px 24px rgba(15,23,42,.08);
   --blue:#5b5cff;
-  --blue2:#2563eb;
   --pill:#eef2ff;
-  --green:#22c55e;
-  --orange:#f97316;
-  --red:#ef4444;
-  --purple:#8b5cf6;
 
   --radius:18px;
   --radius2:14px;
 }
 
-*{box-sizing:border-box}
-html,body{height:100%}
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
 body{
   margin:0;
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -37,7 +30,7 @@ body{
   box-shadow: var(--shadow);
 }
 
-button{font-family:inherit}
+button{ font-family:inherit; }
 
 .ghost-btn{
   background:transparent;
@@ -49,9 +42,7 @@ button{font-family:inherit}
   color:var(--text);
 }
 
-/* =========================
-   Header
-========================= */
+/* header */
 .app-header{
   position: sticky;
   top:0;
@@ -82,33 +73,7 @@ button{font-family:inherit}
   white-space:nowrap;
 }
 
-.layout-nav{
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
-.layout-link{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  text-decoration:none;
-  font-size:12px;
-  font-weight:1000;
-  color:#1f2937;
-  padding:10px 12px;
-  border:1px solid var(--line);
-  border-radius:999px;
-  background:#fff;
-}
-.layout-link.active{
-  border-color:#c7d2fe;
-  background:var(--pill);
-  color:#1d4ed8;
-}
-
-/* =========================
-   Layout
-========================= */
+/* layout */
 .page-body{
   padding:14px 14px 40px;
   max-width: 1320px;
@@ -121,9 +86,7 @@ button{font-family:inherit}
   gap:16px;
 }
 
-/* =========================
-   Metrics bar
-========================= */
+/* metrics bar */
 .metrics-bar{
   margin:14px 0;
   padding:14px;
@@ -183,7 +146,7 @@ button{font-family:inherit}
   user-select:none;
   white-space:nowrap;
 }
-.metric-pill:active{cursor:grabbing}
+.metric-pill:active{ cursor:grabbing; }
 
 .metrics-bar-foot{
   margin-top:12px;
@@ -207,9 +170,7 @@ button{font-family:inherit}
   display:none;
 }
 
-/* =========================
-   Sort UI
-========================= */
+/* sort UI */
 .sort-bar{
   margin-top:12px;
   border-top:1px solid var(--line);
@@ -270,9 +231,7 @@ button{font-family:inherit}
   color:#1d4ed8;
 }
 
-/* =========================
-   ASIN catalog
-========================= */
+/* asin catalog */
 .asin-catalog{
   margin:14px 0;
   padding:14px;
@@ -308,9 +267,7 @@ button{font-family:inherit}
   color:#1d4ed8;
 }
 
-/* =========================
-   Cart summary (sticky)
-========================= */
+/* cart summary */
 .cart-summary{
   position: sticky;
   top:64px;
@@ -359,9 +316,6 @@ button{font-family:inherit}
   font-weight:1000;
 }
 
-/* =========================
-   Empty state
-========================= */
 .empty{
   padding:18px;
   font-weight:1000;
@@ -370,14 +324,11 @@ button{font-family:inherit}
   margin: 14px 0;
 }
 
-/* =========================
-   Product card
-========================= */
+/* product card */
 .product-card{
   margin:0;
   padding:16px;
 }
-
 .card-top{
   display:flex;
   justify-content:space-between;
@@ -398,7 +349,6 @@ button{font-family:inherit}
   font-weight:1000;
 }
 
-/* 3カラムの見やすさ改善（余白/幅バランス） */
 .summary-row{
   display:grid;
   grid-template-columns: 1.35fr .95fr 1.7fr;
@@ -406,7 +356,7 @@ button{font-family:inherit}
   align-items:stretch;
 }
 
-/* left block */
+/* left */
 .left-wrap{
   display:flex;
   gap:14px;
@@ -461,101 +411,9 @@ button{font-family:inherit}
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  opacity:1 !important;
-  visibility:visible !important;
-  pointer-events:auto !important;
-}
-.cart-btn:hover{filter:brightness(1.03)}
-.cart-btn:active{transform:translateY(1px)}
-.cart-btn, .cart-btn:hover, .image-box:hover .cart-btn{
-  display:inline-flex !important;
-  opacity:1 !important;
-  visibility:visible !important;
 }
 
-/* =========================
-   Alt layout (2nd page)
-========================= */
-body.alt-layout .items-stack{
-  gap:18px;
-}
-
-body.alt-layout .product-card{
-  padding:18px;
-}
-
-/* 画像の配置/主要項目/グラフ/購入ボックス/その他項目 を画像のように並べる */
-body.alt-layout .alt-grid{
-  display:grid;
-  grid-template-columns: 320px 360px 1fr 280px;
-  grid-template-rows: auto auto;
-  gap:14px;
-  align-items:start;
-}
-
-/* ① 商品画像：左上 */
-body.alt-layout .alt-image{
-  grid-column: 1;
-  grid-row: 1;
-  width:100%;
-}
-body.alt-layout .alt-image img{
-  height:220px;
-}
-
-/* ② 商品情報：画像の下（左下） */
-body.alt-layout .alt-info{
-  grid-column: 1;
-  grid-row: 2;
-}
-
-/* ③ 主要項目：画像の右 */
-body.alt-layout .alt-center{
-  grid-column: 2;
-  grid-row: 1;
-}
-
-/* ④ グラフ：中央〜右（縦に大きく） */
-body.alt-layout .alt-graph{
-  grid-column: 3;
-  grid-row: 1 / span 2;
-  min-height: 520px;
-}
-body.alt-layout .alt-graph .graph-body{
-  min-height:460px;
-}
-
-/* ⑤ 購入ボックス：一番右 */
-body.alt-layout .alt-buy{
-  grid-column: 4;
-  grid-row: 1;
-}
-
-body.alt-layout .buy-box{
-  border:1px solid var(--line);
-  border-radius:var(--radius2);
-  background:#fff;
-  padding:14px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-body.alt-layout .buy-title{
-  font-size:12px;
-  font-weight:1000;
-  color:var(--muted);
-}
-body.alt-layout .buy-box input,
-body.alt-layout .buy-box select{
-  width:100%;
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:10px 10px;
-  font-weight:1000;
-  font-size:13px;
-}
-
-/* info list（読みやすく） */
+/* info */
 .info-box{
   flex:1;
   border:1px solid var(--line);
@@ -601,22 +459,8 @@ body.alt-layout .buy-box select{
   flex-wrap:wrap;
   align-items:center;
 }
-.warning-tag{
-  padding:5px 10px;
-  border-radius:999px;
-  font-size:12px;
-  font-weight:1000;
-  color:#fff;
-  white-space:nowrap;
-}
-.w-export{background:var(--red)}
-.w-ip{background:var(--purple)}
-.w-large{background:var(--orange)}
-.w-shipban{background:#0ea5bf}
-.w-needok{background:#14b8a6}
-.w-variation{background:#a855f7}
 
-/* center metrics（2列気味で読みやすく） */
+/* center */
 .center-box{
   border:1px solid var(--line);
   border-radius:var(--radius2);
@@ -768,37 +612,148 @@ body.alt-layout .buy-box select{
 .detail-table td{
   font-weight:1000;
 }
+.detail-table tbody tr:nth-child(odd) td{ background:#fcfcff; }
+.detail-table tbody tr:last-child td{border-bottom:none}
 
-/* tooltip */
-.has-tip{
-  border-bottom:2px dotted #94a3b8;
-  cursor:help;
+/* responsive */
+@media (max-width: 1100px){
+  .summary-row{ grid-template-columns: 1fr; }
+  #cartSummary{ top: 64px; }
+  .cart-grid{ grid-template-columns: 1fr 1fr; }
+  .metrics-row{ grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 680px){
+  .metrics-row{ grid-template-columns: 1fr; }
+  .left-wrap{ flex-direction:column; }
+  .image-box{ width:100%; }
 }
 
 /* =========================
-   Responsive
+   Header nav (layout switch)
 ========================= */
-@media (max-width: 1100px){
-  .summary-row{
-    grid-template-columns: 1fr;
-  }
-  .left-wrap{
-    flex-direction:column;
-  }
-  .image-box{
-    width:100%;
-  }
-  .image-box img{
-    height:220px;
-  }
-  .cart-grid{
-    grid-template-columns: 1fr 1fr;
-  }
+.layout-nav{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.layout-link{
+  display:inline-flex;
+  align-items:center;
+  text-decoration:none;
+  font-size:12px;
+  font-weight:900;
+  color:#111827;
+  padding:8px 12px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#fff;
+}
+.layout-link.active{
+  border-color:#c7d2fe;
+  background:#eef2ff;
+  color:#1d4ed8;
+}
 
+/* =========================
+   Full width
+========================= */
+.page-body{
+  max-width: 100%;
+  margin: 0;
+  padding: 10px 10px 40px;
+}
+
+/* =========================
+   Alt layout (2nd page)
+========================= */
+body.alt-layout .alt-grid{
+  display:grid;
+  grid-template-columns: 360px 360px 1fr 300px;
+  grid-template-rows: auto auto;
+  column-gap:14px;
+  row-gap:0px; /* 画像↔商品情報の間を詰める */
+  align-items:start;
+}
+
+body.alt-layout .alt-image{ grid-column:1; grid-row:1; }
+body.alt-layout .alt-info{ grid-column:1; grid-row:2; margin-top:0; }
+body.alt-layout .alt-center{ grid-column:2; grid-row:1; }
+body.alt-layout .alt-graph{ grid-column:3; grid-row:1 / span 2; }
+body.alt-layout .alt-buy{ grid-column:4; grid-row:1; }
+
+/* alt image */
+body.alt-layout .alt-image img{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+  border-radius:var(--radius2);
+  border:1px solid var(--line);
+  background:#f8fafc;
+  margin:0;
+}
+
+/* buy box */
+body.alt-layout .buy-box{
+  border:1px solid var(--line);
+  border-radius:var(--radius2);
+  background:#fff;
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+body.alt-layout .buy-title{
+  font-size:12px;
+  font-weight:900;
+  color:var(--muted);
+}
+body.alt-layout .buy-box input,
+body.alt-layout .buy-box select{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:10px 10px;
+  font-weight:900;
+  font-size:13px;
+}
+
+/* graph: stack 2 parts (MES + Keepa) */
+body.alt-layout .graph-body{
+  height:auto;
+  background:transparent;
+  border:0;
+  overflow:visible;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+body.alt-layout .canvas-wrap,
+body.alt-layout .keepa-wrap{
+  height:260px;
+  border-radius:var(--radius2);
+  overflow:hidden;
+  background:#eef2ff;
+  border:1px solid #dbeafe;
+}
+body.alt-layout .keepa-wrap{
+  background:#fff;
+  border:1px solid var(--line);
+}
+body.alt-layout .keepa-wrap iframe{
+  width:100%;
+  height:100%;
+  border:0;
+}
+
+/* Responsive for alt */
+@media (max-width: 1100px){
   body.alt-layout .alt-grid{
     grid-template-columns: 1fr;
+    row-gap:12px;
   }
-  body.alt-layout .alt-graph{
-    min-height:420px;
+  body.alt-layout .alt-graph,
+  body.alt-layout .alt-buy{
+    grid-row:auto;
+    grid-column:auto;
   }
 }
