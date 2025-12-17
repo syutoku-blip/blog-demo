@@ -537,7 +537,7 @@ function buildInfoGrid(container, ctx, data, tokens) {
     k.textContent = v.label;
 
     const val = document.createElement("div");
-    val.className = "v info-scroll";
+    val.className = "v";
 
     if (v.kind === "tags") {
       val.classList.add("v-tags");
