@@ -16,7 +16,8 @@
   --pad:14px;
   --gap:14px;
 
-  --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic","Meiryo", Arial, sans-serif;
+  --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic","Meiryo", Arial, sans-serif;
 }
 
 *{ box-sizing:border-box; }
@@ -29,39 +30,42 @@ body{
 }
 
 /* =========================
-   Top Bar
+   Header (HTMLに合わせる)
 ========================= */
-.topbar{
+.app-header{
   position:sticky;
   top:0;
-  z-index:20;
+  z-index:30;
   display:flex;
-  align-items:center;
+  align-items:flex-end;
   justify-content:space-between;
-  gap:12px;
-  padding:12px 18px;
+  gap:14px;
+  padding:14px 18px;
   background:rgba(244,246,251,.92);
   backdrop-filter: blur(10px);
   border-bottom:1px solid var(--line);
 }
 
-.topbar__left{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-.app-title{
+.header-left h1{
   margin:0;
-  font-size:16px;
-  font-weight:800;
+  font-size:22px;
+  font-weight:900;
   letter-spacing:.2px;
 }
-
-.layout-switch{
-  display:flex;
-  gap:8px;
+.header-left .sub{
+  margin-top:6px;
+  font-size:13px;
+  color:var(--muted);
+  font-weight:700;
 }
-.btn{
+
+.layout-nav{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.layout-link{
   display:inline-flex;
   align-items:center;
   justify-content:center;
@@ -73,87 +77,181 @@ body{
   text-decoration:none;
   color:var(--text);
   font-size:12px;
-  font-weight:700;
+  font-weight:800;
 }
-.btn:hover{
+.layout-link:hover{
   border-color:#c7d2fe;
   box-shadow:0 10px 22px rgba(91,92,255,.12);
 }
-
-.topbar__right{
-  display:flex;
-  align-items:end;
-  gap:12px;
-  flex-wrap:wrap;
-}
-
-.field{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  font-size:12px;
-  color:var(--muted);
-}
-.field input,
-.field select{
-  width:240px;
-  padding:10px 12px;
-  border-radius:12px;
-  border:1px solid var(--line);
-  background:var(--card);
-  outline:none;
-  box-shadow:var(--shadow-sm);
-  font-size:13px;
-  color:var(--text);
-}
-.field input:focus,
-.field select:focus{
+.layout-link.active{
+  background:var(--pill);
   border-color:#c7d2fe;
-  box-shadow:0 10px 22px rgba(91,92,255,.12);
 }
 
-/* =========================
-   Page Layout
-========================= */
-.page{
-  padding:16px 18px 28px;
-}
-
-/* =========================
-   Top Zones
-========================= */
-.top-zones{
-  display:grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap:12px;
-  margin-bottom:14px;
-}
-
-.zone{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:16px;
-  box-shadow:var(--shadow-sm);
-  overflow:hidden;
-  min-height:110px;
-  display:flex;
-  flex-direction:column;
-}
-.zone__head{
-  padding:10px 12px;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-.zone__head h2{
-  margin:0;
+.header-status{
   font-size:12px;
   font-weight:900;
   color:#334155;
-  letter-spacing:.2px;
 }
-.zone__body{
+
+/* =========================
+   Shared Card Wrapper
+========================= */
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+
+/* =========================
+   Page body
+========================= */
+.page-body{
+  padding:16px 18px 28px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+/* =========================
+   Metrics Bar (上のカスタム枠)
+========================= */
+.metrics-bar{
+  padding:12px;
+}
+.metrics-bar.collapsed .metrics-row{
+  display:none;
+}
+.metrics-bar-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  padding:6px 6px 12px;
+}
+.metrics-bar-title{
+  font-size:13px;
+  font-weight:900;
+  color:#0f172a;
+}
+.metrics-bar-help{
+  margin-top:4px;
+  font-size:12px;
+  color:var(--muted);
+  font-weight:700;
+}
+.metrics-bar-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+/* ボタン */
+.metrics-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:#fff;
+  box-shadow:var(--shadow-sm);
+  font-size:12px;
+  font-weight:900;
+  cursor:pointer;
+}
+.metrics-btn:hover{
+  border-color:#c7d2fe;
+  box-shadow:0 10px 22px rgba(91,92,255,.12);
+}
+
+/* sort bar */
+#sortBar{
+  margin-top:10px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+#sortBar .sort-title{
+  font-size:12px;
+  color:#334155;
+  font-weight:900;
+}
+#sortControls{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.sort-row{
+  display:grid;
+  grid-template-columns: 1fr 120px 80px;
+  gap:10px;
+  align-items:center;
+}
+.sort-row select{
+  width:100%;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:#fff;
+  box-shadow:var(--shadow-sm);
+  font-size:13px;
+  font-weight:800;
+}
+.sort-row button{
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-weight:900;
+  cursor:pointer;
+}
+.sort-row button:hover{
+  border-color:#c7d2fe;
+  box-shadow:0 10px 22px rgba(91,92,255,.12);
+}
+
+#addSortRuleBtn,#applySortBtn,#clearSortBtn{
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-weight:900;
+  cursor:pointer;
+}
+#addSortRuleBtn:hover,#applySortBtn:hover,#clearSortBtn:hover{
+  border-color:#c7d2fe;
+  box-shadow:0 10px 22px rgba(91,92,255,.12);
+}
+
+/* 5枠 */
+.metrics-row{
+  display:grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap:12px;
+  padding:6px;
+}
+.metrics-zone{
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:var(--card);
+  box-shadow:var(--shadow-sm);
+  overflow:hidden;
+  min-height:120px;
+  display:flex;
+  flex-direction:column;
+}
+.metrics-zone-title{
+  padding:10px 12px;
+  border-bottom:1px solid var(--line);
+  font-size:12px;
+  font-weight:900;
+  color:#334155;
+}
+.metrics-zone-list{
   padding:10px 10px 12px;
   display:flex;
   flex-wrap:wrap;
@@ -162,7 +260,8 @@ body{
   min-height:0;
 }
 
-.chip{
+/* JSが生成するピル */
+.metric-pill{
   display:inline-flex;
   align-items:center;
   padding:7px 10px;
@@ -171,107 +270,161 @@ body{
   background:var(--pill);
   color:#1e293b;
   font-size:12px;
-  font-weight:800;
+  font-weight:900;
   cursor:grab;
   user-select:none;
   white-space:nowrap;
 }
-.chip:active{ cursor:grabbing; }
-.chip:hover{
+.metric-pill:active{ cursor:grabbing; }
+.metric-pill:hover{
   border-color:#c7d2fe;
   box-shadow:0 10px 22px rgba(91,92,255,.12);
 }
 
 /* =========================
-   Cards Grid
+   ASIN Catalog
 ========================= */
-.cards__grid{
-  display:grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap:14px;
-}
-
-.card{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:18px;
-  box-shadow:var(--shadow);
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-  min-height:280px;
-}
-
-.card__head{
-  padding:14px 16px;
+.asin-catalog{}
+.asin-catalog-head{
+  padding:12px 14px;
   border-bottom:1px solid var(--line);
 }
-.card__head .title{
-  font-size:14px;
+.asin-catalog-title{
+  font-size:12px;
   font-weight:900;
-  line-height:1.2;
-}
-.card__head .brand{
-  margin-top:4px;
-  font-size:12px;
-  color:var(--muted);
-  font-weight:700;
-}
-
-.card__body{
-  padding:12px 16px 16px;
-  display:grid;
-  grid-template-columns: 1fr;
-  gap:8px;
-}
-
-.metric-line{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  padding:10px 12px;
-  border:1px solid var(--line);
-  border-radius:14px;
-  background:#fbfcff;
-}
-.metric-line .label{
-  font-size:12px;
-  font-weight:800;
   color:#334155;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
 }
-.metric-line .value{
-  font-size:12px;
+.asin-catalog-body{
+  padding:12px 14px 14px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.asin-pill{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:999px;
+  padding:8px 12px;
   font-weight:900;
-  color:#0f172a;
+  font-size:12px;
+  cursor:pointer;
+}
+.asin-pill:hover{
+  border-color:#c7d2fe;
+  box-shadow:0 10px 22px rgba(91,92,255,.12);
 }
 
 /* =========================
-   Layout 2
+   Cart Summary (ある場合)
 ========================= */
-body.alt-layout .page{
-  padding:16px 18px 28px;
+.cart-summary{}
+.cart-head{
+  padding:12px 14px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
 }
-body.alt-layout .cards__grid{
-  grid-template-columns: 1fr;
+.card-title{
+  font-size:12px;
+  font-weight:900;
+  color:#334155;
 }
-body.alt-layout .card{
-  min-height:auto;
+.cart-note{
+  font-size:11px;
+  color:var(--muted);
+  font-weight:700;
+}
+.cart-body{
+  padding:12px 14px 14px;
+  display:grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap:10px;
+}
+.cart-kpi{
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fbfcff;
+  padding:10px 12px;
+}
+.cart-kpi .k{
+  font-size:11px;
+  color:#334155;
+  font-weight:900;
+}
+.cart-kpi .v{
+  margin-top:6px;
+  font-size:12px;
+  font-weight:900;
 }
 
-/* Alt layout card internals (if present) */
-.alt-grid{
-  display:grid;
-  grid-template-columns: minmax(0, 420px) minmax(0, 280px) minmax(0, 1fr) minmax(0, 240px);
-  gap:14px;
-  padding:14px 16px 16px;
-}
-.alt-left{
+/* =========================
+   Items Container
+========================= */
+#itemsContainer{
   display:flex;
   flex-direction:column;
+  gap:14px;
+}
+#emptyState{
+  display:none;
+  padding:22px;
+  border:1px dashed #cbd5e1;
+  border-radius:16px;
+  color:#64748b;
+  background:rgba(255,255,255,.65);
+}
+
+/* =========================
+   Product Card shared
+========================= */
+.product-card{
+  display:flex;
+  flex-direction:column;
+}
+
+/* card top */
+.card-top{
+  padding:12px 16px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.card-top .title{
+  font-size:13px;
+  font-weight:900;
+  color:#0f172a;
+}
+.card-top .remove{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:999px;
+  padding:8px 12px;
+  font-weight:900;
+  font-size:12px;
+  cursor:pointer;
+}
+.card-top .remove:hover{
+  border-color:#c7d2fe;
+  box-shadow:0 10px 22px rgba(91,92,255,.12);
+}
+
+/* =========================
+   Default layout (index.html)
+========================= */
+.summary-row{
+  display:grid;
+  grid-template-columns: minmax(0, 420px) minmax(0, 280px) minmax(0, 1fr);
+  gap:14px;
+  padding:14px 16px 16px;
+  align-items:stretch;
+}
+.left-wrap{
+  display:grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap:12px;
   min-height:0;
 }
@@ -281,6 +434,7 @@ body.alt-layout .card{
   background:#fbfcff;
   overflow:hidden;
   box-shadow:var(--shadow-sm);
+  min-height:0;
 }
 .image-box img{
   width:100%;
@@ -289,6 +443,29 @@ body.alt-layout .card{
   display:block;
   background:#fff;
 }
+
+.left-wrap .field{
+  padding:12px;
+}
+.left-wrap .field label{
+  display:block;
+  margin:10px 0 6px;
+  font-size:12px;
+  font-weight:900;
+  color:#334155;
+}
+.left-wrap .field select,
+.left-wrap .field input{
+  width:100%;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:#fff;
+  box-shadow:var(--shadow-sm);
+  font-size:13px;
+  font-weight:800;
+}
+
 .info-box{
   border:1px solid var(--line);
   border-radius:16px;
@@ -381,6 +558,7 @@ body.alt-layout .card{
   font-weight:900;
   color:#0f172a;
 }
+
 .graph-box{
   border:1px solid var(--line);
   border-radius:16px;
@@ -404,6 +582,23 @@ body.alt-layout .card{
   font-weight:900;
   color:#334155;
 }
+.switch{
+  display:flex;
+  gap:8px;
+}
+.switch button{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:999px;
+  padding:8px 12px;
+  font-weight:900;
+  font-size:12px;
+  cursor:pointer;
+}
+.switch button.active{
+  background:var(--pill);
+  border-color:#c7d2fe;
+}
 .graph-options{
   display:flex;
   gap:12px;
@@ -424,7 +619,7 @@ body.alt-layout .card{
   border-radius:14px;
   overflow:hidden;
   background:#fff;
-  height:220px;
+  height:260px;
 }
 .keepa-wrap iframe{
   width:100%;
@@ -436,14 +631,18 @@ body.alt-layout .card{
   border-radius:14px;
   overflow:hidden;
   background:#fff;
-  height:260px;
+  height:320px;
   padding:10px;
 }
 .canvas-wrap canvas{
   width:100% !important;
   height:100% !important;
 }
-.buy-box{
+
+/* =========================
+   Buy box (alt / layout3で共通)
+========================= */
+.buy-box, .l3-buy{
   border:1px solid var(--line);
   border-radius:16px;
   background:var(--card);
@@ -460,7 +659,9 @@ body.alt-layout .card{
   color:#334155;
 }
 .buy-box select,
-.buy-box input{
+.buy-box input,
+.l3-buy select,
+.l3-buy input{
   width:100%;
   padding:10px 12px;
   border-radius:12px;
@@ -533,43 +734,81 @@ body.alt-layout .card{
   vertical-align:top;
 }
 .detail-table tbody tr:last-child td{ border-bottom:none; }
-
-.info-td{
-  color:#0f172a;
-  font-weight:800;
-}
+.info-td{ color:#0f172a; font-weight:800; }
 .info-td-scroll{
   max-width:220px;
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap;
 }
-.info-td-tags{
-  white-space:normal;
+.info-td-tags{ white-space:normal; }
+.info-td-tags .tag{ margin-right:6px; }
+
+/* =========================
+   Layout 2 (alt.html) ここが今回の要件
+   - “左（画像+商品情報）が縦並び”の中で上段に収める
+   - keepaは需要供給より少し小さめ
+========================= */
+body.alt-layout .card{ min-height:auto; }
+
+/* 2ページ目の上段4カラム */
+body.alt-layout .alt-grid{
+  display:grid;
+  grid-template-columns: minmax(0, 420px) minmax(0, 320px) minmax(0, 1fr) minmax(0, 240px);
+  gap:14px;
+  padding:14px 16px 16px;
+  align-items:stretch; /* ここ超重要：上段の高さを揃える */
+  min-height:0;
 }
-.info-td-tags .tag{
-  margin-right:6px;
+
+/* 左(画像+商品情報)を “上段の高さ”に収める */
+body.alt-layout .alt-left{
+  height:100%;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+/* 画像は上側で一定比率、商品情報は残り（溢れたら商品情報だけスクロール） */
+body.alt-layout .alt-left .image-box{
+  flex: 0 0 46%;
+  min-height: 200px;
+  min-height:0;
+}
+body.alt-layout .alt-left .image-box img{
+  height:100% !important;  /* 220px固定を解除 */
+  object-fit:contain;
+}
+body.alt-layout .alt-left .info-box{
+  flex: 1 1 auto;
+  min-height:0;
+  overflow:auto; /* ここで崩れない */
+}
+
+/* グラフ：keepa小さめ／需要供給大きめ */
+body.alt-layout .graph-body{
+  min-height:0;
+}
+body.alt-layout .keepa-wrap{
+  height:200px; /* 小さめ */
+}
+body.alt-layout .canvas-wrap{
+  height:300px; /* 大きめ */
 }
 
 /* =========================
-   Layout 3
+   Layout 3 (layout3.html)
 ========================= */
-body.third-layout .cards__grid{
-  grid-template-columns: 1fr;
-}
-body.third-layout .card{
-  min-height:auto;
-}
-
-.layout3-grid{
+body.third-layout .layout3-grid{
   display:grid;
   grid-template-columns: minmax(0, 360px) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 320px) minmax(0, 240px);
   grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
   gap:14px;
   padding:14px 16px 16px;
   align-items:stretch;
+  min-height:0;
 }
-
 .l3-block{
   border:1px solid var(--line);
   border-radius:16px;
@@ -580,7 +819,6 @@ body.third-layout .card{
   flex-direction:column;
   min-height:0;
 }
-
 .l3-block .head{
   padding:10px 12px;
   border-bottom:1px solid var(--line);
@@ -588,40 +826,12 @@ body.third-layout .card{
   font-weight:900;
   color:#334155;
 }
+.l3-image .image-box{ border:none; border-radius:0; box-shadow:none; }
+.l3-image .image-box img{ height:260px; }
+.l3-infoA .info-grid, .l3-infoB .info-grid{ padding:12px; }
+.l3-center .center-list{ padding:12px; }
 
-.l3-image .image-box{
-  border:none;
-  border-radius:0;
-  box-shadow:none;
-}
-.l3-image .image-box img{
-  height:260px;
-}
-
-.l3-infoA .info-grid,
-.l3-infoB .info-grid{
-  padding:12px;
-}
-.l3-center .center-list{
-  padding:12px;
-}
-
-.l3-buy{
-  border:1px solid var(--line);
-  border-radius:16px;
-  background:var(--card);
-  box-shadow:var(--shadow-sm);
-  padding:12px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  min-height:0;
-}
-
-.l3-keepa .keepa-mini{
-  padding:12px;
-  height:220px;
-}
+.l3-keepa .keepa-mini{ padding:12px; height:220px; }
 .l3-keepa iframe{
   width:100%;
   height:100%;
@@ -631,11 +841,7 @@ body.third-layout .card{
   background:#fff;
   border:1px solid var(--line);
 }
-
-.l3-mes .mes-big{
-  padding:12px;
-  height:360px;
-}
+.l3-mes .mes-big{ padding:12px; height:360px; }
 .l3-mes canvas{
   width:100% !important;
   height:100% !important;
@@ -646,229 +852,19 @@ body.third-layout .card{
 }
 
 /* =========================
-   Card Top (shared)
-========================= */
-.card-top{
-  padding:12px 16px;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-}
-.card-top .title{
-  font-size:13px;
-  font-weight:900;
-  color:#0f172a;
-}
-.card-top .remove{
-  border:1px solid var(--line);
-  background:#fff;
-  border-radius:999px;
-  padding:8px 12px;
-  font-weight:900;
-  font-size:12px;
-  cursor:pointer;
-}
-.card-top .remove:hover{
-  border-color:#c7d2fe;
-  box-shadow:0 10px 22px rgba(91,92,255,.12);
-}
-
-/* =========================
-   Catalog Area (if present)
-========================= */
-#asinCatalog{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  padding:10px 0 0;
-}
-.asin-pill{
-  border:1px solid var(--line);
-  background:#fff;
-  border-radius:999px;
-  padding:8px 12px;
-  font-weight:900;
-  font-size:12px;
-  cursor:pointer;
-}
-.asin-pill:hover{
-  border-color:#c7d2fe;
-  box-shadow:0 10px 22px rgba(91,92,255,.12);
-}
-
-/* =========================
-   Empty State (if present)
-========================= */
-#emptyState{
-  display:none;
-  padding:22px;
-  margin-top:12px;
-  border:1px dashed #cbd5e1;
-  border-radius:16px;
-  color:#64748b;
-  background:rgba(255,255,255,.65);
-}
-
-/* =========================
-   Sort UI (if present)
-========================= */
-#sortBar{
-  margin-top:12px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-#sortControls{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-.sort-row{
-  display:grid;
-  grid-template-columns: 1fr 120px 80px;
-  gap:10px;
-  align-items:center;
-}
-.sort-row select{
-  width:100%;
-  padding:10px 12px;
-  border-radius:12px;
-  border:1px solid var(--line);
-  background:#fff;
-  box-shadow:var(--shadow-sm);
-  font-size:13px;
-  font-weight:800;
-}
-.sort-row button{
-  padding:10px 12px;
-  border-radius:12px;
-  border:1px solid var(--line);
-  background:#fff;
-  font-weight:900;
-  cursor:pointer;
-}
-.sort-row button:hover{
-  border-color:#c7d2fe;
-  box-shadow:0 10px 22px rgba(91,92,255,.12);
-}
-
-#addSortRuleBtn,
-#applySortBtn,
-#clearSortBtn{
-  padding:10px 12px;
-  border-radius:12px;
-  border:1px solid var(--line);
-  background:#fff;
-  font-weight:900;
-  cursor:pointer;
-}
-#addSortRuleBtn:hover,
-#applySortBtn:hover,
-#clearSortBtn:hover{
-  border-color:#c7d2fe;
-  box-shadow:0 10px 22px rgba(91,92,255,.12);
-}
-
-/* =========================
    Responsive
 ========================= */
 @media (max-width: 1200px){
-  .top-zones{
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .cards__grid{
-    grid-template-columns: 1fr;
-  }
-  .alt-grid{
-    grid-template-columns: 1fr;
-  }
-  .layout3-grid{
-    grid-template-columns: 1fr;
-    grid-template-rows:auto;
-  }
-  .field input,
-  .field select{
-    width:200px;
-  }
+  .metrics-row{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .summary-row{ grid-template-columns: 1fr; }
+  body.alt-layout .alt-grid{ grid-template-columns: 1fr; }
+  body.third-layout .layout3-grid{ grid-template-columns: 1fr; grid-template-rows:auto; }
+  .cart-body{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 720px){
-  .topbar{
-    flex-direction:column;
-    align-items:stretch;
-  }
-  .topbar__right{
-    align-items:stretch;
-  }
-  .field input,
-  .field select{
-    width:100%;
-  }
-  .top-zones{
-    grid-template-columns: 1fr;
-  }
-  .detail-scroll{
-    max-height:260px;
-  }
-}
-
-/* =========================================================
-   Alt layout(2ページ目)：左カラム(画像+商品情報)を
-   “上段の高さ”に綺麗に収める + keepa小さめ
-========================================================= */
-
-/* 上段エリアを「2行の固定レイアウト」にして、各カラムの高さ基準を揃える */
-body.alt-layout .alt-grid{
-  align-items: stretch;                     /* 各セルを高さ100%で揃える */
-  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
-}
-
-/* 左カラム（画像 + 商品情報）を “セルの高さ100%” に */
-body.alt-layout .alt-left{
-  height: 100%;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;                               /* 画像と情報の間に適度な余白 */
-}
-
-/* 画像枠：上側は固定比率（最低高さも確保） */
-body.alt-layout .alt-left .image-box{
-  flex: 0 0 44%;                           /* 画像を上段の約44%に */
-  min-height: 180px;                       /* 小さい画面でも潰れない */
-  min-height: 0;
-}
-
-/* 画像：枠に合わせて収める（はみ出し防止） */
-body.alt-layout .alt-left .image-box img{
-  width: 100%;
-  height: 100% !important;                 /* 既存の height:220px を上書き */
-  object-fit: contain;                     /* 全体が見えるように */
-}
-
-/* 商品情報：残りの高さを使う。溢れた分は “ここだけ” スクロール */
-body.alt-layout .alt-left .info-box{
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow: auto;
-}
-
-/* ===== グラフ：keepaは小さめ、需要供給(canvas)を大きめ ===== */
-body.alt-layout .alt-graph .graph-body{
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-height: 0;
-}
-
-body.alt-layout .alt-graph .keepa-wrap{
-  flex: 0 0 210px;                         /* keepaは少し低め */
-  min-height: 160px;
-}
-
-body.alt-layout .alt-graph .canvas-wrap{
-  flex: 1 1 auto;                           /* 需要供給グラフを優先して大きく */
-  min-height: 240px;
+  .app-header{ flex-direction:column; align-items:stretch; }
+  .metrics-row{ grid-template-columns: 1fr; }
+  .cart-body{ grid-template-columns: 1fr; }
+  .detail-scroll{ max-height:260px; }
 }
