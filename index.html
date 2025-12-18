@@ -1,137 +1,123 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <title>MES-AI-A 商品分析</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <link rel="stylesheet" href="./styles.css?v=20251217_6" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MES-AI-A</title>
+  <link rel="stylesheet" href="styles.patched.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+  <div class="app">
+    <header class="app-header">
+      <div class="app-title">MES-AI-A（詳細ビュー）</div>
+      <div id="headerStatus" class="header-status"></div>
+    </header>
 
-<header class="app-header">
-  <div class="header-left">
-    <h1>MES-AI-A 商品分析</h1>
-    <div class="sub">ASINクリックでカード追加 → 上の5枠で「指標/商品情報」をまとめてカスタム</div>
-  </div>
+    <div id="metricsBar" class="metrics-bar">
+      <div class="metrics-bar-head">
+        <div class="metrics-bar-title">指標カスタマイズ</div>
+        <div class="metrics-bar-actions">
+          <button id="metricsCollapseBtn" type="button">折りたたむ</button>
+          <button id="resetCurrentBtn" type="button">初期化</button>
+          <button id="clearCardsBtn" type="button">表示中ASINクリア</button>
+          <button id="clearCartBtn" type="button">カートクリア</button>
+        </div>
+      </div>
 
-  <div class="layout-nav">
-    <a class="layout-link active" href="./index.html">通常レイアウト</a>
-    <a class="layout-link" href="./alt.html">新レイアウト</a>
-    <a class="layout-link" href="./layout3.html">レイアウト3</a>
-  </div>
+      <div id="sortBar">
+        <div class="sort-title">表示中ASINのソート（真ん中の枠の指標）</div>
+        <div id="sortControls" class="sort-controls"></div>
+        <div class="sort-actions">
+          <button id="addSortRuleBtn" type="button">条件を追加</button>
+          <button id="applySortBtn" class="primary" type="button">ソート適用</button>
+          <button id="clearSortBtn" type="button">ソート解除</button>
+        </div>
+      </div>
 
-  <div id="headerStatus" class="header-status"></div>
-</header>
+      <!-- ★追加：重要視項目 -->
+      <div id="importantBar">
+        <div class="important-title">重要視項目（プールから選択 / すべて満たすASINに🔥）</div>
+        <div id="importantControls" class="important-controls"></div>
+        <div class="important-actions">
+          <button id="addImportantRuleBtn" type="button">条件を追加</button>
+          <button id="applyImportantBtn" class="primary" type="button">適用</button>
+          <button id="clearImportantBtn" type="button">解除</button>
+        </div>
+      </div>
 
-<main class="page-body">
-  <section 
-    id="metricsBar" 
-    class="metrics-bar"
-  >
-    <div class="metrics-head">
-      <div class="metrics-title">指標/商品情報のカスタマイズ（上の5枠はすべてカスタマイズ可）</div>
+      <div class="metrics-row">
+        <section class="metrics-box">
+          <div class="metrics-box-title">プール</div>
+          <div id="metricsPoolZone" class="metrics-zone"></div>
+        </section>
 
-      <div class="metrics-actions">
-        <button id="resetCurrentBtn" type="button">現在表示のデフォルトに戻す</button>
-        <button id="clearCardsBtn" type="button">表示中カードを全て削除</button>
-        <button id="clearCartBtn" type="button">カートをクリア</button>
-        <button id="metricsCollapseBtn" type="button">折りたたむ</button>
+        <section class="metrics-box">
+          <div class="metrics-box-title">商品情報</div>
+          <div id="metricsInfoZone" class="metrics-zone"></div>
+        </section>
+
+        <section class="metrics-box">
+          <div class="metrics-box-title">真ん中</div>
+          <div id="metricsCenterZone" class="metrics-zone"></div>
+        </section>
+
+        <section class="metrics-box">
+          <div class="metrics-box-title">下段</div>
+          <div id="metricsTableZone" class="metrics-zone"></div>
+        </section>
+
+        <section class="metrics-box">
+          <div class="metrics-box-title">非表示</div>
+          <div id="metricsHiddenZone" class="metrics-zone"></div>
+        </section>
+      </div>
+
+      <div class="metrics-bar-foot">
+        ※ 指標ピルをドラッグ&ドロップで移動できます（重複は不可）。
       </div>
     </div>
 
-    <div id="sortBar">
-      <div class="sort-title">表示中ASINのソート（真ん中の枠の指標）</div>
-      <div id="sortControls" class="sort-controls"></div>
-      <div class="sort-actions">
-        <button id="addSortRuleBtn" type="button">条件を追加</button>
-        <button id="applySortBtn" class="primary" type="button">ソート適用</button>
-        <button id="clearSortBtn" type="button">ソート解除</button>
+    <section class="asin-catalog card">
+      <div class="asin-catalog-head">
+        <div class="asin-catalog-title">ASIN一覧（クリックで追加）</div>
       </div>
-    </div>
-
-    <div id="focusBar" class="focus-bar">
-      <div class="focus-title">重要視項目（プールの項目から選択）</div>
-      <div class="focus-help">指定した条件に当てはまるASINは 🔥 で目立つ表示になります</div>
-      <div id="focusControls" class="focus-controls"></div>
-      <div class="focus-actions">
-        <button id="addFocusRuleBtn" type="button">重要視条件を追加</button>
-        <button id="clearFocusBtn" type="button">重要視条件をクリア</button>
-      </div>
-    </div>
-
-    <div class="metrics-row">
-      <div class="metrics-zone">
-        <div class="zone-head">プール（未配置）</div>
-        <div id="metricsPoolZone" class="zone-body zone-scroll"></div>
-      </div>
-
-      <div class="metrics-zone">
-        <div class="zone-head">商品情報（枠）</div>
-        <div id="metricsInfoZone" class="zone-body zone-scroll"></div>
-      </div>
-
-      <div class="metrics-zone">
-        <div class="zone-head">主要項目（枠）</div>
-        <div id="metricsCenterZone" class="zone-body zone-scroll"></div>
-      </div>
-
-      <div class="metrics-zone">
-        <div class="zone-head">下段（枠）</div>
-        <div id="metricsTableZone" class="zone-body zone-scroll"></div>
-      </div>
-
-      <div class="metrics-zone">
-        <div class="zone-head">非表示</div>
-        <div id="metricsHiddenZone" class="zone-body zone-scroll"></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="main-grid">
-    <aside class="left-panel">
-      <div class="panel-title">ASIN一覧（クリックでカード追加）</div>
-      <div id="asinCatalog" class="asin-catalog"></div>
-
-      <div class="cart-summary">
-        <div class="panel-title">カート集計</div>
-
-        <div class="cart-row">
-          <div class="k">ASIN数</div>
-          <div class="v" id="cartAsinCount">0</div>
-        </div>
-        <div class="cart-row">
-          <div class="k">合計数量</div>
-          <div class="v" id="cartItemCount">0</div>
-        </div>
-
-        <div class="cart-row">
-          <div class="k">仕入れ合計</div>
-          <div class="v" id="cartTotalCost">￥0</div>
-        </div>
-        <div class="cart-row">
-          <div class="k">売上合計（円）</div>
-          <div class="v" id="cartTotalRevenue">￥0</div>
-        </div>
-        <div class="cart-row">
-          <div class="k">粗利合計</div>
-          <div class="v" id="cartTotalProfit">￥0</div>
-        </div>
-      </div>
-    </aside>
-
-    <section class="cards-area">
-      <div id="emptyState" class="empty-state">
-        左のASINをクリックして、商品カードを追加してください
-      </div>
-
-      <div id="itemsContainer" class="items"></div>
+      <div id="asinCatalog" class="asin-catalog-body"></div>
     </section>
-  </section>
-</main>
 
-<script src="./asin-data.js?v=20251217_1"></script>
-<script src="./main.js?v=20251217_6"></script>
+    <section class="cart-summary card">
+      <div class="cart-grid">
+        <div class="cart-kpi">
+          <div class="k-label">仕入れ合計</div>
+          <div id="cartTotalCost" class="k-value">￥0</div>
+        </div>
+        <div class="cart-kpi">
+          <div class="k-label">売上合計（円換算）</div>
+          <div id="cartTotalRevenue" class="k-value">￥0</div>
+        </div>
+        <div class="cart-kpi">
+          <div class="k-label">利益（概算）</div>
+          <div id="cartTotalProfit" class="k-value">￥0</div>
+        </div>
+        <div class="cart-kpi">
+          <div class="k-label">ASIN数</div>
+          <div id="cartAsinCount" class="k-value">0</div>
+        </div>
+        <div class="cart-kpi">
+          <div class="k-label">数量合計</div>
+          <div id="cartItemCount" class="k-value">0</div>
+        </div>
+      </div>
+    </section>
+
+    <main id="itemsContainer" class="items"></main>
+
+    <div id="emptyState" class="empty-state">
+      左のASIN一覧から追加してください
+    </div>
+  </div>
+
+  <script src="asin-data.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
