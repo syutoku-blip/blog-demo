@@ -3,8 +3,6 @@
  * - レイアウト3追加（body.third-layout）
  * - 商品情報は商品情報枠（zoneState.info）を上から半分ずつで
  *   商品情報①/商品情報②に分割表示（レイアウト3のみ）
- * - ★重要視項目（ソートの下）追加：
- *   pool内の項目を選択→数値条件を設定→全条件(AND)を満たすASINに🔥表示
  **************************************************************/
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -201,21 +199,12 @@ const applySortBtn = $("#applySortBtn");
 const clearSortBtn = $("#clearSortBtn");
 let sortRules = [];
 
-/* important（重要視項目） */
-const importantBar = $("#importantBar");
-const importantControls = $("#importantControls");
-const addImportantRuleBtn = $("#addImportantRuleBtn");
-const applyImportantBtn = $("#applyImportantBtn");
-const clearImportantBtn = $("#clearImportantBtn");
-let importantRules = [];
-
 init();
 
 function init() {
   initPoolUI();
   initCatalog();
   initSortUI();
-  initImportantUI();
   initActions();
   updateCartSummary();
   updateHeaderStatus();
@@ -245,10 +234,6 @@ function initActions() {
 
     sortRules = [];
     renderSortControls();
-
-    importantRules = [];
-    renderImportantControls();
-
     renderTopZones();
     rerenderAllCards();
   });
@@ -262,7 +247,6 @@ function initActions() {
     itemsContainer.innerHTML = "";
     emptyState.style.display = "block";
     updateHeaderStatus();
-    updateImportantMarks();
   });
 
   clearCartBtn?.addEventListener("click", () => {
@@ -300,7 +284,6 @@ function addOrFocusCard(asin) {
   cardState.set(asin, { el: card, data, chart: card.__chart || null });
 
   updateHeaderStatus();
-  updateImportantMarks();
 }
 
 function updateHeaderStatus() {
@@ -325,7 +308,6 @@ function renderTopZones() {
   zoneState.hidden.forEach((t) => zoneHidden.appendChild(makePill(t)));
 
   refreshSortRuleOptions();
-  refreshImportantRuleOptions();
 }
 
 function makePill(token) {
@@ -473,166 +455,6 @@ function applySort() {
   });
 
   entries.forEach(([_, v]) => itemsContainer.appendChild(v.el));
-
-  updateImportantMarks();
-}
-
-/* =========================
-   Important（重要視項目）
-   - pool内の項目（token）から選択
-   - 数値比較（>=, <=, =）
-   - 複数条件は AND（全部満たすと🔥）
-========================= */
-function initImportantUI() {
-  importantRules = [];
-  renderImportantControls();
-
-  addImportantRuleBtn?.addEventListener("click", () => {
-    const candidates = getImportantCandidates();
-    const first = candidates[0] || tokM(METRICS_ALL[0].id);
-    importantRules.push({ token: first, op: "gte", value: 0 });
-    renderImportantControls();
-  });
-
-  applyImportantBtn?.addEventListener("click", () => {
-    updateImportantMarks();
-  });
-
-  clearImportantBtn?.addEventListener("click", () => {
-    importantRules = [];
-    renderImportantControls();
-    updateImportantMarks();
-  });
-}
-
-function renderImportantControls() {
-  if (!importantControls) return;
-  importantControls.innerHTML = "";
-
-  importantRules.forEach((r, idx) => {
-    const row = document.createElement("div");
-    row.className = "important-row";
-
-    const selToken = document.createElement("select");
-    const opts = getImportantCandidates()
-      .map((t) => `<option value="${t}" ${t === r.token ? "selected" : ""}>${labelOf(t)}</option>`)
-      .join("");
-    selToken.innerHTML = opts || `<option value="${tokM(METRICS_ALL[0].id)}">${METRICS_ALL[0].label}</option>`;
-    selToken.addEventListener("change", () => {
-      r.token = selToken.value;
-      updateImportantMarks();
-    });
-
-    const selOp = document.createElement("select");
-    selOp.innerHTML = `
-      <option value="gte" ${r.op === "gte" ? "selected" : ""}>以上</option>
-      <option value="lte" ${r.op === "lte" ? "selected" : ""}>以下</option>
-      <option value="eq"  ${r.op === "eq"  ? "selected" : ""}>一致</option>
-    `;
-    selOp.addEventListener("change", () => {
-      r.op = selOp.value;
-      updateImportantMarks();
-    });
-
-    const inp = document.createElement("input");
-    inp.type = "number";
-    inp.step = "0.01";
-    inp.value = String(r.value ?? 0);
-    inp.placeholder = "数値";
-    inp.addEventListener("input", () => {
-      r.value = Number(inp.value || 0);
-      updateImportantMarks();
-    });
-
-    const del = document.createElement("button");
-    del.type = "button";
-    del.textContent = "削除";
-    del.addEventListener("click", () => {
-      importantRules.splice(idx, 1);
-      renderImportantControls();
-      updateImportantMarks();
-    });
-
-    row.appendChild(selToken);
-    row.appendChild(selOp);
-    row.appendChild(inp);
-    row.appendChild(del);
-    importantControls.appendChild(row);
-  });
-}
-
-function getImportantCandidates() {
-  // 「プールに存在する項目」から選択（M/Iどちらも選べる）
-  // ※ 数値評価できない項目は条件判定で弾かれる（false）
-  return zoneState.pool.slice();
-}
-
-function refreshImportantRuleOptions() {
-  const poolTokens = new Set(zoneState.pool);
-  importantRules.forEach((r) => {
-    if (!poolTokens.has(r.token)) {
-      r.token = zoneState.pool[0] || tokM(METRICS_ALL[0].id);
-    }
-  });
-  renderImportantControls();
-}
-
-function tokenNumericValue(token, ctx, data) {
-  const { type, id } = parseToken(token);
-
-  if (type === "M") {
-    const m = METRIC_BY_ID[id];
-    if (!m) return NaN;
-    const raw = data?.[m.sourceKey];
-    const n = Number(String(raw ?? "").trim().replace(/[^\d.\-]/g, ""));
-    return Number.isFinite(n) ? n : NaN;
-  }
-
-  if (type === "I") {
-    const v = resolveTokenValue(token, ctx, data);
-    if (!v) return NaN;
-    if (v.kind === "tags") return NaN;
-    return num(v.text);
-  }
-
-  return NaN;
-}
-
-function matchImportantRules(data, ctx) {
-  if (!importantRules || importantRules.length === 0) return false;
-
-  return importantRules.every((r) => {
-    const v = tokenNumericValue(r.token, ctx, data);
-    if (!Number.isFinite(v)) return false;
-
-    const target = Number(r.value ?? 0);
-    if (r.op === "gte") return v >= target;
-    if (r.op === "lte") return v <= target;
-    if (r.op === "eq") return v === target;
-    return false;
-  });
-}
-
-function updateImportantMarks() {
-  cardState.forEach((v) => {
-    const el = v.el;
-    const asin = el.dataset.asin;
-
-    const jpAsin = v.data["日本ASIN"] || "－";
-    const usAsin = v.data["アメリカASIN"] || asin || "－";
-    const realW = v.data["重量kg"] ?? v.data["重量（kg）"] ?? v.data["重量"] ?? "";
-    const volW = v.data["容積重量"] ?? "";
-    const size = v.data["サイズ"] || "－";
-    const weight = `${fmtKg(realW)}（${fmtKg(volW)}）`;
-    const ctx = { asin, jpAsin, usAsin, size, weight, data: v.data };
-
-    const ok = matchImportantRules(v.data, ctx);
-
-    el.classList.toggle("is-important", ok);
-
-    const badge = el.querySelector(".important-badge");
-    if (badge) badge.style.display = ok ? "inline-flex" : "none";
-  });
 }
 
 /* =========================
@@ -824,8 +646,6 @@ function rerenderAllCards() {
     buildCenterList(v.el.querySelector(".js-center"), ctx, v.data);
     buildDetailTable(v.el.querySelector(".js-detailTable"), ctx, v.data);
   });
-
-  updateImportantMarks();
 }
 
 /* =========================
@@ -914,7 +734,7 @@ function createProductCard(asin, data) {
   if (isThirdLayout) {
     card.innerHTML = `
       <div class="card-top">
-        <div class="title">ASIN: ${asin} <span class="important-badge" style="display:none" title="重要視項目を満たしています">🔥</span></div>
+        <div class="title">ASIN: ${asin}</div>
         <button class="remove" type="button">この行を削除</button>
       </div>
 
@@ -1003,7 +823,7 @@ function createProductCard(asin, data) {
     card.innerHTML = isAltLayout
       ? `
       <div class="card-top">
-        <div class="title">ASIN: ${asin} <span class="important-badge" style="display:none" title="重要視項目を満たしています">🔥</span></div>
+        <div class="title">ASIN: ${asin}</div>
         <button class="remove" type="button">この行を削除</button>
       </div>
 
@@ -1076,7 +896,7 @@ function createProductCard(asin, data) {
     `
       : `
       <div class="card-top">
-        <div class="title">ASIN: ${asin} <span class="important-badge" style="display:none" title="重要視項目を満たしています">🔥</span></div>
+        <div class="title">ASIN: ${asin}</div>
         <button class="remove" type="button">この行を削除</button>
       </div>
 
@@ -1164,7 +984,6 @@ function createProductCard(asin, data) {
 
     if (cardState.size === 0) emptyState.style.display = "block";
     updateHeaderStatus();
-    updateImportantMarks();
   });
 
   // inputs
@@ -1256,6 +1075,5 @@ function createProductCard(asin, data) {
     setMode("MES");
   }
 
-  updateImportantMarks();
   return card;
 }
