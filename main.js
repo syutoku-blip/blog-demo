@@ -340,12 +340,8 @@ function attachZoneDnD(zoneEl, { zoneKey }) {
     e.preventDefault();
     const raw = e.dataTransfer.getData("text/plain");
     if (!raw) return;
-
-    // ✅ token自体に「:」が含まれるため split(":") は使わない
-    const PREFIX = "item:";
-    if (!raw.startsWith(PREFIX)) return;
-    const token = raw.slice(PREFIX.length);
-    if (!token) return;
+    const [kind, token] = raw.split(":");
+    if (kind !== "item" || !token) return;
 
     moveTokenToZone(token, zoneKey);
     renderTopZones();
@@ -712,176 +708,372 @@ function updateCartSummary() {
 
     itemCount += qty;
     totalCost += costJPY * qty;
-    totalRevenueJPY += sellUSD * qty * FX_RATE;
+    totalRevenueJPY += sellUSD * FX_RATE * qty;
   });
 
   const profit = totalRevenueJPY - totalCost;
 
-  if (cartTotalCost) cartTotalCost.textContent = fmtJPY(totalCost);
-  if (cartTotalRevenue) cartTotalRevenue.textContent = fmtJPY(totalRevenueJPY);
-  if (cartTotalProfit) cartTotalProfit.textContent = fmtJPY(profit);
-  if (cartAsinCount) cartAsinCount.textContent = String(asinCount);
-  if (cartItemCount) cartItemCount.textContent = String(itemCount);
+  cartTotalCost.textContent = fmtJPY(totalCost);
+  cartTotalRevenue.textContent = fmtJPY(totalRevenueJPY);
+  cartTotalProfit.textContent = fmtJPY(profit);
+  cartAsinCount.textContent = String(asinCount);
+  cartItemCount.textContent = String(itemCount);
 }
 
 /* =========================
    カード生成
 ========================= */
 function createProductCard(asin, data) {
-  const isThird = document.body.classList.contains("third-layout");
-  const isAlt = document.body.classList.contains("alt-layout");
-
   const card = document.createElement("section");
   card.className = "product-card card";
   card.dataset.asin = asin;
 
-  const imgSrc = data["商品画像"] || "https://via.placeholder.com/160x160?text=No+Image";
+  const isAltLayout = document.body.classList.contains("alt-layout");
+  const isThirdLayout = document.body.classList.contains("third-layout");
 
-  // ---- 共通（上部） ----
-  const top = document.createElement("div");
-  top.className = "summary-row";
+  if (isThirdLayout) {
+    card.innerHTML = `
+      <div class="card-top">
+        <div class="title">ASIN: ${asin}</div>
+        <button class="remove" type="button">この行を削除</button>
+      </div>
 
-  // left: image + buy box
-  const leftWrap = document.createElement("div");
-  leftWrap.className = "left-wrap";
+      <div class="layout3-grid">
+        <!-- 商品画像 -->
+        <div class="l3-image l3-block">
+          <div class="head">商品画像</div>
+          <div class="image-box">
+            <img src="${data["商品画像"] || ""}" alt="商品画像" onerror="this.style.display='none';" />
+          </div>
+        </div>
 
-  const imageBox = document.createElement("div");
-  imageBox.className = "image-box";
-  imageBox.innerHTML = `
-    <img src="${imgSrc}" alt="${asin}" />
-  `;
+        <!-- 商品情報① -->
+        <div class="l3-infoA l3-block">
+          <div class="head">商品情報①</div>
+          <div class="info-grid js-infoGridA"></div>
+        </div>
 
-  const buyBox = document.createElement("div");
-  buyBox.className = "field";
-  buyBox.innerHTML = `
-    <label>数量</label>
-    <input class="js-qty" type="number" min="1" value="${data["個数"] ?? 1}" />
-    <label>販売価格（$）</label>
-    <input class="js-sellUSD" type="text" value="${String(data["販売額（ドル）"] ?? "").replace(/[^\d.\-]/g, "")}" />
-    <label>仕入れ額（￥）</label>
-    <input class="js-costJPY" type="text" value="${String(data["仕入れ目安単価"] ?? "").replace(/[^\d.\-]/g, "")}" />
-    <button class="cart-btn js-addToCart" type="button">カートに入れる</button>
-  `;
+        <!-- 商品情報② -->
+        <div class="l3-infoB l3-block">
+          <div class="head">商品情報②</div>
+          <div class="info-grid js-infoGridB"></div>
+        </div>
 
-  // info box
-  const infoBox = document.createElement("div");
-  infoBox.className = "info-box";
-  infoBox.innerHTML = `
-    <div class="head">商品情報</div>
-    <div class="info-grid js-infoGrid"></div>
-  `;
+        <!-- 主要項目 -->
+        <div class="l3-center l3-block">
+          <div class="head">主要項目</div>
+          <div class="center-list js-center"></div>
+        </div>
 
-  // center box
-  const centerBox = document.createElement("div");
-  centerBox.className = "center-box";
-  centerBox.innerHTML = `
-    <div class="center-head">主要指標</div>
-    <div class="center-list js-center"></div>
-  `;
+        <!-- カート（右縦） -->
+        <div class="l3-buy">
+          <div class="buy-title">数量</div>
+          <select class="js-qty">
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
 
-  // ---- assemble top by layout flags (元コードのまま) ----
-  leftWrap.appendChild(imageBox);
-  leftWrap.appendChild(buyBox);
+          <div class="buy-title" style="margin-top:10px;">販売価格（$）</div>
+          <input class="js-sell" type="number" step="0.01" placeholder="例: 39.99" />
 
-  top.appendChild(leftWrap);
-  top.appendChild(infoBox);
-  top.appendChild(centerBox);
+          <div class="buy-title" style="margin-top:10px;">仕入れ額（￥）</div>
+          <input class="js-cost" type="number" step="1" placeholder="例: 3700" />
 
-  // ---- graph ----
-  const graph = document.createElement("div");
-  graph.className = "graph-row";
+          <button class="cart-btn js-addCart" type="button" style="margin-top:12px;">カートに入れる</button>
+        </div>
 
-  const keepa = document.createElement("div");
-  keepa.className = "graph-box";
-  keepa.innerHTML = `
-    <div class="head">Keepa</div>
-    <div class="keepa-wrap">
-      <img class="keepa-img" src="${data["Keepaリンク"] || ""}" alt="keepa" />
-    </div>
-  `;
+        <!-- keepa（小） -->
+        <div class="l3-keepa l3-block">
+          <div class="head">keepaグラフ</div>
+          <div class="keepa-mini">
+            <iframe class="js-keepaFrame" src="" loading="lazy"></iframe>
+          </div>
+        </div>
 
-  const mes = document.createElement("div");
-  mes.className = "graph-box";
-  mes.innerHTML = `
-    <div class="head">需給推移</div>
-    <div class="chart-wrap">
-      <canvas class="js-chart"></canvas>
-    </div>
-    <div class="chart-toggles">
-      <label><input class="js-showDS" type="checkbox" checked /> 需要/供給</label>
-      <label><input class="js-showSP" type="checkbox" checked /> セラー/価格</label>
-    </div>
-  `;
+        <!-- 需要供給（大） -->
+        <div class="l3-mes l3-block">
+          <div class="head">需要供給グラフ（180日）</div>
 
-  graph.appendChild(keepa);
-  graph.appendChild(mes);
+          <div class="graph-options js-graphOptions" style="margin-bottom:10px;">
+            <label><input type="checkbox" class="js-chkDS" checked />《需要＆供給》</label>
+            <label><input type="checkbox" class="js-chkSP" />《供給＆価格》</label>
+          </div>
 
-  // ---- detail table ----
-  const detail = document.createElement("div");
-  detail.className = "detail-box";
-  detail.innerHTML = `
-    <div class="head">下段テーブル</div>
-    <div class="table-wrap">
-      <table class="detail-table js-detailTable">
-        <thead><tr></tr></thead>
-        <tbody><tr></tr></tbody>
-      </table>
-    </div>
-  `;
+          <div class="mes-big">
+            <canvas class="js-chart"></canvas>
+          </div>
+        </div>
+      </div>
 
-  card.appendChild(top);
-  card.appendChild(graph);
-  card.appendChild(detail);
+      <div class="detail-wrap">
+        <div class="detail-head"><div class="t">その他項目</div></div>
+        <div class="detail-scroll">
+          <table class="detail-table js-detailTable">
+            <thead><tr></tr></thead>
+            <tbody><tr></tr></tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  } else {
+    // 既存：alt / 通常
+    card.innerHTML = isAltLayout
+      ? `
+      <div class="card-top">
+        <div class="title">ASIN: ${asin}</div>
+        <button class="remove" type="button">この行を削除</button>
+      </div>
 
-  // ---- handlers ----
-  const qtyEl = card.querySelector(".js-qty");
-  const sellEl = card.querySelector(".js-sellUSD");
-  const costEl = card.querySelector(".js-costJPY");
-  const btnEl = card.querySelector(".js-addToCart");
+      <div class="alt-grid">
+        <div class="alt-left">
+          <div class="alt-image image-box">
+            <img src="${data["商品画像"] || ""}" alt="商品画像" onerror="this.style.display='none';" />
+          </div>
 
-  const syncCartInputs = () => {
-    const qty = Math.max(1, Number(qtyEl?.value || 1));
-    const sellUSD = num(sellEl?.value);
-    const costJPY = num(costEl?.value);
-    return { qty, sellUSD, costJPY };
-  };
+          <div class="alt-info info-box">
+            <div class="info-grid js-infoGrid"></div>
+          </div>
+        </div>
 
-  btnEl?.addEventListener("click", () => {
-    const { qty, sellUSD, costJPY } = syncCartInputs();
+        <div class="alt-center center-box">
+          <div class="center-head">主要項目</div>
+          <div class="center-list js-center"></div>
+        </div>
+
+        <div class="alt-graph graph-box">
+          <div class="graph-head">
+            <div class="graph-title">グラフ（180日）</div>
+          </div>
+
+          <div class="graph-options js-graphOptions">
+            <label><input type="checkbox" class="js-chkDS" checked />《需要＆供給》</label>
+            <label><input type="checkbox" class="js-chkSP" />《供給＆価格》</label>
+          </div>
+
+          <div class="graph-body">
+            <div class="keepa-wrap js-keepaWrap">
+              <iframe class="js-keepaFrame" src="" loading="lazy"></iframe>
+            </div>
+
+            <div class="canvas-wrap js-mesWrap">
+              <canvas class="js-chart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="alt-buy buy-box">
+          <div class="buy-title">数量</div>
+          <select class="js-qty">
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+
+          <div class="buy-title">販売価格（$）</div>
+          <input class="js-sell" type="number" step="0.01" placeholder="例: 39.99" />
+
+          <div class="buy-title">仕入れ額（￥）</div>
+          <input class="js-cost" type="number" step="1" placeholder="例: 3700" />
+
+          <button class="cart-btn js-addCart" type="button">カートに入れる</button>
+        </div>
+      </div>
+
+      <div class="detail-wrap">
+        <div class="detail-head"><div class="t">その他項目</div></div>
+        <div class="detail-scroll">
+          <table class="detail-table js-detailTable">
+            <thead><tr></tr></thead>
+            <tbody><tr></tr></tbody>
+          </table>
+        </div>
+      </div>
+    `
+      : `
+      <div class="card-top">
+        <div class="title">ASIN: ${asin}</div>
+        <button class="remove" type="button">この行を削除</button>
+      </div>
+
+      <div class="summary-row">
+        <div class="left-wrap">
+          <div class="image-box">
+            <img src="${data["商品画像"] || ""}" alt="商品画像" onerror="this.style.display='none';" />
+
+            <div class="field">
+              <label>数量</label>
+              <select class="js-qty">
+                <option value="1" selected>1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+
+              <label>販売価格（$）</label>
+              <input class="js-sell" type="number" step="0.01" placeholder="例: 39.99" />
+
+              <label>仕入れ額（￥）</label>
+              <input class="js-cost" type="number" step="1" placeholder="例: 3700" />
+
+              <button class="cart-btn js-addCart" type="button">カートに入れる</button>
+            </div>
+          </div>
+
+          <div class="info-box">
+            <div class="info-grid js-infoGrid"></div>
+          </div>
+        </div>
+
+        <div class="center-box">
+          <div class="center-head">主要項目</div>
+          <div class="center-list js-center"></div>
+        </div>
+
+        <div class="graph-box">
+          <div class="graph-head">
+            <div class="graph-title">グラフ（180日）</div>
+            <div class="switch">
+              <button type="button" class="js-btnMes active">MES-AI-A</button>
+              <button type="button" class="js-btnKeepa">Keepa</button>
+            </div>
+          </div>
+
+          <div class="graph-options js-graphOptions">
+            <label><input type="checkbox" class="js-chkDS" checked />《需要＆供給》</label>
+            <label><input type="checkbox" class="js-chkSP" />《供給＆価格》</label>
+          </div>
+
+          <div class="graph-body">
+            <div class="canvas-wrap js-mesWrap">
+              <canvas class="js-chart"></canvas>
+            </div>
+            <div class="keepa-wrap js-keepaWrap" style="display:none;">
+              <iframe class="js-keepaFrame" src="" loading="lazy"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-wrap">
+        <div class="detail-head"><div class="t">その他項目</div></div>
+        <div class="detail-scroll">
+          <table class="detail-table js-detailTable">
+            <thead><tr></tr></thead>
+            <tbody><tr></tr></tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  // remove
+  card.querySelector(".remove").addEventListener("click", () => {
+    if (cart.has(asin)) {
+      cart.delete(asin);
+      updateCartSummary();
+    }
+    if (card.__chart) card.__chart.destroy();
+    card.remove();
+    cardState.delete(asin);
+
+    if (cardState.size === 0) emptyState.style.display = "block";
+    updateHeaderStatus();
+  });
+
+  // inputs
+  const sellInput = card.querySelector(".js-sell");
+  const costInput = card.querySelector(".js-cost");
+
+  if (data["販売額（ドル）"]) {
+    const s = String(data["販売額（ドル）"]).replace(/[^\d.]/g, "");
+    if (s) sellInput.value = s;
+  }
+  if (data["仕入れ目安単価"]) {
+    const c = String(data["仕入れ目安単価"]).replace(/[^\d]/g, "");
+    if (c) costInput.value = c;
+  }
+
+  card.querySelector(".js-addCart").addEventListener("click", () => {
+    const qty = Math.max(1, Number(card.querySelector(".js-qty").value || 1));
+    const sellUSD = num(sellInput.value);
+    const costJPY = num(costInput.value);
+
+    if (sellUSD <= 0) return alert("販売価格（$）を入力してください");
+    if (costJPY <= 0) return alert("仕入れ額（￥）を入力してください");
+
     cart.set(asin, { qty, sellUSD, costJPY });
     updateCartSummary();
   });
 
-  // chart
-  const canvas = card.querySelector(".js-chart");
-  const chart = renderChart(canvas);
-  card.__chart = chart;
-
-  const showDS = card.querySelector(".js-showDS");
-  const showSP = card.querySelector(".js-showSP");
-
-  const onToggle = () => updateChartVisibility(chart, !!showDS?.checked, !!showSP?.checked);
-  showDS?.addEventListener("change", onToggle);
-  showSP?.addEventListener("change", onToggle);
-
-  // initial render
+  // ctx
   const jpAsin = data["日本ASIN"] || "－";
-  const usAsin = data["アメリカASIN"] || asin || "－";
+  const usAsin = data["アメリカASIN"] || asin;
   const realW = data["重量kg"] ?? data["重量（kg）"] ?? data["重量"] ?? "";
   const volW = data["容積重量"] ?? "";
   const size = data["サイズ"] || "－";
   const weight = `${fmtKg(realW)}（${fmtKg(volW)}）`;
   const ctx = { asin, jpAsin, usAsin, size, weight, data };
 
-  // 商品情報
-  buildInfoGrid(card.querySelector(".js-infoGrid"), ctx, data);
-  // 真ん中
+  // info
+  if (isThirdLayout) {
+    buildInfoGridSplit(card.querySelector(".js-infoGridA"), card.querySelector(".js-infoGridB"), ctx, data);
+  } else {
+    buildInfoGrid(card.querySelector(".js-infoGrid"), ctx, data);
+  }
+
+  // center / table
   buildCenterList(card.querySelector(".js-center"), ctx, data);
-  // 下段
   buildDetailTable(card.querySelector(".js-detailTable"), ctx, data);
 
-  // layout3向け: 既存カードを更新する（必要なDOMがあれば対応）
-  rerenderAllCards();
+  // chart
+  const canvas = card.querySelector(".js-chart");
+  const chart = renderChart(canvas);
+  card.__chart = chart;
+
+  const chkDS = card.querySelector(".js-chkDS");
+  const chkSP = card.querySelector(".js-chkSP");
+  const refreshVis = () => updateChartVisibility(chart, chkDS.checked, chkSP.checked);
+  chkDS?.addEventListener("change", refreshVis);
+  chkSP?.addEventListener("change", refreshVis);
+  updateChartVisibility(chart, true, false);
+
+  // keepa
+  const keepaFrame = card.querySelector(".js-keepaFrame");
+  if (keepaFrame) keepaFrame.src = `https://keepa.com/#!product/1-${asin}`;
+
+  // 通常レイアウトのみ：トグル維持
+  if (!isAltLayout && !isThirdLayout) {
+    const keepaWrap = card.querySelector(".js-keepaWrap");
+    const mesWrap = card.querySelector(".js-mesWrap");
+    const graphOptions = card.querySelector(".js-graphOptions");
+    const btnMes = card.querySelector(".js-btnMes");
+    const btnKeepa = card.querySelector(".js-btnKeepa");
+
+    function setMode(mode) {
+      if (mode === "MES") {
+        btnMes.classList.add("active");
+        btnKeepa.classList.remove("active");
+        graphOptions.style.display = "flex";
+        mesWrap.style.display = "block";
+        keepaWrap.style.display = "none";
+      } else {
+        btnKeepa.classList.add("active");
+        btnMes.classList.remove("active");
+        graphOptions.style.display = "none";
+        mesWrap.style.display = "none";
+        keepaWrap.style.display = "block";
+      }
+    }
+    btnMes.addEventListener("click", () => setMode("MES"));
+    btnKeepa.addEventListener("click", () => setMode("KEEPA"));
+    setMode("MES");
+  }
 
   return card;
 }
