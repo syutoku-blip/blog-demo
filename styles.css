@@ -690,7 +690,9 @@ button{ font-family:inherit; }
 }
 @media (max-width: 680px){
   .metrics-row{ grid-template-columns: 1fr; }
-  .left-wrap{ flex-direction:column; }
+  .left-wrap{
+    flex-direction:column;
+  }
   .image-box{ width:100%; }
 }
 
@@ -804,13 +806,54 @@ body.alt-layout .keepa-wrap iframe{
 ========================= */
 body.third-layout .layout3-grid{
   display:grid;
-  grid-template-columns: 340px 320px 320px 360px 260px;
-  /* ✅ 追加：上段（赤枠）の高さを揃える */
+  /* ✅ ノートPC幅でも右の「カート」まで収まるように、固定pxを減らして伸縮させる */
+  grid-template-columns:
+    minmax(240px, 320px)
+    minmax(220px, 300px)
+    minmax(220px, 300px)
+    minmax(320px, 1fr)
+    minmax(200px, 240px);
+  /* ✅ 上段（赤枠）の高さを揃える */
   grid-template-rows: 320px auto;
   gap:14px;
   align-items:stretch;
 }
 
+/* ✅ ノートPC想定（1366px前後）で横幅が溢れないようにさらに詰める */
+@media (max-width: 1400px){
+  body.third-layout .layout3-grid{
+    grid-template-columns:
+      minmax(220px, 280px)
+      minmax(200px, 260px)
+      minmax(200px, 260px)
+      minmax(300px, 1fr)
+      minmax(180px, 220px);
+    gap:10px;
+    grid-template-rows: 300px auto;
+  }
+}
+
+/* ✅ さらに狭い場合は、カートを下に回して崩れを防ぐ */
+@media (max-width: 1180px){
+  body.third-layout .layout3-grid{
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    gap:12px;
+  }
+  body.third-layout .l3-buy{
+    grid-column:auto;
+    grid-row:auto;
+  }
+  body.third-layout .l3-keepa,
+  body.third-layout .l3-mes,
+  body.third-layout .l3-image,
+  body.third-layout .l3-infoA,
+  body.third-layout .l3-infoB,
+  body.third-layout .l3-center{
+    grid-column:auto;
+    grid-row:auto;
+  }
+}
 
 body.third-layout .l3-image{
   grid-column:1;
@@ -854,7 +897,6 @@ body.third-layout .l3-block{
   height:100%;
   min-height:0;
 }
-
 
 body.third-layout .l3-block .head{
   font-size:12px;
@@ -935,17 +977,4 @@ body.third-layout .l3-mes .mes-big{
 body.third-layout .l3-mes canvas{
   width:100%;
   height:100%;
-}
-
-@media (max-width: 1400px){
-  body.third-layout .layout3-grid{
-    grid-template-columns: 1fr 1fr;
-  }
-  body.third-layout .l3-buy{ grid-column:1 / -1; grid-row:auto; }
-  body.third-layout .l3-mes{ grid-column:1 / -1; }
-  body.third-layout .l3-center{ grid-column:1 / -1; }
-  body.third-layout .l3-infoA{ grid-column:1; }
-  body.third-layout .l3-infoB{ grid-column:2; }
-  body.third-layout .l3-image{ grid-column:1 / -1; }
-  body.third-layout .l3-keepa{ grid-column:1 / -1; }
 }
