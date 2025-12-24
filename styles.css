@@ -1,723 +1,110 @@
-:root{
-  --bg:#f4f6fb;
-  --card:#ffffff;
-  --text:#0f172a;
-  --muted:#64748b;
-  --line:#e5e7eb;
-  --shadow: 0 10px 24px rgba(15,23,42,.08);
-  --blue:#5b5cff;
-  --pill:#eef2ff;
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>MES-AI-A 商品分析（レイアウト4）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  --radius:18px;
-  --radius2:14px;
-}
+  <link rel="stylesheet" href="./styles.css?v=20251217_6" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+</head>
+<body class="fourth-layout">
 
-*{ box-sizing:border-box; }
-html,body{ height:100%; }
-body{
-  margin:0;
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  line-height:1.45;
-}
+<header class="app-header">
+  <div class="header-left">
+    <h1>MES-AI-A 商品分析</h1>
+    <div class="sub">ASINクリックでカード追加 → 上の5枠で「指標/商品情報」をまとめてカスタム</div>
+  </div>
 
-.card{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  box-shadow: var(--shadow);
-}
+  <div class="layout-nav">
+    <a class="layout-link" href="./index.html">通常レイアウト</a>
+    <a class="layout-link" href="./alt.html">新レイアウト</a>
+    <a class="layout-link" href="./layout3.html">レイアウト3</a>
+    <a class="layout-link active" href="./layout4.html">レイアウト4</a>
+  </div>
 
-button{ font-family:inherit; }
+  <div id="headerStatus" class="header-status"></div>
+</header>
 
-.ghost-btn{
-  background:transparent;
-  border:1px solid var(--line);
-  border-radius:999px;
-  padding:10px 14px;
-  font-weight:900;
-  cursor:pointer;
-  color:var(--text);
-}
+<main class="page-body">
+  <section class="metrics-bar card" id="metricsBar">
+    <div class="metrics-bar-head">
+      <div>
+        <div class="metrics-bar-title">配置カスタマイズ（ドラッグして配置）</div>
+        <div class="metrics-bar-help">同じ項目はどこか1枠のみ（重複配置できません）</div>
+      </div>
+      <button id="metricsCollapseBtn" class="ghost-btn" type="button">折りたたむ</button>
+    </div>
 
-/* header */
-.app-header{
-  position: sticky;
-  top:0;
-  z-index: 9990;
-  background:#fff;
-  border-bottom:1px solid var(--line);
-  padding:12px 16px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-}
-.header-left h1{
-  margin:0;
-  font-size:18px;
-  letter-spacing:.2px;
-}
-.sub{
-  margin-top:2px;
-  font-size:12px;
-  color:var(--muted);
-  font-weight:800;
-}
-.header-status{
-  font-size:12px;
-  color:var(--muted);
-  font-weight:900;
-  white-space:nowrap;
-}
+    <div id="sortBar">
+      <div class="sort-title">表示中ASINのソート（真ん中の枠の指標）</div>
+      <div id="sortControls" class="sort-controls"></div>
+      <div class="sort-actions">
+        <button id="addSortRuleBtn" type="button">条件を追加</button>
+        <button id="applySortBtn" class="primary" type="button">ソート適用</button>
+        <button id="clearSortBtn" type="button">ソート解除</button>
+      </div>
+    </div>
 
-/* layout switch */
-.layout-nav{
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
-.layout-link{
-  display:inline-flex;
-  align-items:center;
-  text-decoration:none;
-  font-size:12px;
-  font-weight:900;
-  color:#111827;
-  padding:8px 12px;
-  border:1px solid var(--line);
-  border-radius:999px;
-  background:#fff;
-}
-.layout-link.active{
-  border-color:#c7d2fe;
-  background:#eef2ff;
-  color:#1d4ed8;
-}
+    <div class="metrics-row">
+      <div class="metrics-zone">
+        <div class="metrics-zone-title">プール</div>
+        <div id="metricsPoolZone" class="metrics-zone-list"></div>
+      </div>
+      <div class="metrics-zone">
+        <div class="metrics-zone-title">商品情報</div>
+        <div id="metricsInfoZone" class="metrics-zone-list"></div>
+      </div>
+      <div class="metrics-zone">
+        <div class="metrics-zone-title">真ん中の枠</div>
+        <div id="metricsCenterZone" class="metrics-zone-list"></div>
+      </div>
+      <div class="metrics-zone">
+        <div class="metrics-zone-title">下段テーブル</div>
+        <div id="metricsTableZone" class="metrics-zone-list"></div>
+      </div>
+      <div class="metrics-zone">
+        <div class="metrics-zone-title">非表示</div>
+        <div id="metricsHiddenZone" class="metrics-zone-list"></div>
+      </div>
+    </div>
 
-/* layout */
-.page-body{
-  max-width: 100%;
-  margin: 0;
-  padding: 10px 10px 40px;
-}
+    <div class="metrics-bar-foot">
+      <button id="resetCurrentBtn" type="button">初期配置に戻す</button>
+      <button id="clearCardsBtn" type="button">表示カードをクリア</button>
+      <button id="clearCartBtn" type="button">カートを空にする</button>
+    </div>
+  </section>
 
-.items-stack{
-  display:flex;
-  flex-direction:column;
-  gap:16px;
-}
+  <section class="asin-catalog card">
+    <div class="asin-catalog-head">
+      <div class="asin-catalog-title">データがあるASIN（クリックで表示）</div>
+    </div>
+    <div class="asin-catalog-body" id="asinCatalog"></div>
+  </section>
 
-/* metrics bar */
-.metrics-bar{
-  margin:14px 0;
-  padding:14px;
-}
-.metrics-bar-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:12px;
-}
-.metrics-bar-title{
-  font-weight:1000;
-  font-size:14px;
-}
-.metrics-bar-help{
-  margin-top:2px;
-  font-size:12px;
-  color:var(--muted);
-  font-weight:800;
-}
+  <section id="cartSummary" class="cart-summary card">
+    <div class="cart-head">
+      <div class="card-title">カート</div>
+      <div class="cart-note">※ 仕入れ額(￥)と販売価格($)×為替(固定)で予測</div>
+    </div>
+    <div class="cart-grid">
+      <div><span>今の仕入れ合計額</span><b id="cartTotalCost">￥0</b></div>
+      <div><span>売り上げ予測</span><b id="cartTotalRevenue">￥0</b></div>
+      <div><span>利益予測</span><b id="cartTotalProfit">￥0</b></div>
+      <div><span>今の仕入れASIN数</span><b id="cartAsinCount">0</b></div>
+      <div><span>今の仕入れ商品数</span><b id="cartItemCount">0</b></div>
+    </div>
+  </section>
 
-.metrics-row{
-  margin-top:12px;
-  display:grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap:12px;
-}
-.metrics-zone{
-  border:1px solid var(--line);
-  border-radius:var(--radius2);
-  padding:12px;
-  background:#fbfdff;
-}
-.metrics-zone-title{
-  font-size:12px;
-  font-weight:1000;
-  color:#1f2937;
-  margin-bottom:10px;
-}
-.metrics-zone-list{
-  min-height:64px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  align-content:flex-start;
-}
+  <div id="emptyState" class="empty card">
+    ASINをクリックして商品を表示してください
+  </div>
 
-.metric-pill{
-  background:var(--pill);
-  border:1px solid #dbeafe;
-  color:#1d4ed8;
-  padding:7px 11px;
-  border-radius:999px;
-  font-size:12px;
-  font-weight:1000;
-  cursor:grab;
-  user-select:none;
-  white-space:nowrap;
-}
-.metric-pill:active{ cursor:grabbing; }
+  <div id="itemsContainer" class="items-stack"></div>
+</main>
 
-.metrics-bar-foot{
-  margin-top:12px;
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-.metrics-bar-foot button{
-  border:1px solid var(--line);
-  background:#fff;
-  border-radius:999px;
-  padding:10px 14px;
-  font-weight:900;
-  cursor:pointer;
-}
-.metrics-bar-foot button.primary{
-  background:var(--blue);
-  color:#fff;
-  border-color:transparent;
-}
-
-/* sort bar */
-#sortBar{
-  margin-top:12px;
-  padding:12px;
-  border:1px dashed #d1d5db;
-  border-radius:14px;
-  background:#fff;
-}
-.sort-title{
-  font-weight:1000;
-  font-size:12px;
-  color:#111827;
-}
-.sort-controls{
-  margin-top:10px;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-.sort-rule{
-  display:flex;
-  gap:8px;
-  align-items:center;
-  flex-wrap:wrap;
-}
-.sort-rule select{
-  padding:8px 10px;
-  border:1px solid var(--line);
-  border-radius:10px;
-  font-weight:800;
-  background:#fff;
-}
-.sort-rule .remove{
-  padding:8px 10px;
-  border:1px solid var(--line);
-  border-radius:10px;
-  background:#fff;
-  font-weight:900;
-  cursor:pointer;
-}
-.sort-actions{
-  margin-top:10px;
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-.sort-actions button{
-  border:1px solid var(--line);
-  background:#fff;
-  border-radius:999px;
-  padding:10px 14px;
-  font-weight:900;
-  cursor:pointer;
-}
-.sort-actions button.primary{
-  background:var(--blue);
-  color:#fff;
-  border-color:transparent;
-}
-
-/* asin list */
-.asin-catalog{
-  padding:14px;
-}
-.asin-catalog-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.asin-catalog-title{
-  font-weight:1000;
-  font-size:13px;
-}
-.asin-catalog-body{
-  margin-top:10px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
-.asin-tag{
-  padding:8px 12px;
-  border-radius:999px;
-  border:1px solid var(--line);
-  background:#fff;
-  font-size:12px;
-  font-weight:1000;
-  cursor:pointer;
-}
-.asin-tag:hover{ border-color:#c7d2fe; background:#eef2ff; }
-
-/* cart */
-.cart-summary{
-  margin-top:14px;
-  padding:14px;
-}
-.cart-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-end;
-  gap:10px;
-  flex-wrap:wrap;
-}
-.cart-note{
-  font-size:12px;
-  color:var(--muted);
-  font-weight:800;
-}
-.cart-grid{
-  margin-top:12px;
-  display:grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap:10px;
-}
-.cart-grid div{
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:10px 12px;
-  background:#fbfdff;
-}
-.cart-grid span{
-  display:block;
-  font-size:12px;
-  color:var(--muted);
-  font-weight:900;
-}
-.cart-grid b{
-  display:block;
-  margin-top:6px;
-  font-size:16px;
-  letter-spacing:.2px;
-}
-
-/* empty */
-.empty{
-  margin-top:16px;
-  padding:18px;
-  text-align:center;
-  font-weight:1000;
-  color:var(--muted);
-}
-
-/* item card base */
-.item-card{
-  padding:14px;
-}
-.item-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:10px;
-}
-.item-title{
-  font-weight:1000;
-  font-size:14px;
-}
-.item-actions{
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
-.item-actions button{
-  border:1px solid var(--line);
-  background:#fff;
-  border-radius:999px;
-  padding:8px 12px;
-  font-weight:1000;
-  cursor:pointer;
-}
-
-.item-body{
-  margin-top:12px;
-}
-
-/* ===========================
-   Layout 1 (通常) grid
-=========================== */
-.default-layout .item-grid{
-  display:grid;
-  grid-template-columns: 360px 1fr 320px;
-  gap:14px;
-  align-items:stretch;
-}
-
-.default-layout .left-col{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-.default-layout .center-col{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-.default-layout .right-col{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-/* product image */
-.product-image-box{
-  padding:12px;
-}
-.section-title{
-  font-size:12px;
-  font-weight:1000;
-  margin-bottom:10px;
-}
-.product-image{
-  width:100%;
-  height: 260px;
-  object-fit:contain;
-  border-radius:14px;
-  background:#fff;
-  border:1px solid var(--line);
-}
-
-/* keepa */
-.keepa-box{
-  padding:12px;
-}
-.keepa-wrap{
-  width:100%;
-  height: 260px;
-  border-radius:14px;
-  border:1px solid var(--line);
-  overflow:hidden;
-  background:#fff;
-}
-.keepa-wrap img{
-  width:100%;
-  height:100%;
-  object-fit:contain;
-  display:block;
-}
-
-/* info box */
-.info-box{
-  padding:12px;
-}
-.info-list{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-.info-row{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  border:1px solid var(--line);
-  border-radius:12px;
-  background:#fbfdff;
-  padding:10px 12px;
-}
-.info-row span{
-  font-size:12px;
-  color:var(--muted);
-  font-weight:900;
-}
-.info-row b{
-  font-size:12px;
-  font-weight:1000;
-  color:#111827;
-}
-
-/* center metrics */
-.center-metrics{
-  padding:12px;
-}
-.metrics-cards{
-  display:grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap:10px;
-}
-.metric-card{
-  border:1px solid var(--line);
-  border-radius:14px;
-  background:#fbfdff;
-  padding:10px 12px;
-}
-.metric-card .k{
-  font-size:12px;
-  color:var(--muted);
-  font-weight:900;
-}
-.metric-card .v{
-  margin-top:6px;
-  font-size:18px;
-  font-weight:1000;
-}
-
-/* table */
-.metrics-table{
-  padding:12px;
-}
-.table{
-  width:100%;
-  border-collapse:separate;
-  border-spacing:0;
-  overflow:hidden;
-  border-radius:14px;
-  border:1px solid var(--line);
-  background:#fff;
-}
-.table th, .table td{
-  padding:10px 12px;
-  border-bottom:1px solid var(--line);
-  font-size:12px;
-}
-.table th{
-  text-align:left;
-  background:#f8fafc;
-  font-weight:1000;
-  color:#334155;
-}
-.table td{
-  font-weight:900;
-  color:#111827;
-}
-.table tr:last-child td{ border-bottom:none; }
-
-/* right */
-.right-panel{
-  padding:12px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-.form-row{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
-.form-row label{
-  font-size:12px;
-  color:var(--muted);
-  font-weight:900;
-}
-.form-row input, .form-row select{
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:12px 12px;
-  font-weight:900;
-  font-size:14px;
-  background:#fff;
-}
-.add-to-cart{
-  margin-top:4px;
-  background:var(--blue);
-  color:#fff;
-  border:none;
-  border-radius:14px;
-  padding:14px 12px;
-  font-weight:1000;
-  cursor:pointer;
-}
-.add-to-cart:disabled{
-  opacity:.6;
-  cursor:not-allowed;
-}
-
-/* ===========================
-   Layout 2 (alt)
-=========================== */
-.alt-layout .item-grid{
-  display:grid;
-  grid-template-columns: 420px 1fr 340px;
-  gap:14px;
-}
-
-.alt-layout .left-col{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-.alt-layout .center-col{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-.alt-layout .right-col{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-.alt-layout .product-image{
-  height: 320px;
-}
-.alt-layout .keepa-wrap{
-  height: 220px;
-}
-.alt-layout .metrics-cards{
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-/* ===========================
-   Layout 3
-=========================== */
-.third-layout .item-grid{
-  display:grid;
-  grid-template-columns: 380px 1fr 320px;
-  gap:14px;
-}
-
-.third-layout .left-col{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-.third-layout .center-col{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-.third-layout .right-col{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-.third-layout .product-image{
-  height: 300px;
-}
-.third-layout .keepa-wrap{
-  height: 240px;
-}
-.third-layout .metrics-cards{
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-/* Layout3: 商品情報を2段に分割 */
-.third-layout .info-split{
-  display:grid;
-  grid-template-columns: 1fr;
-  gap:10px;
-}
-.third-layout .info-split .info-box{
-  padding:12px;
-}
-.third-layout .info-split .info-box .info-list{
-  max-height: 210px;
-  overflow:auto;
-  padding-right:4px;
-}
-
-/* ===========================
-   Layout 4  ★追加
-   画像のように
-   - 左：商品画像＋keepa（縦積み）
-   - 中：商品情報（スクロール）
-   - 右：主要項目（カード）＋カート入力
-=========================== */
-.fourth-layout .item-grid{
-  display:grid;
-  grid-template-columns: 420px 1fr 340px;
-  gap:14px;
-  align-items:stretch;
-}
-
-.fourth-layout .left-col{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-.fourth-layout .center-col{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-.fourth-layout .right-col{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-.fourth-layout .product-image{
-  height: 320px;
-}
-
-.fourth-layout .keepa-wrap{
-  height: 260px;
-}
-
-/* 商品情報：縦スクロール */
-.fourth-layout .info-box .info-list{
-  max-height: 520px;
-  overflow:auto;
-  padding-right:4px;
-}
-
-/* 主要項目：2列カード */
-.fourth-layout .main-metrics{
-  padding:12px;
-}
-.fourth-layout .main-metrics-grid{
-  display:grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap:10px;
-}
-.fourth-layout .main-metric-card{
-  border:1px solid var(--line);
-  border-radius:14px;
-  background:#fbfdff;
-  padding:10px 12px;
-}
-.fourth-layout .main-metric-card .k{
-  font-size:12px;
-  color:var(--muted);
-  font-weight:900;
-}
-.fourth-layout .main-metric-card .v{
-  margin-top:6px;
-  font-size:18px;
-  font-weight:1000;
-}
-
-/* responsive */
-@media (max-width: 1200px){
-  .metrics-row{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .cart-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .default-layout .item-grid,
-  .alt-layout .item-grid,
-  .third-layout .item-grid,
-  .fourth-layout .item-grid{
-    grid-template-columns: 1fr;
-  }
-}
+<script src="./asin-data.js"></script>
+<script src="./main.js"></script>
+</body>
+</html>
