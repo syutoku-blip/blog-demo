@@ -21,12 +21,30 @@ body{
   color:var(--text);
 }
 
-/* header */
+a{ color:inherit; }
+
+.card{
+  background: var(--card);
+  border:1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.page-body{
+  max-width: 1420px;
+  margin: 16px auto 60px;
+  padding: 0 16px;
+}
+
+/* =========================
+   Header
+========================= */
 .app-header{
   position: sticky;
   top:0;
   z-index: 9990;
-  background:#fff;
+  background: rgba(244,246,251,0.92);
+  backdrop-filter: blur(10px);
   border-bottom:1px solid var(--line);
   padding:12px 16px;
   display:flex;
@@ -74,21 +92,11 @@ body{
   white-space:nowrap;
 }
 
-.page-body{
-  max-width: 1420px;
-  margin: 16px auto 60px;
-  padding: 0 16px;
-}
-
-.card{
-  background: var(--card);
-  border:1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-}
-
-/* metrics */
+/* =========================
+   Metrics bar
+========================= */
 .metrics-bar{ padding:12px; }
+
 .metrics-bar-head{
   display:flex;
   justify-content:space-between;
@@ -98,6 +106,7 @@ body{
 }
 .metrics-bar-title{ font-size:14px; font-weight:900; }
 .metrics-bar-help{ font-size:12px; color:var(--muted); margin-top:2px; }
+
 .ghost-btn{
   border:1px solid var(--line);
   background:#fff;
@@ -107,6 +116,7 @@ body{
   font-weight:900;
   cursor:pointer;
 }
+
 .metrics-row{
   display:grid;
   grid-template-columns: 1.15fr 1fr 1fr 1fr .85fr;
@@ -145,6 +155,7 @@ body{
   cursor: grab;
   user-select:none;
 }
+
 .metrics-bar-foot{
   display:flex;
   gap:10px;
@@ -160,13 +171,16 @@ body{
   font-weight:900;
   cursor:pointer;
 }
+
 .metrics-bar.collapsed .metrics-row,
 .metrics-bar.collapsed .metrics-bar-foot,
 .metrics-bar.collapsed #sortBar{
   display:none;
 }
 
-/* sort bar */
+/* =========================
+   Sort bar
+========================= */
 #sortBar{
   border:1px solid var(--line);
   border-radius: var(--radius2);
@@ -228,7 +242,9 @@ body{
   background: rgba(91,92,255,.10);
 }
 
-/* asin catalog */
+/* =========================
+   ASIN catalog
+========================= */
 .asin-catalog{ margin-top:12px; padding:12px; }
 .asin-catalog-head{
   display:flex;
@@ -253,7 +269,9 @@ body{
   box-shadow: 0 4px 12px rgba(15,23,42,.06);
 }
 
-/* cart summary */
+/* =========================
+   Cart summary
+========================= */
 .cart-summary{ margin-top:12px; padding:12px; }
 .cart-head{
   display:flex;
@@ -264,6 +282,7 @@ body{
 }
 .cart-head .card-title{ font-size:13px; font-weight:900; }
 .cart-note{ font-size:12px; color:var(--muted); }
+
 .cart-grid{
   display:grid;
   grid-template-columns: repeat(5, 1fr);
@@ -286,6 +305,7 @@ body{
   font-size:15px;
   font-weight:900;
 }
+
 .empty{
   margin-top:12px;
   padding:16px;
@@ -294,22 +314,31 @@ body{
   color:var(--muted);
 }
 
-/* product list */
+/* =========================
+   Cards container
+========================= */
 .items-stack{
   display:flex;
   flex-direction:column;
   gap:14px;
   margin-top:12px;
 }
-.product-card{ padding:12px; }
+
+.product-card{
+  padding:12px;
+}
+
 .card-top{
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
   gap:10px;
   margin-bottom:10px;
 }
-.card-top .title{ font-size:13px; font-weight:900; }
+.card-top .title{
+  font-size:13px;
+  font-weight:900;
+}
 .card-top .remove{
   border:1px solid var(--line);
   background:#fff;
@@ -320,18 +349,22 @@ body{
   cursor:pointer;
 }
 
-/* default layout */
+/* =========================
+   Default layout (index.html)
+========================= */
 .summary-row{
   display:grid;
   grid-template-columns: 560px 300px 1fr;
   gap:14px;
   align-items:stretch;
 }
+
 .left-wrap{
   display:grid;
   grid-template-columns: 280px 1fr;
   gap:12px;
 }
+
 .image-box{
   border:1px solid var(--line);
   border-radius: var(--radius);
@@ -348,6 +381,7 @@ body{
   border:1px solid rgba(229,231,235,.8);
   background:#fff;
 }
+
 .field{
   display:flex;
   flex-direction:column;
@@ -369,6 +403,7 @@ body{
   font-size:13px;
   background:#fff;
 }
+
 .cart-btn{
   width:100%;
   height:44px;
@@ -388,6 +423,7 @@ body{
   box-shadow: 0 10px 26px rgba(15,23,42,.06);
   padding:10px;
 }
+
 .info-grid{
   display:grid;
   grid-template-columns: 150px 1fr;
@@ -406,7 +442,6 @@ body{
   word-break:break-word;
 }
 
-/* tags */
 .v-tags{
   display:flex;
   flex-wrap:wrap;
@@ -440,7 +475,6 @@ body{
   color:#1d4ed8;
 }
 
-/* center/graph */
 .center-box{
   border:1px solid var(--line);
   border-radius: var(--radius);
@@ -461,6 +495,7 @@ body{
   flex-direction:column;
   gap:8px;
 }
+
 .metric-row{
   display:flex;
   align-items:center;
@@ -501,6 +536,7 @@ body{
   font-size:13px;
   font-weight:900;
 }
+
 .switch{
   display:flex;
   gap:8px;
@@ -519,6 +555,7 @@ body{
   border-color: rgba(91,92,255,.45);
   background: rgba(91,92,255,.12);
 }
+
 .graph-options{
   display:flex;
   gap:14px;
@@ -534,6 +571,7 @@ body{
   grid-template-columns: 1fr;
   gap:10px;
 }
+
 .canvas-wrap{
   height:280px;
   border-radius:14px;
@@ -548,9 +586,15 @@ body{
   background:#fff;
   overflow:hidden;
 }
-.keepa-wrap iframe{ width:100%; height:100%; border:0; }
+.keepa-wrap iframe{
+  width:100%;
+  height:100%;
+  border:0;
+}
 
-/* detail */
+/* =========================
+   Detail table
+========================= */
 .detail-wrap{
   margin-top:12px;
   border:1px solid var(--line);
@@ -568,6 +612,7 @@ body{
   font-size:13px;
   font-weight:900;
 }
+
 .detail-scroll{ overflow:auto; }
 .detail-table{
   border-collapse:separate;
@@ -591,10 +636,14 @@ body{
   font-weight:900;
   color:#334155;
 }
-.detail-table td{ background:#fff; font-weight:800; }
+.detail-table td{
+  background:#fff;
+  font-weight:800;
+}
 .detail-table th:last-child,
-.detail-table td:last-child{ border-right:0; }
-
+.detail-table td:last-child{
+  border-right:0;
+}
 .info-td{ max-width:220px; }
 .info-td-scroll{
   max-height:84px;
@@ -604,27 +653,228 @@ body{
 }
 .info-td-tags{ padding-top:12px; }
 
-/* responsive (existing) */
+/* =========================
+   alt.html layout
+========================= */
+.alt-layout .summary-row{ display:none; }
+
+.alt-layout .alt-grid{
+  display:grid;
+  grid-template-columns: 560px 300px 1fr 260px;
+  gap: 14px;
+  align-items:stretch;
+}
+.alt-layout .alt-left{
+  display:grid;
+  grid-template-columns: 280px 1fr;
+  gap: 12px;
+}
+.alt-layout .alt-image{ padding:10px; }
+.alt-layout .alt-image img{ height:260px; }
+.alt-layout .alt-info{ padding:10px; }
+.alt-layout .alt-center{ overflow:hidden; }
+.alt-layout .alt-graph{ overflow:hidden; }
+
+.alt-layout .alt-buy{
+  border:2px solid #1f2937;
+  border-radius: 18px;
+  padding: 12px;
+  background:#fff;
+  box-shadow: var(--shadow);
+}
+.alt-layout .buy-title{
+  font-size: 12px;
+  font-weight: 900;
+  color:#334155;
+  margin: 0 0 6px;
+}
+.alt-layout .alt-buy input,
+.alt-layout .alt-buy select{
+  width:100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px;
+  font-weight: 900;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+.alt-layout .alt-buy .cart-btn{
+  height: 46px;
+  margin-top: 2px;
+}
+
+.alt-layout .graph-body{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.alt-layout .keepa-wrap,
+.alt-layout .canvas-wrap{
+  height: 260px;
+}
+.alt-layout .graph-options{
+  padding: 10px 12px;
+}
+
+/* =========================
+   layout3.html layout
+========================= */
+.third-layout .summary-row{ display:none; }
+
+body.third-layout .layout3-grid{
+  display:grid;
+  grid-template-columns: 420px 1fr 1fr 280px;
+  grid-template-rows: auto auto;
+  gap:14px;
+  align-items:stretch;
+}
+
+body.third-layout .l3-block{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:12px;
+  box-shadow: var(--shadow);
+}
+
+body.third-layout .l3-block .head{
+  font-weight:900;
+  margin-bottom:10px;
+  color:#0f172a;
+}
+
+body.third-layout .l3-image{
+  grid-column: 1 / span 1;
+  grid-row: 1 / span 1;
+}
+body.third-layout .l3-image .image-box{
+  padding:0;
+  border:0;
+  box-shadow:none;
+}
+body.third-layout .l3-image img{
+  height: 320px;
+}
+
+body.third-layout .l3-infoA{
+  grid-column: 2 / span 1;
+  grid-row: 1 / span 1;
+}
+
+body.third-layout .l3-infoB{
+  grid-column: 3 / span 1;
+  grid-row: 1 / span 1;
+}
+
+body.third-layout .l3-buy{
+  grid-column: 4 / span 1;
+  grid-row: 1 / span 2;
+  border:2px solid #1f2937;
+  border-radius:18px;
+  padding:14px;
+  background:#fff;
+  box-shadow: var(--shadow);
+}
+body.third-layout .l3-buy .buy-title{
+  font-weight:900;
+  font-size:12px;
+  color:#334155;
+  margin:0 0 6px;
+}
+body.third-layout .l3-buy input,
+body.third-layout .l3-buy select{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:10px 10px;
+  font-weight:900;
+  font-size:13px;
+}
+
+body.third-layout .l3-keepa{
+  grid-column: 1 / span 1;
+  grid-row: 2 / span 1;
+  background:#f3f4f6;
+}
+body.third-layout .keepa-mini{
+  height:200px;
+  border-radius:14px;
+  overflow:hidden;
+  border:1px solid var(--line);
+  background:#fff;
+}
+body.third-layout .keepa-mini iframe{
+  width:100%;
+  height:100%;
+  border:0;
+}
+
+body.third-layout .l3-mes{
+  grid-column: 2 / span 2;
+  grid-row: 2 / span 1;
+}
+body.third-layout .mes-big{
+  height:280px;
+  border-radius:14px;
+  overflow:hidden;
+  border:1px solid rgba(219,234,254,1);
+  background: rgba(238,242,255,1);
+}
+body.third-layout .l3-mes canvas{
+  width:100%;
+  height:100%;
+}
+
+/* =========================
+   Responsive
+========================= */
 @media (max-width: 1260px){
   .summary-row{ grid-template-columns: 1fr; }
   .left-wrap{ grid-template-columns: 1fr; }
   .cart-grid{ grid-template-columns: 1fr 1fr; }
-}
 
+  .alt-layout .alt-grid{
+    grid-template-columns: 1fr 1fr;
+  }
+  .alt-layout .alt-buy{
+    grid-column: 1 / -1;
+  }
+  .alt-layout .graph-body{
+    grid-template-columns: 1fr;
+  }
+
+  body.third-layout .layout3-grid{
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+  }
+  body.third-layout .l3-buy{
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+}
 
 /* =========================
    Layout4（fourth-layout）
-   - 商品画像/keepaは細め
-   - 主要項目は広め
-   - 主要項目は高さ固定＋中スクロール
+   - 主要項目（l4-center）の高さを基準にして
+     商品画像（l4-image）/商品情報（l4-info）の高さを揃える
+   - 主要項目は枠固定＋中スクロール
    ※ ここ以外は一切変更しない
 ========================= */
 
+body.fourth-layout{
+  /* 1段目（画像/商品情報/主要項目）の高さを統一（=主要項目の枠高さ） */
+  --l4-top-h: 360px;
+}
+
 body.fourth-layout .layout4-grid{
   display:grid;
+
   /* 画像(細) / 商品情報 / 主要項目(広) / 主要項目(広) / カート */
   grid-template-columns: 300px 320px 1.35fr 1.35fr 280px;
-  grid-template-rows: auto auto;
+
+  /* 1段目の行高さを固定＝主要項目の高さ基準 */
+  grid-template-rows: var(--l4-top-h) auto;
+
   grid-template-areas:
     "image info center center cart"
     "keepa mes  mes    mes    cart";
@@ -640,7 +890,7 @@ body.fourth-layout .l4-keepa{ grid-area: keepa; }
 body.fourth-layout .l4-mes{ grid-area: mes; }
 body.fourth-layout .l4-buy{ grid-area: cart; }
 
-/* ブロックの共通見た目（既存UIに合わせる） */
+/* ブロック共通 */
 body.fourth-layout .l4-block{
   background:#fff;
   border:1px solid var(--line);
@@ -654,12 +904,23 @@ body.fourth-layout .l4-block .head{
   color:#0f172a;
 }
 
-/* 商品画像：上の1枚だけ表示（列幅が細くなっても崩れない） */
+/* 高さ統一：1段目の3つは必ず同じ高さ */
+body.fourth-layout .l4-image,
+body.fourth-layout .l4-info,
+body.fourth-layout .l4-center{
+  height: 100%;
+  display:flex;
+  flex-direction:column;
+  min-height: 0;
+}
+
+/* 商品画像：上の1枚だけ表示（枠内にフィット） */
 body.fourth-layout .l4-image .image-grid{
+  flex: 1;
+  min-height: 0;
   display:grid;
   grid-template-columns: 1fr;
-  grid-auto-rows: 300px;
-  gap: 0;
+  grid-template-rows: 1fr;
 }
 
 /* 複数画像がDOMにある想定で、1枚だけ残す */
@@ -676,7 +937,44 @@ body.fourth-layout .l4-image .image-grid img{
   background:#fff;
 }
 
-/* keepa（画像列に合わせる：列幅はgridで揃う） */
+/* 商品情報：枠固定＋中スクロール */
+body.fourth-layout .l4-info .info-grid{
+  flex: 1;
+  min-height: 0;
+  overflow:auto;
+}
+
+/* 主要項目：枠固定＋中スクロール */
+body.fourth-layout .l4-center .center-cards{
+  flex:1;
+  min-height:0;
+  overflow:auto;
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:10px;
+  padding-right: 4px;
+}
+body.fourth-layout .l4-center .center-card{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px;
+  background:#fff;
+}
+body.fourth-layout .l4-center .center-card .label{
+  font-size:12px;
+  font-weight:900;
+  color:#475569;
+  margin-bottom:6px;
+}
+body.fourth-layout .l4-center .center-card .value{
+  font-size:15px;
+  font-weight:1000;
+  color:#0f172a;
+  text-align:right;
+  word-break:break-word;
+}
+
+/* keepa（画像列に合わせる） */
 body.fourth-layout .l4-keepa{
   background:#f3f4f6;
 }
@@ -693,56 +991,7 @@ body.fourth-layout .l4-keepa iframe{
   border:0;
 }
 
-/* 商品情報：高さを合わせて中だけスクロール（枠サイズ固定） */
-body.fourth-layout .l4-info .info-grid{
-  max-height: 300px;
-  overflow:auto;
-}
-
-/* =========================
-   主要項目（枠サイズ固定＋中スクロール）
-   - ここが今回の重要点
-========================= */
-
-/* 枠の高さを固定して、増えたら中をスクロール */
-body.fourth-layout .l4-center{
-  height: 300px;               /* ←枠のサイズは変えない */
-  display:flex;
-  flex-direction:column;
-}
-
-/* 主要項目カード群が増えたらここだけスクロール */
-body.fourth-layout .l4-center .center-cards{
-  flex:1;
-  overflow:auto;               /* ←増えたら下スクロール */
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap:10px;
-  padding-right: 4px;          /* スクロールバーでガタつかないように */
-}
-
-body.fourth-layout .l4-center .center-card{
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:12px;
-  background:#fff;
-}
-
-body.fourth-layout .l4-center .center-card .label{
-  font-size:12px;
-  font-weight:900;
-  color:#475569;
-  margin-bottom:6px;
-}
-body.fourth-layout .l4-center .center-card .value{
-  font-size:15px;
-  font-weight:1000;
-  color:#0f172a;
-  text-align:right;
-  word-break:break-word;
-}
-
-/* 需要供給グラフ（横幅は info+center 分：grid-areaで確保済み） */
+/* 需要供給グラフ */
 body.fourth-layout .l4-mes .mes-big{
   height: 260px;
   border-radius:14px;
@@ -755,7 +1004,7 @@ body.fourth-layout .l4-mes canvas{
   height:100%;
 }
 
-/* カート（右） */
+/* カート */
 body.fourth-layout .l4-buy{
   border:2px solid #1f2937;
   border-radius:18px;
@@ -782,27 +1031,20 @@ body.fourth-layout .l4-buy .cart-btn{
   height:46px;
 }
 
-/* 端末幅が狭い時は縦積み（既存の崩れ防止） */
+/* 端末幅が狭い時は縦積み */
 @media (max-width: 1200px){
+  body.fourth-layout{
+    --l4-top-h: 320px;
+  }
+
   body.fourth-layout .layout4-grid{
     grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
     grid-template-areas:
       "image info"
       "center center"
       "keepa keepa"
       "mes   mes"
       "cart  cart";
-  }
-
-  body.fourth-layout .l4-image .image-grid{
-    grid-auto-rows: 280px;
-  }
-
-  body.fourth-layout .l4-info .info-grid{
-    max-height: 280px;
-  }
-
-  body.fourth-layout .l4-center{
-    height: 280px;  /* スマホも枠固定＋中スクロール */
   }
 }
