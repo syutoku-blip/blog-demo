@@ -952,30 +952,32 @@ a{ color:inherit; text-decoration:none; }
 
 /* =========================
    Layout4（fourth-layout）
-   - 画像：2列グリッド
-   - 主要項目：カード表示
-   - keepa小 + 需要供給大 + 右カート
+   - 配置を画像の通りにする
+     1段目: [商品画像] [商品情報] [主要項目(横長)] [カート(縦長)]
+     2段目: [keepa]     [空き]     [需要供給(横長)] [カート(縦長)]
+   ※ 見た目/機能は変えず、grid配置のみ変更
 ========================= */
 
 body.fourth-layout .layout4-grid{
   display:grid;
-  grid-template-columns: 380px 380px 1fr 280px;
+  grid-template-columns: 420px 320px 1fr 1fr 280px;
   grid-template-rows: auto auto;
+  grid-template-areas:
+    "image info center center cart"
+    "keepa .    mes    mes    cart";
   gap:14px;
   align-items:stretch;
 }
 
-body.fourth-layout .l4-buy{ grid-row: 1 / span 2; }
-body.fourth-layout .l4-mes{ grid-column: 2 / span 2; }
+/* 各ブロックの配置（ここが“配置だけ”の本体） */
+body.fourth-layout .l4-image{ grid-area: image; }
+body.fourth-layout .l4-info{ grid-area: info; }
+body.fourth-layout .l4-center{ grid-area: center; }
+body.fourth-layout .l4-keepa{ grid-area: keepa; }
+body.fourth-layout .l4-mes{ grid-area: mes; }
+body.fourth-layout .l4-buy{ grid-area: cart; }
 
-@media (max-width: 1200px){
-  body.fourth-layout .layout4-grid{
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto;
-  }
-  body.fourth-layout .l4-buy{ grid-column: 1 / -1; }
-}
-
+/* 既存の見た目はそのまま */
 body.fourth-layout .l4-block{
   background:#fff;
   border:1px solid var(--line);
@@ -1096,4 +1098,17 @@ body.fourth-layout .l4-mes .mes-big{
 body.fourth-layout .l4-mes canvas{
   width:100%;
   height:100%;
+}
+
+/* レスポンシブ（崩さないため最小限） */
+@media (max-width: 1200px){
+  body.fourth-layout .layout4-grid{
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "image info"
+      "center center"
+      "keepa keepa"
+      "mes   mes"
+      "cart  cart";
+  }
 }
