@@ -1,7 +1,6 @@
 /**************************************************************
  * main.js
  * - レイアウト3追加（body.third-layout）
- * - レイアウト4追加（body.fourth-layout）
  * - 商品情報は商品情報枠（zoneState.info）を上から半分ずつで
  *   商品情報①/商品情報②に分割表示（レイアウト3のみ）
  **************************************************************/
@@ -594,6 +593,37 @@ function buildCenterList(container, ctx, data) {
   });
 }
 
+// Layout4用：主要項目をカード表示（2列グリッド）
+function buildCenterCards(container, ctx, data) {
+  if (!container) return;
+  container.innerHTML = "";
+
+  zoneState.center.forEach((tok) => {
+    const v = resolveTokenValue(tok, ctx, data);
+
+    const tile = document.createElement("div");
+    tile.className = "center-card";
+
+    const label = document.createElement("div");
+    label.className = "label";
+    label.textContent = v.label;
+
+    const value = document.createElement("div");
+    value.className = "value";
+
+    if (v.kind === "tags") {
+      value.classList.add("v-tags");
+      value.innerHTML = v.html;
+    } else {
+      value.textContent = v.text ?? "－";
+    }
+
+    tile.appendChild(label);
+    tile.appendChild(value);
+    container.appendChild(tile);
+  });
+}
+
 function buildDetailTable(tableEl, ctx, data) {
   if (!tableEl) return;
   const theadRow = tableEl.querySelector("thead tr");
@@ -627,6 +657,7 @@ function buildDetailTable(tableEl, ctx, data) {
 
 function rerenderAllCards() {
   const isThird = document.body.classList.contains("third-layout");
+  const isFourth = document.body.classList.contains("fourth-layout");
 
   cardState.forEach((v) => {
     const asin = v.el.dataset.asin;
@@ -649,7 +680,11 @@ function rerenderAllCards() {
       buildInfoGrid(v.el.querySelector(".js-infoGrid"), ctx, v.data);
     }
 
-    buildCenterList(v.el.querySelector(".js-center"), ctx, v.data);
+    if (isFourth) {
+      buildCenterCards(v.el.querySelector(".js-centerCards"), ctx, v.data);
+    } else {
+      buildCenterList(v.el.querySelector(".js-center"), ctx, v.data);
+    }
     buildDetailTable(v.el.querySelector(".js-detailTable"), ctx, v.data);
   });
 }
@@ -826,7 +861,8 @@ function createProductCard(asin, data) {
       </div>
     `;
   } else if (isFourthLayout) {
-    // レイアウト4（画像参考：左=画像/keepa、中央=商品情報、右=主要項目+カート、下=需要供給）
+    // Layout4（画像2列 + 主要項目カード + keepa小 + 需要供給大 + 右カート）
+    const imgSrc = data["商品画像"] || "";
     card.innerHTML = `
       <div class="card-top">
         <div class="title">ASIN: ${asin}</div>
@@ -837,24 +873,27 @@ function createProductCard(asin, data) {
         <!-- 商品画像 -->
         <div class="l4-image l4-block">
           <div class="head">商品画像</div>
-          <div class="image-box">
-            <img src="${data["商品画像"] || ""}" alt="商品画像" onerror="this.style.display='none';" />
+          <div class="image-grid">
+            <img class="main" src="${imgSrc}" alt="商品画像" onerror="this.style.display='none';" />
+            <img class="thumb" src="${imgSrc}" alt="商品画像" onerror="this.style.display='none';" />
+            <img class="thumb" src="${imgSrc}" alt="商品画像" onerror="this.style.display='none';" />
+            <img class="thumb" src="${imgSrc}" alt="商品画像" onerror="this.style.display='none';" />
           </div>
         </div>
 
         <!-- 商品情報 -->
         <div class="l4-info l4-block">
-          <div class="head">商品情報①</div>
+          <div class="head">商品情報</div>
           <div class="info-grid js-infoGrid"></div>
         </div>
 
         <!-- 主要項目 -->
         <div class="l4-center l4-block">
           <div class="head">主要項目</div>
-          <div class="center-list js-center"></div>
+          <div class="center-cards js-centerCards"></div>
         </div>
 
-        <!-- カート -->
+        <!-- カート（右縦） -->
         <div class="l4-buy">
           <div class="buy-title">数量</div>
           <select class="js-qty">
@@ -1117,7 +1156,11 @@ function createProductCard(asin, data) {
   }
 
   // center / table
-  buildCenterList(card.querySelector(".js-center"), ctx, data);
+  if (isFourthLayout) {
+    buildCenterCards(card.querySelector(".js-centerCards"), ctx, data);
+  } else {
+    buildCenterList(card.querySelector(".js-center"), ctx, data);
+  }
   buildDetailTable(card.querySelector(".js-detailTable"), ctx, data);
 
   // chart
@@ -1136,7 +1179,7 @@ function createProductCard(asin, data) {
   const keepaFrame = card.querySelector(".js-keepaFrame");
   if (keepaFrame) keepaFrame.src = `https://keepa.com/#!product/1-${asin}`;
 
-  // 通常レイアウトのみ：トグル維持（alt/3/4 はトグル無し）
+  // 通常レイアウトのみ：トグル維持
   if (!isAltLayout && !isThirdLayout && !isFourthLayout) {
     const keepaWrap = card.querySelector(".js-keepaWrap");
     const mesWrap = card.querySelector(".js-mesWrap");
