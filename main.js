@@ -468,11 +468,9 @@ function createProductCard(asin, data) {
   if (isThirdLayout) {
     card.innerHTML = `
       <div class="card-top">
-        <div class="title-row">
-          <div class="title">ASIN: ${asin}</div>
-          <span class="memo-badge js-memoBadge" aria-hidden="true"></span>
-          <button class="memo-btn js-memoBtn" type="button" title="メモ" aria-label="メモを開く">📝</button>
-        </div>
+        <div class="title">ASIN: ${asin}</div>
+        <span class="memo-badge js-memoBadge" aria-hidden="true"></span>
+        <button class="memo-btn js-memoBtn" type="button" title="メモ" aria-label="メモを開く">📝</button>
         <button class="remove" type="button">この行を削除</button>
       </div>
 
@@ -547,11 +545,9 @@ function createProductCard(asin, data) {
   } else if (isFourthLayout) {
     card.innerHTML = `
       <div class="card-top">
-        <div class="title-row">
-          <div class="title">ASIN: ${asin}</div>
-          <span class="memo-badge js-memoBadge" aria-hidden="true"></span>
-          <button class="memo-btn js-memoBtn" type="button" title="メモ" aria-label="メモを開く">📝</button>
-        </div>
+        <div class="title">ASIN: ${asin}</div>
+        <span class="memo-badge js-memoBadge" aria-hidden="true"></span>
+        <button class="memo-btn js-memoBtn" type="button" title="メモ" aria-label="メモを開く">📝</button>
         <button class="remove" type="button">この行を削除</button>
       </div>
 
@@ -632,11 +628,9 @@ function createProductCard(asin, data) {
     card.innerHTML = isAltLayout
       ? `
       <div class="card-top">
-        <div class="title-row">
-          <div class="title">ASIN: ${asin}</div>
-          <span class="memo-badge js-memoBadge" aria-hidden="true"></span>
-          <button class="memo-btn js-memoBtn" type="button" title="メモ" aria-label="メモを開く">📝</button>
-        </div>
+        <div class="title">ASIN: ${asin}</div>
+        <span class="memo-badge js-memoBadge" aria-hidden="true"></span>
+        <button class="memo-btn js-memoBtn" type="button" title="メモ" aria-label="メモを開く">📝</button>
         <button class="remove" type="button">この行を削除</button>
       </div>
 
@@ -709,11 +703,9 @@ function createProductCard(asin, data) {
     `
       : `
       <div class="card-top">
-        <div class="title-row">
-          <div class="title">ASIN: ${asin}</div>
-          <span class="memo-badge js-memoBadge" aria-hidden="true"></span>
-          <button class="memo-btn js-memoBtn" type="button" title="メモ" aria-label="メモを開く">📝</button>
-        </div>
+        <div class="title">ASIN: ${asin}</div>
+        <span class="memo-badge js-memoBadge" aria-hidden="true"></span>
+        <button class="memo-btn js-memoBtn" type="button" title="メモ" aria-label="メモを開く">📝</button>
         <button class="remove" type="button">この行を削除</button>
       </div>
 
@@ -790,15 +782,15 @@ function createProductCard(asin, data) {
     `;
   }
 
-  
   // memo
   const memoBtn = card.querySelector(".js-memoBtn");
   const memoBadge = card.querySelector(".js-memoBadge");
   if (memoBtn && memoBadge) {
-    const savedMemo = loadAsinMemo(asin);
-    applyMemoBadge(memoBadge, savedMemo);
+    const saved = loadAsinMemo(asin);
+    applyMemoBadge(memoBadge, saved);
     memoBtn.addEventListener("click", () => openMemoModal(asin, memoBadge));
   }
+
   // remove
   card.querySelector(".remove").addEventListener("click", () => {
     if (cart.has(asin)) {
@@ -995,12 +987,14 @@ function createProductCard(asin, data) {
   return card;
 }
 
-  
 /* =========================
-   ASIN memo (localStorage)
+   ASINメモ（localStorage）
+   - ASINごとに「絵文字マーク」と「メモ本文」を保存
+   - ASIN横には絵文字（or 📝）だけ表示
+   - 📝ボタンでモーダル表示
 ========================= */
 const MEMO_STORAGE_PREFIX = "MES_ASIN_MEMO__";
-let __memoModal = null;
+let __memoOverlay = null;
 
 function loadAsinMemo(asin) {
   try {
@@ -1023,14 +1017,17 @@ function saveAsinMemo(asin, memo) {
 }
 
 function clearAsinMemo(asin) {
-  try { localStorage.removeItem(MEMO_STORAGE_PREFIX + asin); } catch (e) {}
+  try {
+    localStorage.removeItem(MEMO_STORAGE_PREFIX + asin);
+  } catch (e) {}
 }
 
 function applyMemoBadge(badgeEl, memo) {
   if (!badgeEl) return;
   const hasText = memo && typeof memo.text === "string" && memo.text.trim() !== "";
   const emoji = memo && typeof memo.emoji === "string" ? memo.emoji.trim() : "";
-  const show = emoji || hasText;
+  const show = !!(emoji || hasText);
+
   if (!show) {
     badgeEl.textContent = "";
     badgeEl.style.display = "none";
@@ -1040,8 +1037,8 @@ function applyMemoBadge(badgeEl, memo) {
   badgeEl.style.display = "inline-flex";
 }
 
-function ensureMemoModal() {
-  if (__memoModal) return __memoModal;
+function ensureMemoOverlay() {
+  if (__memoOverlay) return __memoOverlay;
 
   const overlay = document.createElement("div");
   overlay.className = "memo-overlay";
@@ -1065,9 +1062,7 @@ function ensureMemoModal() {
 
       <div class="memo-actions">
         <button class="memo-clear" type="button">クリア</button>
-        <div class="memo-actions-right">
-          <button class="memo-save" type="button">保存</button>
-        </div>
+        <button class="memo-save" type="button">保存</button>
       </div>
     </div>
   `;
@@ -1079,8 +1074,6 @@ function ensureMemoModal() {
   function close() {
     overlay.style.display = "none";
     overlay.removeAttribute("data-asin");
-    overlay.removeAttribute("data-emoji");
-    overlay.removeAttribute("data-badgeId");
   }
 
   overlay.addEventListener("click", (e) => {
@@ -1091,28 +1084,27 @@ function ensureMemoModal() {
     if (overlay.style.display !== "none" && e.key === "Escape") close();
   });
 
-  __memoModal = { overlay, close };
-  return __memoModal;
+  __memoOverlay = { overlay, close };
+  return __memoOverlay;
 }
 
 function openMemoModal(asin, badgeEl) {
-  const { overlay, close } = ensureMemoModal();
+  const { overlay, close } = ensureMemoOverlay();
   const emojiRow = overlay.querySelector(".js-memoEmojiRow");
   const textArea = overlay.querySelector(".js-memoText");
   const saveBtn = overlay.querySelector(".memo-save");
   const clearBtn = overlay.querySelector(".memo-clear");
 
-  // prepare state
   const current = loadAsinMemo(asin);
   let selectedEmoji = current.emoji || "";
   textArea.value = current.text || "";
 
   overlay.setAttribute("data-asin", asin);
 
-  // render emojis
-  const EMOJIS = ["😈", "👼", "♥️", "👓", "🎯", "⭐️", "✅", "⚠️"];
+  const EMOJIS = ["😈", "👼", "♥️", "👓", "🎯"];
   emojiRow.innerHTML = "";
   const btns = [];
+
   EMOJIS.forEach((em) => {
     const b = document.createElement("button");
     b.type = "button";
@@ -1121,14 +1113,13 @@ function openMemoModal(asin, badgeEl) {
     if (em === selectedEmoji) b.classList.add("active");
     b.addEventListener("click", () => {
       selectedEmoji = em;
-      btns.forEach(x => x.classList.remove("active"));
+      btns.forEach((x) => x.classList.remove("active"));
       b.classList.add("active");
     });
     btns.push(b);
     emojiRow.appendChild(b);
   });
 
-  // save handlers (reset to avoid stacking)
   saveBtn.onclick = () => {
     const memo = { emoji: selectedEmoji, text: textArea.value || "" };
     const hasAnything = (memo.emoji && memo.emoji.trim() !== "") || (memo.text && memo.text.trim() !== "");
@@ -1145,211 +1136,14 @@ function openMemoModal(asin, badgeEl) {
   clearBtn.onclick = () => {
     selectedEmoji = "";
     textArea.value = "";
-    btns.forEach(x => x.classList.remove("active"));
+    btns.forEach((x) => x.classList.remove("active"));
     clearAsinMemo(asin);
     applyMemoBadge(badgeEl, { emoji: "", text: "" });
     close();
   };
 
   overlay.style.display = "flex";
-  // focus
   setTimeout(() => {
     try { textArea.focus(); } catch (e) {}
   }, 0);
-}
-
-/* =========================
-   Helpers
-========================= */
-function formatValue(v) {
-  if (Array.isArray(v)) return v.join(", ");
-  return v == null ? "" : String(v);
-}
-
-function renderInfoGrid(gridEl, metrics, data) {
-  gridEl.innerHTML = "";
-  metrics.forEach((m) => {
-    const k = document.createElement("div");
-    k.className = "k";
-    k.textContent = m.label;
-
-    const v = document.createElement("div");
-    v.className = "v";
-
-    const raw = data[m.valueKey];
-    if (m.key.includes("注意事項")) {
-      // tags split
-      const tags = String(raw || "").split(",").map((x) => x.trim()).filter(Boolean);
-      const wrap = document.createElement("div");
-      wrap.className = "v-tags";
-      tags.forEach((t) => {
-        const tag = document.createElement("span");
-        tag.className = "tag";
-        if (t.includes("不可") || t.includes("知財")) tag.classList.add("danger");
-        else if (t.includes("大型")) tag.classList.add("warn");
-        else tag.classList.add("info");
-        tag.textContent = t;
-        wrap.appendChild(tag);
-      });
-      v.appendChild(wrap);
-    } else {
-      v.textContent = formatValue(raw);
-    }
-
-    gridEl.appendChild(k);
-    gridEl.appendChild(v);
-  });
-}
-
-/* =========================
-   Fake chart data (180 days)
-   - Keepa風：上部：価格(オレンジ) + ランキング(緑)
-   - 下部：セラー数(紫)
-========================= */
-function buildFakeChartData(asin, data) {
-  const days = 180;
-  const labels = [];
-  const price = [];
-  const rank = [];
-  const sellers = [];
-
-  // base values from data or defaults
-  const basePrice = parseFloat(String(data["販売額（ドル）"] || "39.99").replace(/[^\d.]/g, "")) || 39.99;
-  const baseRank = parseFloat(String(data["ランキング"] || "120000").replace(/[^\d.]/g, "")) || 120000;
-  const baseSellers = parseFloat(String(data["セラー数"] || "12").replace(/[^\d.]/g, "")) || 12;
-
-  // simple seeded random
-  let seed = hashCode(asin) % 10000;
-
-  function rnd() {
-    seed = (seed * 9301 + 49297) % 233280;
-    return seed / 233280;
-  }
-
-  // generate day-by-day
-  let p = basePrice;
-  let r = baseRank;
-  let s = baseSellers;
-
-  for (let i = 0; i < days; i++) {
-    const d = new Date();
-    d.setDate(d.getDate() - (days - 1 - i));
-    labels.push(`${d.getMonth() + 1}/${d.getDate()}`);
-
-    // drift
-    r += (rnd() - 0.5) * 6000;
-    r = clamp(r, 5000, 800000);
-
-    // sellers respond loosely to rank
-    s += (rnd() - 0.5) * 1.2 + (r < baseRank ? 0.15 : -0.08);
-    s = clamp(s, 1, 80);
-
-    // price reacts
-    p += (rnd() - 0.5) * 0.8 + (r < baseRank ? 0.15 : -0.08) + (s > baseSellers ? -0.12 : 0.07);
-    p = clamp(p, 8, 120);
-
-    price.push(parseFloat(p.toFixed(2)));
-    rank.push(Math.round(r));
-    sellers.push(parseFloat(s.toFixed(1)));
-  }
-
-  // downsample labels to show every 10th day (but keep full dataset)
-  // Chart.js uses all labels; we only style ticks in options
-  const isAltLayout = document.body.classList.contains("alt-layout");
-  const isThirdLayout = document.body.classList.contains("third-layout");
-  const isFourthLayout = document.body.classList.contains("fourth-layout");
-
-  const showEvery = 10;
-
-  return {
-    type: "line",
-    data: {
-      labels,
-      datasets: [
-        {
-          label: "価格（$）",
-          data: price,
-          yAxisID: "yPrice",
-          borderColor: "#f59e0b",
-          backgroundColor: "rgba(245,158,11,0.12)",
-          pointRadius: 0,
-          tension: 0.25,
-        },
-        {
-          label: "ランキング",
-          data: rank,
-          yAxisID: "yRank",
-          borderColor: "#10b981",
-          backgroundColor: "rgba(16,185,129,0.12)",
-          pointRadius: 0,
-          tension: 0.25,
-        },
-        {
-          label: "セラー数",
-          data: sellers,
-          yAxisID: "ySell",
-          borderColor: "#8b5cf6",
-          backgroundColor: "rgba(139,92,246,0.10)",
-          pointRadius: 0,
-          tension: 0.25,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: { mode: "index", intersect: false },
-      },
-      interaction: { mode: "index", intersect: false },
-      scales: {
-        x: {
-          ticks: {
-            autoSkip: false,
-            callback: function (value, index) {
-              if (index % showEvery === 0) return this.getLabelForValue(value);
-              return "";
-            },
-            maxRotation: 0,
-            minRotation: 0,
-          },
-          grid: { display: false },
-        },
-        yPrice: {
-          position: "left",
-          beginAtZero: false,
-          grid: { color: "rgba(148,163,184,0.25)" },
-          ticks: {
-            callback: (v) => `$${v}`,
-          },
-        },
-        yRank: {
-          position: "right",
-          reverse: true,
-          grid: { drawOnChartArea: false },
-          ticks: {
-            callback: (v) => `${Math.round(v)}`,
-          },
-        },
-        ySell: {
-          position: "right",
-          grid: { drawOnChartArea: false },
-          ticks: {
-            callback: (v) => `${v}`,
-          },
-        },
-      },
-    },
-  };
-}
-
-function hashCode(str) {
-  let h = 0;
-  for (let i = 0; i < str.length; i++) h = (h << 5) - h + str.charCodeAt(i);
-  return h;
-}
-function clamp(x, a, b) {
-  return Math.max(a, Math.min(b, x));
 }
