@@ -829,16 +829,9 @@ a{ color:inherit; }
   .metrics-row{ grid-template-columns: 1fr; }
 }
 
-  
 /* =========================
-   Memo UI
+   ASINメモUI
 ========================= */
-.title-row{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  min-width:0;
-}
 .memo-badge{
   display:none;
   align-items:center;
@@ -846,8 +839,8 @@ a{ color:inherit; }
   min-width:26px;
   height:26px;
   border-radius:999px;
-  border:1px solid rgba(148,163,184,35);
-  background: rgba(148,163,184,14);
+  border:1px solid rgba(148,163,184,0.35);
+  background: rgba(148,163,184,0.14);
   font-size:14px;
   line-height:1;
 }
@@ -862,7 +855,7 @@ a{ color:inherit; }
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  box-shadow: 0 4px 12px rgba(15,23,42,06);
+  box-shadow: 0 4px 12px rgba(15,23,42,0.06);
 }
 
 .memo-overlay{
@@ -905,7 +898,7 @@ a{ color:inherit; }
 .memo-emoji{
   border:1px solid var(--line);
   border-radius: var(--radius2);
-  background: rgba(255,255,255,85);
+  background: rgba(255,255,255,0.85);
   padding:10px;
   margin-bottom:10px;
 }
@@ -933,8 +926,8 @@ a{ color:inherit; }
   justify-content:center;
 }
 .memo-emoji-btn.active{
-  border-color: rgba(91,92,255,55);
-  box-shadow: 0 10px 26px rgba(91,92,255,12);
+  border-color: rgba(91,92,255,0.55);
+  box-shadow: 0 10px 26px rgba(91,92,255,0.12);
 }
 
 .memo-body{
@@ -972,6 +965,6 @@ a{ color:inherit; }
   cursor:pointer;
 }
 .memo-save{
-  border-color: rgba(91,92,255,35);
-  background: rgba(91,92,255,10);
+  border-color: rgba(91,92,255,0.35);
+  background: rgba(91,92,255,0.10);
 }
