@@ -1,110 +1,955 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <title>MES-AI-A 商品分析</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SHiFT塾｜講師紹介</title>
+  <meta name="description" content="SHiFT塾の塾長・副塾長・講師陣紹介ページ" />
 
-  <link rel="stylesheet" href="./styles.css?v=20251217_6" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #0b0f1a;
+      --bg2:#070a12;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --line: rgba(255,255,255,.10);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.62);
+      --muted2: rgba(255,255,255,.48);
+
+      --gold1:#d7b86e;
+      --gold2:#b9913c;
+      --shadow: 0 24px 60px rgba(0,0,0,.55);
+      --shadow2: 0 14px 34px rgba(0,0,0,.40);
+
+      --r: 22px;
+      --max: 1100px;
+    }
+
+    *{ box-sizing: border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      color: var(--text);
+      font-family: "Noto Sans JP", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      letter-spacing: .02em;
+      background:
+        radial-gradient(1200px 700px at 20% -10%, rgba(215,184,110,.22), transparent 60%),
+        radial-gradient(900px 540px at 90% 10%, rgba(255,77,77,.14), transparent 55%),
+        radial-gradient(1200px 800px at 40% 120%, rgba(185,145,60,.16), transparent 60%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      overflow-x:hidden;
+    }
+
+    .wrap{
+      width: min(var(--max), calc(100% - 40px));
+      margin: 0 auto;
+      padding: 56px 0 88px;
+    }
+
+    /* subtle grid */
+    .grid-bg{
+      position: fixed;
+      inset: 0;
+      pointer-events:none;
+      opacity:.22;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(circle at 30% 0%, black 0, transparent 55%);
+    }
+
+    /* Intro card */
+    .top{
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: calc(var(--r) + 6px);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      padding: 30px 28px;
+      overflow:hidden;
+    }
+    .top::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:
+        radial-gradient(500px 220px at 12% 10%, rgba(215,184,110,.30), transparent 55%),
+        radial-gradient(520px 240px at 82% 0%, rgba(255,77,77,.22), transparent 55%);
+      opacity:.65;
+      pointer-events:none;
+    }
+    .top-inner{ position:relative; display:grid; gap:14px; }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(215,184,110,.45);
+      background: rgba(215,184,110,.10);
+      color: rgba(255,255,255,.88);
+      font-weight: 800;
+      letter-spacing: .08em;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+    .badge i{
+      width:10px;height:10px;border-radius:999px;
+      display:inline-block;
+      background: linear-gradient(135deg, var(--gold1), var(--gold2));
+      box-shadow: 0 0 0 3px rgba(215,184,110,.18);
+    }
+
+    .headline{
+      margin: 2px 0 0;
+      font-size: clamp(22px, 3.1vw, 34px);
+      font-weight: 900;
+      letter-spacing: .06em;
+      line-height: 1.2;
+    }
+    .subline{
+      margin:0;
+      color: var(--muted);
+      font-size: 14.5px;
+      line-height: 1.9;
+      max-width: 900px;
+    }
+    .keycopy{
+      display:flex;
+      flex-wrap: wrap;
+      gap:10px;
+      margin-top: 4px;
+    }
+    .chip{
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.78);
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: .06em;
+    }
+
+    /* Section title */
+    .section{
+      margin-top: 34px;
+    }
+    .section-title{
+      display:flex;
+      align-items:flex-end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 14px;
+    }
+    .section-title h2{
+      margin:0;
+      font-size: 18px;
+      letter-spacing: .14em;
+      font-weight: 900;
+    }
+    .section-title .hint{
+      color: var(--muted2);
+      font-size: 12.5px;
+      letter-spacing: .06em;
+    }
+    .rule{
+      height:1px;
+      background: linear-gradient(90deg, rgba(215,184,110,.45), rgba(255,255,255,.10), transparent);
+      border:0;
+      margin: 10px 0 18px;
+    }
+
+    /* Profile card */
+    .profile{
+      border: 1px solid var(--line);
+      border-radius: calc(var(--r) + 6px);
+      background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.04));
+      box-shadow: var(--shadow2);
+      padding: 22px;
+    }
+    .profile-grid{
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      gap: 22px;
+      align-items:start;
+    }
+
+    .photo{
+      position: relative;
+      border-radius: 20px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.14);
+      background:
+        radial-gradient(500px 240px at 30% 10%, rgba(215,184,110,.22), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      aspect-ratio: 4 / 5;
+      min-height: 380px;
+    }
+    .photo.small{ min-height: 260px; aspect-ratio: 1 / 1; border-radius: 999px; }
+    .photo img{
+      width:100%; height:100%;
+      object-fit: cover;
+      display:block;
+      filter: contrast(1.02) saturate(1.02);
+    }
+    .photo .ph{
+      position:absolute; inset:0;
+      display:grid; place-items:center;
+      color: rgba(255,255,255,.60);
+      font-weight: 900;
+      letter-spacing: .18em;
+      font-size: 13px;
+    }
+    .photo::after{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,.35));
+      pointer-events:none;
+    }
+    .photo.small::after{ background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,.25)); }
+
+    .who{
+      display:grid;
+      gap: 10px;
+      align-content:start;
+    }
+    .name{
+      margin:0;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: .10em;
+    }
+    .role{
+      margin: -6px 0 0;
+      color: var(--muted);
+      font-size: 13.5px;
+      letter-spacing: .06em;
+      font-weight: 800;
+    }
+
+    .meta-row{
+      display:flex;
+      flex-wrap: wrap;
+      gap:10px;
+      margin-top: 2px;
+    }
+    .meta{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+      color: rgba(255,255,255,.78);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .06em;
+    }
+    .dot{
+      width:8px; height:8px; border-radius:999px;
+      background: linear-gradient(135deg, var(--gold1), var(--gold2));
+      box-shadow: 0 0 0 3px rgba(215,184,110,.16);
+    }
+
+    .block{
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px dashed rgba(255,255,255,.16);
+    }
+    .label{
+      font-weight: 900;
+      letter-spacing: .16em;
+      font-size: 12px;
+      color: rgba(255,255,255,.86);
+      margin-bottom: 10px;
+    }
+
+    .timeline{
+      width:100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      border-radius: 14px;
+      overflow:hidden;
+    }
+    .timeline tr{ background: rgba(255,255,255,.03); }
+    .timeline tr:nth-child(odd){ background: rgba(255,255,255,.05); }
+    .timeline th, .timeline td{
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      vertical-align: top;
+    }
+    .timeline th{
+      width: 88px;
+      color: rgba(255,255,255,.68);
+      font-weight: 900;
+      letter-spacing: .10em;
+      text-align:left;
+    }
+    .timeline td{
+      color: rgba(255,255,255,.90);
+      font-weight: 600;
+    }
+
+    /* Media cards */
+    .media-grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 12px;
+    }
+    .media-card{
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      box-shadow: 0 14px 32px rgba(0,0,0,.35);
+      padding: 16px;
+      display:grid;
+      gap: 10px;
+      position: relative;
+      overflow:hidden;
+    }
+    .media-card::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: radial-gradient(520px 200px at 10% 0%, rgba(215,184,110,.18), transparent 60%);
+      opacity:.6;
+      pointer-events:none;
+    }
+    .media-card > *{ position:relative; }
+    .media-title{
+      margin:0;
+      font-weight: 900;
+      letter-spacing: .08em;
+      font-size: 13.5px;
+      color: rgba(255,255,255,.92);
+    }
+    .media-desc{
+      margin:0;
+      color: rgba(255,255,255,.72);
+      font-size: 13.2px;
+      line-height: 1.85;
+    }
+    .media-desc ul{ margin: 8px 0 0; padding-left: 1.2em; }
+    .media-desc li{ margin: 6px 0; }
+
+    .btn{
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 14px;
+      font-weight: 900;
+      letter-spacing: .14em;
+      cursor: pointer;
+      color: rgba(10,12,18,.95);
+      background: linear-gradient(135deg, var(--gold1), var(--gold2));
+      box-shadow: 0 10px 22px rgba(215,184,110,.22);
+      transition: transform .12s ease, filter .12s ease;
+      width: 100%;
+      margin-top: 2px;
+    }
+    .btn:hover{ transform: translateY(-1px); filter: brightness(1.02); }
+    .btn:active{ transform: translateY(0px); }
+
+    /* Message */
+    .message{
+      margin-top: 18px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: calc(var(--r) + 6px);
+      padding: 22px;
+      background:
+        radial-gradient(900px 420px at 20% 0%, rgba(215,184,110,.16), transparent 58%),
+        linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      box-shadow: var(--shadow2);
+    }
+    .message h3{
+      margin:0 0 10px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .16em;
+      color: rgba(255,255,255,.90);
+    }
+    .message p{
+      margin:0;
+      color: rgba(255,255,255,.80);
+      font-size: 14px;
+      line-height: 1.95;
+      white-space: pre-line;
+    }
+
+    /* Instructor list */
+    .stack{ display:grid; gap: 18px; }
+    .instructor{
+      border: 1px solid rgba(255,255,255,.11);
+      border-radius: calc(var(--r) + 6px);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      box-shadow: 0 14px 34px rgba(0,0,0,.36);
+      padding: 18px;
+    }
+    .instructor-grid{
+      display:grid;
+      grid-template-columns: 220px 1fr;
+      gap: 18px;
+      align-items:start;
+    }
+    .instructor .name{ font-size: 18px; letter-spacing:.10em; }
+    .instructor .role{ font-size: 12.8px; }
+    .kpi{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .kpi .meta{ font-size: 11.8px; }
+
+    /* Modal */
+    dialog{
+      width: min(960px, 92vw);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 20px;
+      padding: 0;
+      color: var(--text);
+      background: rgba(10,12,18,.88);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 30px 90px rgba(0,0,0,.65);
+    }
+    dialog::backdrop{
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(2px);
+    }
+    .modal-head{
+      display:flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+    }
+    .modal-head .t{
+      font-weight: 900;
+      letter-spacing: .12em;
+      font-size: 12px;
+      color: rgba(255,255,255,.86);
+    }
+    .x{
+      border:0;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.14);
+      color: rgba(255,255,255,.88);
+      border-radius: 12px;
+      padding: 8px 10px;
+      cursor:pointer;
+      font-weight: 900;
+      letter-spacing:.08em;
+    }
+    .modal-body{
+      padding: 16px;
+      display:grid;
+      place-items:center;
+      min-height: 320px;
+    }
+    .modal-body img{
+      max-width: 100%;
+      height: auto;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: 0 18px 40px rgba(0,0,0,.45);
+    }
+    .empty{
+      color: rgba(255,255,255,.62);
+      font-weight: 900;
+      letter-spacing: .12em;
+      font-size: 12px;
+      padding: 18px 14px;
+      border-radius: 14px;
+      border: 1px dashed rgba(255,255,255,.16);
+      background: rgba(255,255,255,.04);
+    }
+
+    /* Responsive */
+    @media (max-width: 920px){
+      .profile-grid{ grid-template-columns: 280px 1fr; }
+      .instructor-grid{ grid-template-columns: 200px 1fr; }
+    }
+    @media (max-width: 760px){
+      .wrap{ width: min(var(--max), calc(100% - 28px)); padding: 40px 0 72px; }
+      .top{ padding: 24px 18px; }
+      .profile{ padding: 18px; }
+      .profile-grid{ grid-template-columns: 1fr; }
+      .photo{ min-height: 360px; max-width: 420px; }
+      .media-grid{ grid-template-columns: 1fr; }
+      .instructor-grid{ grid-template-columns: 1fr; }
+      .photo.small{ max-width: 220px; }
+    }
+  </style>
 </head>
+
 <body>
+  <div class="grid-bg" aria-hidden="true"></div>
 
-<header class="app-header">
-  <div class="header-left">
-    <h1>MES-AI-A 商品分析</h1>
-    <div class="sub">ASINクリックでカード追加 → 上の5枠で「指標/商品情報」をまとめてカスタム</div>
-  </div>
-
-  <div class="layout-nav">
-    <a class="layout-link active" href="./index.html">通常レイアウト</a>
-    <a class="layout-link" href="./alt.html">新レイアウト</a>
-    <a class="layout-link" href="./layout3.html">レイアウト3</a>
-    <a class="layout-link" href="./layout4.html">レイアウト4</a>
-  </div>
-
-  <div id="headerStatus" class="header-status"></div>
-</header>
-
-<main class="page-body">
-  <section class="metrics-bar card" id="metricsBar">
-    <div class="metrics-bar-head">
-      <div>
-        <div class="metrics-bar-title">配置カスタマイズ（ドラッグして配置）</div>
-        <div class="metrics-bar-help">同じ項目はどこか1枠のみ（重複配置できません）</div>
+  <main class="wrap">
+    <!-- INTRO -->
+    <section class="top" aria-label="イントロ">
+      <div class="top-inner">
+        <div class="badge"><i></i> SHiFT Academy / Instructor</div>
+        <h1 class="headline">理論よりもリアルを。<br>教科書よりも経験を。</h1>
+        <p class="subline">
+          海外市場で結果を出すには、現場で動ける力が必要です。<br>
+          SHiFT塾には、実戦で成果を積み上げてきた専門家たちが集まっています。<br>
+          彼らは全員、教えるためではなく、「共に挑む」ためにここにいます。
+        </p>
+        <div class="keycopy">
+          <span class="chip">現場起点</span>
+          <span class="chip">実戦コミット</span>
+          <span class="chip">再現性のある仕組み</span>
+          <span class="chip">伴走サポート</span>
+        </div>
       </div>
-      <button id="metricsCollapseBtn" class="ghost-btn" type="button">折りたたむ</button>
-    </div>
+    </section>
 
-    <div id="sortBar">
-      <div class="sort-title">表示中ASINのソート（真ん中の枠の指標）</div>
-      <div id="sortControls" class="sort-controls"></div>
-      <div class="sort-actions">
-        <button id="addSortRuleBtn" type="button">条件を追加</button>
-        <button id="applySortBtn" class="primary" type="button">ソート適用</button>
-        <button id="clearSortBtn" type="button">ソート解除</button>
+    <!-- DIRECTOR -->
+    <section class="section" aria-label="塾長紹介">
+      <div class="section-title">
+        <h2>塾長紹介</h2>
+        <div class="hint">Executive Profile</div>
       </div>
-    </div>
+      <hr class="rule">
 
-    <div class="metrics-row">
-      <div class="metrics-zone">
-        <div class="metrics-zone-title">プール</div>
-        <div id="metricsPoolZone" class="metrics-zone-list"></div>
+      <article class="profile">
+        <div class="profile-grid">
+          <div class="photo">
+            <!-- <img src="https://example.com/takenaka.jpg" alt="竹中 重人"> -->
+            <div class="ph">PHOTO</div>
+          </div>
+
+          <div class="who">
+            <div>
+              <h3 class="name">竹中 重人</h3>
+              <p class="role">ワールドシフト株式会社 代表／SHiFT塾 塾長</p>
+              <div class="meta-row">
+                <span class="meta"><span class="dot"></span> 年間流通総額 60億円</span>
+                <span class="meta"><span class="dot"></span> MES-AI-A 開発</span>
+                <span class="meta"><span class="dot"></span> SLC-Prime</span>
+              </div>
+            </div>
+
+            <div class="block">
+              <div class="label">CAREER</div>
+              <table class="timeline" aria-label="経歴">
+                <tbody>
+                  <tr><th>2005</th><td>輸入物販事業を開始</td></tr>
+                  <tr><th>2008</th><td>中国輸入を本格化</td></tr>
+                  <tr><th>2013</th><td>コンサルグループ「SHiFT」設立</td></tr>
+                  <tr><th>2017</th><td>「SHiFT塾」創設</td></tr>
+                  <tr><th>2020</th><td>MES-AI-Aツール開発</td></tr>
+                  <tr><th>2021</th><td>SLC-Primeサービス開始</td></tr>
+                  <tr><th>2023</th><td>年間流通総額60億円突破。クラウド輸出®の基盤を確立。</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="block">
+              <div class="label">MEDIA / PARTNERSHIP</div>
+              <div class="media-grid">
+                <div class="media-card">
+                  <p class="media-title">福岡ソフトバンクホークス 公式スポンサー</p>
+                  <p class="media-desc">本拠地・PayPayドームのバックネット裏に広告を掲載中。</p>
+                  <button class="btn" type="button" onclick="openModal('ホークス公式スポンサー','')">PHOTO</button>
+                </div>
+                <div class="media-card">
+                  <p class="media-title">JETRO パートナーシップ認定</p>
+                  <p class="media-desc">海外展開支援の取り組みとして認定。</p>
+                  <button class="btn" type="button" onclick="openModal('JETRO パートナー認定','')">PHOTO</button>
+                </div>
+                <div class="media-card">
+                  <p class="media-title">本出版（竹中重人 著）</p>
+                  <p class="media-desc">実務ノウハウを体系化し、再現性のある形で提供。</p>
+                  <button class="btn" type="button" onclick="openModal('本出版','')">PHOTO</button>
+                </div>
+                <div class="media-card">
+                  <p class="media-title">メディア掲載（TV／経済メディア等）</p>
+                  <p class="media-desc">「王様のブランチ」ほか、各種媒体で紹介。</p>
+                  <button class="btn" type="button" onclick="openModal('メディア掲載','')">PHOTO</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </article>
+
+      <div class="message" aria-label="塾長メッセージ">
+        <h3>MESSAGE</h3>
+        <p>
+みなさんこんにちは！SHiFT塾塾長の竹中です。
+
+私はみなさんよりもずっと前にAmazon輸出に挑戦し、その経験を通じて独立を勝ち取りました。
+当時と比べ、今は大きく円安が加速。アメリカには大きなチャンスがあります。
+さらに、私たちが開発したツール「MES-AI-A」によって“売れるモノ”が誰でもわかる時代になりました。
+
+SHiFT塾では、その波に乗って多くの受講生が独立を果たし、
+中には年商数億円を達成したメンバーも多数誕生しています。
+
+次は、あなたの番です。
+私たちと一緒に「世界で戦う力」を、実戦を通じて身につけていきましょう。
+        </p>
       </div>
-      <div class="metrics-zone">
-        <div class="metrics-zone-title">商品情報</div>
-        <div id="metricsInfoZone" class="metrics-zone-list"></div>
+    </section>
+
+    <!-- VICE DIRECTOR -->
+    <section class="section" aria-label="副塾長紹介">
+      <div class="section-title">
+        <h2>副塾長紹介</h2>
+        <div class="hint">Vice Director Profile</div>
       </div>
-      <div class="metrics-zone">
-        <div class="metrics-zone-title">真ん中の枠</div>
-        <div id="metricsCenterZone" class="metrics-zone-list"></div>
+      <hr class="rule">
+
+      <article class="profile">
+        <div class="profile-grid">
+          <div class="photo">
+            <!-- <img src="https://example.com/vice.jpg" alt="副塾長 氏名"> -->
+            <div class="ph">PHOTO</div>
+          </div>
+
+          <div class="who">
+            <div>
+              <h3 class="name">副塾長 氏名</h3>
+              <p class="role">ワールドシフト株式会社 ／ SHiFT塾 副塾長</p>
+              <div class="meta-row">
+                <span class="meta"><span class="dot"></span> 実務伴走</span>
+                <span class="meta"><span class="dot"></span> 改善・戦略設計</span>
+                <span class="meta"><span class="dot"></span> 運用最適化</span>
+              </div>
+            </div>
+
+            <div class="block">
+              <div class="label">CAREER</div>
+              <table class="timeline" aria-label="副塾長 経歴">
+                <tbody>
+                  <tr><th>20XX</th><td>物販・ECビジネスを開始</td></tr>
+                  <tr><th>20XX</th><td>Amazon US 輸出を本格化</td></tr>
+                  <tr><th>20XX</th><td>複数ジャンルで利益最大化を実現</td></tr>
+                  <tr><th>20XX</th><td>SHiFT塾 講師として参画</td></tr>
+                  <tr><th>20XX</th><td>副塾長に就任</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="block">
+              <div class="label">ROLE / EXPERTISE</div>
+              <div class="media-grid">
+                <div class="media-card">
+                  <p class="media-title">受講生伴走・戦略設計</p>
+                  <p class="media-desc">初期設計〜改善まで、現場に即した伴走を担当。</p>
+                  <button class="btn" type="button" onclick="openModal('受講生伴走','')">DETAIL</button>
+                </div>
+                <div class="media-card">
+                  <p class="media-title">Amazon運用・改善指導</p>
+                  <p class="media-desc">リサーチ／価格設計／広告など、運用最適化を支援。</p>
+                  <button class="btn" type="button" onclick="openModal('Amazon運用','')">DETAIL</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </article>
+
+      <div class="message" aria-label="副塾長メッセージ">
+        <h3>MESSAGE</h3>
+        <p>
+SHiFT塾 副塾長の〇〇です。
+
+多くの受講生と伴走する中で感じるのは、
+「正しい環境」と「実行できる仕組み」があれば、
+海外ビジネスは特別な人だけのものではない、ということです。
+
+机上の空論ではなく、“今この瞬間に使える実務”を大切に、
+一緒に、確実に前へ進んでいきましょう。
+        </p>
       </div>
-      <div class="metrics-zone">
-        <div class="metrics-zone-title">下段テーブル</div>
-        <div id="metricsTableZone" class="metrics-zone-list"></div>
+    </section>
+
+    <!-- INSTRUCTORS -->
+    <section class="section" aria-label="講師紹介">
+      <div class="section-title">
+        <h2>講師紹介</h2>
+        <div class="hint">Professional Instructors</div>
       </div>
-      <div class="metrics-zone">
-        <div class="metrics-zone-title">非表示</div>
-        <div id="metricsHiddenZone" class="metrics-zone-list"></div>
+      <hr class="rule">
+
+      <div class="stack">
+
+        <!-- Instructor 1 (画像の文章イメージに近い詳細版) -->
+        <article class="instructor">
+          <div class="instructor-grid">
+            <div class="photo small">
+              <!-- <img src="https://example.com/tanaka.jpg" alt="田中さん"> -->
+              <div class="ph">PHOTO</div>
+            </div>
+
+            <div class="who">
+              <div>
+                <h3 class="name">講師（ニックネーム） 田中さん</h3>
+                <p class="role">副業スタート／堅実運用・リサーチ設計</p>
+                <div class="kpi">
+                  <span class="meta"><span class="dot"></span> 副業でも再現</span>
+                  <span class="meta"><span class="dot"></span> 仕組み化</span>
+                  <span class="meta"><span class="dot"></span> 伴走重視</span>
+                </div>
+              </div>
+
+              <div class="block">
+                <div class="label">自己紹介</div>
+                <p class="media-desc">
+                  サラリーマンとして働きながら副業でAmazon輸出に挑戦。
+                  再現性のあるリサーチと堅実な運用を強みとし、
+                  現在は講師として受講生の伴走を行っています。
+                </p>
+              </div>
+
+              <div class="block">
+                <div class="label">経歴</div>
+                <ul class="media-desc">
+                  <li>2018年：SHiFT塾3期生として入塾、副業でAmazon輸出開始</li>
+                  <li>2020年：サラリーマン年収を超える利益を達成</li>
+                  <li>2021年〜：SHiFT塾 講師として活動開始</li>
+                  <li>2025年：会社員・セラー・講師の三足の草鞋で活動中</li>
+                </ul>
+              </div>
+
+              <div class="block">
+                <div class="label">アピールポイント</div>
+                <ul class="media-desc">
+                  <li>✅ 副業×共働きでも再現が見える「実務の組み立て方」を伝えます</li>
+                  <li>✅ 成功/失敗の両方から得た“ズレない判断基準”を共有します</li>
+                </ul>
+              </div>
+
+              <div class="block">
+                <div class="label">こんな塾生に育ってほしい</div>
+                <p class="media-desc">
+                  日々変わる状況の中でも、自分で考え判断できるセラーとして、
+                  長く活躍できる力を身につけてほしいと考えています。
+                </p>
+              </div>
+
+              <div class="block">
+                <div class="label">担当した塾生の実績</div>
+                <p class="media-desc">月商1,000万円達成塾生を輩出</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Instructor 2 -->
+        <article class="instructor">
+          <div class="instructor-grid">
+            <div class="photo small"><div class="ph">PHOTO</div></div>
+            <div class="who">
+              <div>
+                <h3 class="name">講師（ニックネーム） 佐藤さん</h3>
+                <p class="role">未経験→安定化／初心者サポート特化</p>
+                <div class="kpi">
+                  <span class="meta"><span class="dot"></span> 初心者の躓き解消</span>
+                  <span class="meta"><span class="dot"></span> 手順化</span>
+                  <span class="meta"><span class="dot"></span> 時間管理</span>
+                </div>
+              </div>
+
+              <div class="block">
+                <div class="label">自己紹介</div>
+                <p class="media-desc">
+                  物販未経験からSHiFT塾に参加。
+                  初心者目線で“迷わない手順”に落とし込むのが得意です。
+                </p>
+              </div>
+
+              <div class="block">
+                <div class="label">経歴</div>
+                <ul class="media-desc">
+                  <li>2019年：SHiFT塾入塾（物販未経験スタート）</li>
+                  <li>2021年：Amazon USで安定利益化</li>
+                  <li>2022年〜：講師として活動開始</li>
+                </ul>
+              </div>
+
+              <div class="block">
+                <div class="label">アピールポイント</div>
+                <ul class="media-desc">
+                  <li>✅ 初心者が詰まる“最初の壁”を最短で越える導線設計</li>
+                  <li>✅ 作業の仕組み化・テンプレ化で、継続しやすい運用へ</li>
+                </ul>
+              </div>
+
+              <div class="block">
+                <div class="label">担当した塾生の実績</div>
+                <p class="media-desc">未経験から月商300万円達成者を多数輩出</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Instructor 3 -->
+        <article class="instructor">
+          <div class="instructor-grid">
+            <div class="photo small"><div class="ph">PHOTO</div></div>
+            <div class="who">
+              <div>
+                <h3 class="name">講師（ニックネーム） 鈴木さん</h3>
+                <p class="role">数値管理・改善／広告・利益設計</p>
+                <div class="kpi">
+                  <span class="meta"><span class="dot"></span> KPI設計</span>
+                  <span class="meta"><span class="dot"></span> 広告最適化</span>
+                  <span class="meta"><span class="dot"></span> 利益率改善</span>
+                </div>
+              </div>
+
+              <div class="block">
+                <div class="label">自己紹介</div>
+                <p class="media-desc">
+                  データ分析と改善が得意です。
+                  “売上”ではなく“利益”が残る運用へ導きます。
+                </p>
+              </div>
+
+              <div class="block">
+                <div class="label">アピールポイント</div>
+                <ul class="media-desc">
+                  <li>✅ 数値の見方と改善の優先順位を明確化</li>
+                  <li>✅ 伸びた要因／落ちた要因を再現できる形に落とし込み</li>
+                </ul>
+              </div>
+
+              <div class="block">
+                <div class="label">担当した塾生の実績</div>
+                <p class="media-desc">広告最適化で利益率20%以上を安定化（複数名）</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Instructor 4 -->
+        <article class="instructor">
+          <div class="instructor-grid">
+            <div class="photo small"><div class="ph">PHOTO</div></div>
+            <div class="who">
+              <div>
+                <h3 class="name">講師（ニックネーム） 高橋さん</h3>
+                <p class="role">会社員→独立／独立ロードマップ支援</p>
+                <div class="kpi">
+                  <span class="meta"><span class="dot"></span> 独立設計</span>
+                  <span class="meta"><span class="dot"></span> 収益安定化</span>
+                  <span class="meta"><span class="dot"></span> 事業化</span>
+                </div>
+              </div>
+
+              <div class="block">
+                <div class="label">自己紹介</div>
+                <p class="media-desc">
+                  会社員から独立を経験。
+                  “勢い”ではなく“再現性と安全設計”で独立をサポートします。
+                </p>
+              </div>
+
+              <div class="block">
+                <div class="label">アピールポイント</div>
+                <ul class="media-desc">
+                  <li>✅ 収益・作業量・資金繰りを踏まえた独立判断の基準作り</li>
+                  <li>✅ 事業として継続するための仕組み化・役割分担</li>
+                </ul>
+              </div>
+
+              <div class="block">
+                <div class="label">担当した塾生の実績</div>
+                <p class="media-desc">独立達成者・法人化支援実績あり</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Instructor 5 -->
+        <article class="instructor">
+          <div class="instructor-grid">
+            <div class="photo small"><div class="ph">PHOTO</div></div>
+            <div class="who">
+              <div>
+                <h3 class="name">講師（ニックネーム） 山本さん</h3>
+                <p class="role">地方在住・副業／再現性のある継続運用</p>
+                <div class="kpi">
+                  <span class="meta"><span class="dot"></span> 地方×副業</span>
+                  <span class="meta"><span class="dot"></span> 継続設計</span>
+                  <span class="meta"><span class="dot"></span> 安定利益</span>
+                </div>
+              </div>
+
+              <div class="block">
+                <div class="label">自己紹介</div>
+                <p class="media-desc">
+                  地方在住・副業スタートのロールモデル。
+                  限られた時間でも積み上がる運用の作り方を得意としています。
+                </p>
+              </div>
+
+              <div class="block">
+                <div class="label">担当した塾生の実績</div>
+                <p class="media-desc">地方在住でも月商500万円達成（複数名）</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
       </div>
+    </section>
+
+  </main>
+
+  <!-- Modal -->
+  <dialog id="m">
+    <div class="modal-head">
+      <div class="t" id="mt">MEDIA</div>
+      <button class="x" onclick="closeModal()">CLOSE</button>
     </div>
-
-    <div class="metrics-bar-foot">
-      <button id="resetCurrentBtn" type="button">初期配置に戻す</button>
-      <button id="clearCardsBtn" type="button">表示カードをクリア</button>
-      <button id="clearCartBtn" type="button">カートを空にする</button>
+    <div class="modal-body" id="mb">
+      <div class="empty">画像URLを設定すると表示できます</div>
     </div>
-  </section>
+  </dialog>
 
-  <section class="asin-catalog card">
-    <div class="asin-catalog-head">
-      <div class="asin-catalog-title">データがあるASIN（クリックで表示）</div>
-    </div>
-    <div class="asin-catalog-body" id="asinCatalog"></div>
-  </section>
+  <script>
+    const m = document.getElementById('m');
+    const mt = document.getElementById('mt');
+    const mb = document.getElementById('mb');
 
-  <section id="cartSummary" class="cart-summary card">
-    <div class="cart-head">
-      <div class="card-title">カート</div>
-      <div class="cart-note">※ 仕入れ額(￥)と販売価格($)×為替(固定)で予測</div>
-    </div>
-    <div class="cart-grid">
-      <div><span>今の仕入れ合計額</span><b id="cartTotalCost">￥0</b></div>
-      <div><span>売り上げ予測</span><b id="cartTotalRevenue">￥0</b></div>
-      <div><span>利益予測</span><b id="cartTotalProfit">￥0</b></div>
-      <div><span>今の仕入れASIN数</span><b id="cartAsinCount">0</b></div>
-      <div><span>今の仕入れ商品数</span><b id="cartItemCount">0</b></div>
-    </div>
-  </section>
+    // url に画像URLを渡すと表示できます（今は空欄）
+    function openModal(title, url){
+      mt.textContent = title || "MEDIA";
+      if (!url){
+        mb.innerHTML = '<div class="empty">画像URLを設定すると表示できます</div>';
+      }else{
+        mb.innerHTML = '<img src="'+ url +'" alt="'+ (title||'media') +'">';
+      }
+      m.showModal();
+    }
+    function closeModal(){ m.close(); }
 
-  <div id="emptyState" class="empty card">
-    ASINをクリックして商品を表示してください
-  </div>
-
-  <div id="itemsContainer" class="items-stack"></div>
-</main>
-
-<script src="./asin-data.js"></script>
-<script src="./main.js"></script>
+    // 背景クリックで閉じる
+    m.addEventListener('click', (e) => {
+      const rect = m.getBoundingClientRect();
+      const inside = rect.top <= e.clientY && e.clientY <= rect.bottom &&
+                     rect.left <= e.clientX && e.clientX <= rect.right;
+      if (!inside) closeModal();
+    });
+  </script>
 </body>
 </html>
