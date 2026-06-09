@@ -6,233 +6,323 @@
 <title>Export Lab</title>
 
 <style>
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0;
-  font-family:"Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif;
-  color:#333;
-
-  /* BODY部分の背景画像 */
-  background-image:url("./assets/body-bg.png");
-  background-repeat:repeat;
-  background-size:auto;
-  background-color:#f7fdff;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-a{text-decoration:none;color:inherit}
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:"Noto Sans JP",sans-serif;
+
+    /* BODY背景 */
+    background:url("./body-bg.png");
+    background-repeat:repeat;
+    background-size:auto;
+}
+
+/* =========================
+   HEADER
+========================= */
 
 .header{
-  height:44px;
-  background:#fff;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:0 105px;
-  box-shadow:0 1px 4px #ddd;
-  position:sticky;
-  top:0;
-  z-index:100;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:44px;
+    background:#fff;
+    z-index:9999;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:0 100px;
+
+    box-shadow:0 1px 4px rgba(0,0,0,.1);
 }
 
 .logo{
-  color:#174f99;
-  font-family:Georgia,serif;
-  font-size:28px;
-  font-weight:bold;
+    font-size:30px;
+    font-weight:bold;
+    color:#144b92;
 }
 
-.logo span{color:#e53935}
-
-.auth{display:flex;gap:14px}
-
-.auth a{
-  color:#fff;
-  padding:9px 17px;
-  border-radius:3px;
-  font-weight:bold;
-  font-size:15px;
+.logo span{
+    color:#e74c3c;
 }
 
-.register{background:#ff6048}
-.login{background:#1683c9}
-
-.side{
-  position:absolute;
-  left:58px;
-  width:255px;
-  background:#1786c8;
-  color:#fff;
-  border-radius:0 0 14px 14px;
-  padding:32px 22px 22px;
-  z-index:90;
+.header-buttons{
+    display:flex;
+    gap:10px;
 }
 
-.side.fixed{
-  position:fixed;
-  top:60px;
-  left:58px;
+.btn{
+    color:#fff;
+    text-decoration:none;
+    font-weight:bold;
+    font-size:14px;
+
+    padding:8px 16px;
+    border-radius:3px;
 }
 
-.side a{
-  display:block;
-  padding:14px 16px;
-  font-size:17px;
-  font-weight:800;
+.btn-register{
+    background:#ff6848;
 }
 
-.side .line{
-  border-bottom:1px solid rgba(255,255,255,.55);
+.btn-login{
+    background:#0d84cb;
 }
 
-.side .arrow{
-  float:right;
-  font-size:20px;
+/* =========================
+   SIDE MENU
+========================= */
+
+.side-menu{
+    width:280px;
+
+    background:#1686c8;
+
+    border-radius:0 0 18px 18px;
+
+    padding:28px 22px;
+
+    color:#fff;
+
+    z-index:999;
 }
+
+.side-menu.fixed{
+    position:fixed;
+    left:50px;
+    top:60px;
+}
+
+.side-menu.absolute{
+    position:absolute;
+    left:50px;
+}
+
+.side-menu a{
+    display:block;
+    color:#fff;
+    text-decoration:none;
+    font-size:18px;
+    font-weight:700;
+
+    padding:18px 10px;
+}
+
+.menu-line{
+    border-bottom:1px solid rgba(255,255,255,.5);
+}
+
+.arrow{
+    float:right;
+}
+
+/* =========================
+   MAIN
+========================= */
 
 .main{
-  margin-left:330px;
+    margin-left:360px;
 }
 
-/* TOP画像 */
+/* =========================
+   HERO
+========================= */
+
 .hero{
-  height:620px;
-  background-image:url("./assets/hero.png");
-  background-repeat:no-repeat;
-  background-position:center top;
-  background-size:contain;
+    height:620px;
+
+    margin-top:44px;
+
+    background:url("./hero.png");
+    background-position:center top;
+    background-repeat:no-repeat;
+    background-size:contain;
 }
 
-/* BODY */
+/* =========================
+   CONTENT
+========================= */
+
 .content{
-  padding:0 70px 90px 20px;
+    padding:40px 80px 100px;
 }
 
-/* NEWS */
-.section-title{
-  text-align:center;
-  font-size:32px;
-  font-weight:900;
-  font-style:italic;
-  margin:20px 0 42px;
-}
-
-.news-title{color:#064c91}
-.latest-title{color:#65bf45}
-.hot-title{color:#ff5549}
+/* =========================
+   NEWS
+========================= */
 
 .news{
-  text-align:center;
-  margin-bottom:100px;
+    text-align:center;
+    margin-bottom:100px;
+}
+
+.news h2{
+    color:#0b4f9d;
+    font-size:48px;
+    font-weight:900;
+    font-style:italic;
+
+    margin-bottom:50px;
 }
 
 .news-row{
-  display:flex;
-  justify-content:center;
-  gap:40px;
-  margin:25px 0;
-  font-size:16px;
+    display:flex;
+    justify-content:center;
+    gap:40px;
+
+    margin-bottom:30px;
+
+    font-size:18px;
 }
 
-.more{
-  display:inline-block;
-  margin-top:25px;
-  background:#07549d;
-  color:#fff;
-  padding:10px 22px;
-  border-radius:4px;
-  font-weight:bold;
+.more-btn{
+    display:inline-block;
+
+    background:#074f9a;
+    color:#fff;
+
+    padding:12px 30px;
+
+    border-radius:4px;
+
+    text-decoration:none;
+    font-weight:bold;
+
+    margin-top:20px;
 }
 
-.more.green{background:#63bd45}
-.more.red{background:#ff5549}
+/* =========================
+   TOPIC
+========================= */
 
-/* TOPICS */
-.topics{
-  max-width:1250px;
-  margin:0 auto 115px;
+.section-title{
+    text-align:center;
+
+    font-size:48px;
+    font-weight:900;
+    font-style:italic;
+
+    margin-bottom:50px;
 }
 
-.card{
-  background:#fff;
-  border-radius:14px;
-  padding:20px 24px;
-  margin-bottom:16px;
-  min-height:112px;
-  box-shadow:0 2px 8px rgba(0,0,0,.03);
+.latest{
+    color:#68c248;
 }
 
-.user{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-weight:bold;
+.hot{
+    color:#ff5b4f;
+}
+
+.topic-wrap{
+    max-width:1200px;
+    margin:0 auto 120px;
+}
+
+.topic-card{
+    background:#fff;
+
+    border-radius:15px;
+
+    padding:20px 25px;
+
+    margin-bottom:18px;
+
+    box-shadow:0 3px 10px rgba(0,0,0,.05);
+}
+
+.topic-user{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    margin-bottom:10px;
+
+    font-weight:bold;
 }
 
 .avatar{
-  width:38px;
-  height:38px;
-  border-radius:50%;
-  background:#d8d8d8;
-  display:inline-block;
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    background:#d8d8d8;
 }
 
 .member{
-  color:#0050a0;
-  font-size:13px;
+    color:#0c55a0;
+    font-size:13px;
 }
 
-.status{
-  margin:8px 0;
-  font-size:14px;
+.topic-status{
+    margin-bottom:10px;
 }
 
-.hash{
-  color:#1886c8;
-  font-weight:bold;
+.topic-title{
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:10px;
 }
 
-.q{
-  font-weight:bold;
-  font-size:17px;
+.topic-public{
+    color:#666;
 }
 
-.public{
-  margin-top:8px;
-  font-size:14px;
+.green{
+    background:#68c248;
 }
+
+.red{
+    background:#ff5b4f;
+}
+
+/* =========================
+   MOBILE
+========================= */
 
 @media(max-width:900px){
-  .header{padding:0 16px}
-  .logo{font-size:22px}
-  .auth a{font-size:12px;padding:8px}
 
-  .side{
-    position:static !important;
-    width:auto;
-    margin:0 16px;
-  }
+    .header{
+        padding:0 15px;
+    }
 
-  .side.fixed{position:static !important}
+    .logo{
+        font-size:22px;
+    }
 
-  .main{
-    margin-left:0;
-  }
+    .main{
+        margin-left:0;
+    }
 
-  .hero{
-    height:360px;
-    background-size:cover;
-    background-position:center top;
-  }
+    .hero{
+        height:300px;
+        background-size:cover;
+    }
 
-  .content{
-    padding:30px 16px;
-  }
+    .side-menu{
+        position:static !important;
+        width:auto;
+        margin:20px;
+    }
 
-  .news-row{
-    gap:18px;
-    font-size:14px;
-  }
+    .content{
+        padding:20px;
+    }
+
+    .news-row{
+        flex-direction:column;
+        gap:5px;
+    }
+
 }
 </style>
 </head>
@@ -240,166 +330,191 @@ a{text-decoration:none;color:inherit}
 <body>
 
 <header class="header">
-  <div class="logo">🌐 world SHi<span>F</span>T</div>
-  <div class="auth">
-    <a class="register" href="#">⊞ SHiFT会員登録</a>
-    <a class="login" href="#">👤 ログイン</a>
-  </div>
+
+    <div class="logo">
+        world SHi<span>F</span>T
+    </div>
+
+    <div class="header-buttons">
+        <a href="#" class="btn btn-register">
+            SHiFT会員登録
+        </a>
+
+        <a href="#" class="btn btn-login">
+            ログイン
+        </a>
+    </div>
+
 </header>
 
-<nav class="side">
-  <a href="#latest">LATEST TOPIC</a>
-  <a href="#hot">HOT TOPIC</a>
-  <a href="#">マイページ</a>
-  <a class="line" href="#">TAG <span class="arrow">▼</span></a>
-  <a class="line" href="#">運営BLOG <span class="arrow">▶</span></a>
-  <a class="line" href="#">SHiFT塾とは？ <span class="arrow">▶</span></a>
-  <a class="line" href="#">運営者情報 <span class="arrow">▶</span></a>
+<nav id="sideMenu" class="side-menu">
+
+    <a href="#latest">LATEST TOPIC</a>
+
+    <a href="#hot">HOT TOPIC</a>
+
+    <a href="#">マイページ</a>
+
+    <a href="#" class="menu-line">
+        TAG
+        <span class="arrow">▼</span>
+    </a>
+
+    <a href="#" class="menu-line">
+        運営BLOG
+        <span class="arrow">▶</span>
+    </a>
+
+    <a href="#" class="menu-line">
+        SHiFT塾とは？
+        <span class="arrow">▶</span>
+    </a>
+
+    <a href="#" class="menu-line">
+        運営者情報
+        <span class="arrow">▶</span>
+    </a>
+
 </nav>
 
 <main class="main">
 
-  <!-- TOP画像 -->
-  <section class="hero"></section>
+    <section class="hero"></section>
 
-  <!-- BODY -->
-  <div class="content">
+    <div class="content">
 
-    <section class="news">
-      <h2 class="section-title news-title">NEWS</h2>
+        <section class="news" id="news">
 
-      <div class="news-row">
-        <span>2026/04/16</span>
-        <span>✨ 新規機能追加のお知らせ ✨</span>
-      </div>
+            <h2>NEWS</h2>
 
-      <div class="news-row">
-        <span>2026/04/01</span>
-        <span>🛠 機能修正のお知らせ</span>
-      </div>
+            <div class="news-row">
+                <div>2026/04/16</div>
+                <div>✨ 新規機能追加のお知らせ ✨</div>
+            </div>
 
-      <div class="news-row">
-        <span>2026/02/25</span>
-        <span>🛠 追加・修正機能のお知らせ</span>
-      </div>
+            <div class="news-row">
+                <div>2026/04/01</div>
+                <div>🛠 機能修正のお知らせ</div>
+            </div>
 
-      <a class="more" href="#">⊞ もっと見る</a>
-    </section>
+            <div class="news-row">
+                <div>2026/02/25</div>
+                <div>🛠 追加・修正機能のお知らせ</div>
+            </div>
 
-    <section id="latest" class="topics">
-      <h2 class="section-title latest-title">▱ LATEST TOPIC</h2>
+            <a href="#" class="more-btn">
+                ⊞ もっと見る
+            </a>
 
-      <article class="card">
-        <div class="user">
-          <span class="avatar"></span>
-          SHiFTLogisticsCenterさん
-          <span class="member">SHiFT会員</span> 🏅
-        </div>
-        <div class="status"><span class="hash">#</span>　♟ 募集中</div>
-        <div class="q">Q【米Amazon輸出】売れているのに利益が残らない原因は？FBA納品で見落としがちな発送バランス設計とは</div>
-        <div class="public">会員以外にも公開</div>
-      </article>
+        </section>
 
-      <article class="card">
-        <div class="user">
-          <span class="avatar"></span>
-          SHiFT塾　サポート＆運営事務局さん
-          <span class="member">SHiFT会員</span> 🏅
-        </div>
-        <div class="status"><span class="hash">#</span>　♟ 募集中</div>
-        <div class="q">Q 売上上位プレイヤーは知ってる 👀 利益商品を見つけるためのコツとは…？！</div>
-        <div class="public">会員以外にも公開</div>
-      </article>
+        <section id="latest">
 
-      <article class="card">
-        <div class="user">
-          <span class="avatar"></span>
-          MES-AI-Aアプリ化担当Ｋ 🚀 さん
-          <span class="member">SHiFT会員</span>
-        </div>
-        <div class="status"><span class="hash">#</span>　♟ 募集中</div>
-        <div class="q">Q【EP06】MES-AI-A　WEBアプリ化プロジェクト　リリース日と新ツール名称の発表 🎉</div>
-        <div class="public">会員以外にも公開</div>
-      </article>
+            <h2 class="section-title latest">
+                LATEST TOPIC
+            </h2>
 
-      <p style="text-align:center">
-        <a class="more green" href="#">⊞ もっと見る</a>
-      </p>
-    </section>
+            <div class="topic-wrap">
 
-    <section id="hot" class="topics">
-      <h2 class="section-title hot-title">🔥 HOT TOPIC</h2>
+                <div class="topic-card">
 
-      <article class="card">
-        <div class="user">
-          <span class="avatar"></span>
-          MES-AI-Aアプリ化担当Ｋ 🚀 さん
-          <span class="member">SHiFT会員</span>
-        </div>
-        <div class="status"><span class="hash">#</span>　♟ 募集中</div>
-        <div class="q">Q【EP02】MES-AI-A WEBアプリ化プロジェクト　みなさまの声Q&A ✨</div>
-        <div class="public">会員以外にも公開</div>
-      </article>
+                    <div class="topic-user">
+                        <div class="avatar"></div>
+                        SHiFTLogisticsCenterさん
+                        <span class="member">SHiFT会員</span>
+                    </div>
 
-      <article class="card">
-        <div class="user">
-          <span class="avatar"></span>
-          えるむぎさん
-          <span class="member">SHiFT会員</span>
-        </div>
-        <div class="status"><span class="hash">#</span>　✅ 解決済み　🚨 急いでいます</div>
-        <div class="q">Q 関税についてご存じの方いらっしゃいますか？</div>
-        <div class="public">会員以外にも公開</div>
-      </article>
+                    <div class="topic-status">
+                        # 募集中
+                    </div>
 
-      <article class="card">
-        <div class="user">
-          <span class="avatar"></span>
-          anさん
-          <span class="member">SHiFT会員</span>
-        </div>
-        <div class="status"><span class="hash">#</span>　♟ 募集中</div>
-        <div class="q">Q 仕入れ商品のリサーチについて</div>
-        <div class="public">会員以外にも公開</div>
-      </article>
+                    <div class="topic-title">
+                        【米Amazon輸出】売れているのに利益が残らない原因は？
+                    </div>
 
-      <p style="text-align:center">
-        <a class="more red" href="#">⊞ もっと見る</a>
-      </p>
-    </section>
+                    <div class="topic-public">
+                        会員以外にも公開
+                    </div>
 
-  </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <section id="hot">
+
+            <h2 class="section-title hot">
+                HOT TOPIC
+            </h2>
+
+            <div class="topic-wrap">
+
+                <div class="topic-card">
+
+                    <div class="topic-user">
+                        <div class="avatar"></div>
+                        MES-AI-Aアプリ化担当Ｋさん
+                    </div>
+
+                    <div class="topic-status">
+                        # 募集中
+                    </div>
+
+                    <div class="topic-title">
+                        WEBアプリ化プロジェクト Q&A
+                    </div>
+
+                    <div class="topic-public">
+                        会員以外にも公開
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
 </main>
 
 <script>
-const menu = document.querySelector(".side");
-const news = document.querySelector(".news");
+
+const menu = document.getElementById("sideMenu");
+const news = document.getElementById("news");
 
 function updateMenu(){
-  if(window.innerWidth <= 900){
-    menu.classList.remove("fixed");
-    menu.style.top = "";
-    return;
-  }
 
-  const newsTop = news.getBoundingClientRect().top + window.scrollY;
-  const menuTop = newsTop - 40;
+    if(window.innerWidth <= 900){
+        return;
+    }
 
-  if(window.scrollY < menuTop - 60){
-    menu.classList.remove("fixed");
-    menu.style.position = "absolute";
-    menu.style.top = menuTop + "px";
-  }else{
-    menu.style.position = "";
-    menu.style.top = "";
-    menu.classList.add("fixed");
-  }
+    const newsTop =
+        news.offsetTop;
+
+    const menuStart =
+        newsTop - 20;
+
+    if(window.scrollY > menuStart){
+
+        menu.classList.remove("absolute");
+        menu.classList.add("fixed");
+
+    }else{
+
+        menu.classList.remove("fixed");
+        menu.classList.add("absolute");
+
+        menu.style.top =
+            menuStart + "px";
+    }
 }
 
-window.addEventListener("scroll", updateMenu);
-window.addEventListener("resize", updateMenu);
-window.addEventListener("load", updateMenu);
-updateMenu();
+window.addEventListener("scroll",updateMenu);
+window.addEventListener("resize",updateMenu);
+window.addEventListener("load",updateMenu);
+
 </script>
 
 </body>
