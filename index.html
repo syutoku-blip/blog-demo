@@ -13,7 +13,7 @@ body{
   color:#333;
   background:#fff;
 }
-a{color:inherit;text-decoration:none}
+a{text-decoration:none;color:inherit}
 
 .header{
   position:fixed;
@@ -47,25 +47,25 @@ a{color:inherit;text-decoration:none}
 .register{background:#ff6548}
 .login{background:#1284ca}
 
-.page-switch{
+.page-tabs{
   position:fixed;
   right:24px;
   bottom:24px;
-  z-index:1200;
+  z-index:2000;
   display:flex;
   gap:8px;
 }
-.page-switch a{
-  width:38px;
-  height:38px;
+.page-tabs button{
+  width:42px;
+  height:42px;
+  border:none;
   border-radius:50%;
   background:#1686c8;
   color:#fff;
-  display:grid;
-  place-items:center;
   font-weight:bold;
+  cursor:pointer;
 }
-.page-switch a.active{
+.page-tabs button.active{
   background:#ff6548;
 }
 
@@ -84,6 +84,7 @@ a{color:inherit;text-decoration:none}
   position:relative;
   width:100%;
   overflow:hidden;
+  background:#fff;
 }
 .body-bg{
   display:block;
@@ -93,8 +94,8 @@ a{color:inherit;text-decoration:none}
 .body-content{
   position:absolute;
   inset:0;
-  padding:80px 80px 130px 360px;
   z-index:2;
+  padding:80px 80px 130px 360px;
 }
 
 .side-menu{
@@ -134,6 +135,19 @@ a{color:inherit;text-decoration:none}
   line-height:1;
   margin-bottom:48px;
 }
+.news{margin-bottom:115px;text-align:center}
+.news h2{color:#07549d}
+.news-row{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:42px;
+  margin-bottom:28px;
+  font-size:18px;
+}
+.news-date{min-width:120px;text-align:left}
+.news-text{min-width:360px;text-align:left}
+
 .more-btn-wrap{text-align:center}
 .more-btn{
   display:inline-block;
@@ -147,28 +161,6 @@ a{color:inherit;text-decoration:none}
 .blue-btn{background:#07549d}
 .green-btn{background:#64bf45}
 .red-btn{background:#ff5b4f}
-
-.news{
-  text-align:center;
-  margin-bottom:115px;
-}
-.news h2{color:#07549d}
-.news-row{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:42px;
-  margin-bottom:28px;
-  font-size:18px;
-}
-.news-date{
-  min-width:120px;
-  text-align:left;
-}
-.news-text{
-  min-width:360px;
-  text-align:left;
-}
 
 .topic-section{
   max-width:1200px;
@@ -199,7 +191,7 @@ a{color:inherit;text-decoration:none}
   background:#d8d8d8;
   position:relative;
 }
-.avatar::before{
+.avatar:before{
   content:"";
   position:absolute;
   width:15px;
@@ -209,7 +201,7 @@ a{color:inherit;text-decoration:none}
   top:7px;
   left:12px;
 }
-.avatar::after{
+.avatar:after{
   content:"";
   position:absolute;
   width:22px;
@@ -219,28 +211,17 @@ a{color:inherit;text-decoration:none}
   left:9px;
   bottom:7px;
 }
-.member{
-  color:#07549d;
-  font-size:13px;
-}
-.topic-status{
-  margin-bottom:10px;
-  font-size:14px;
-}
-.hash{
-  color:#1284ca;
-  font-weight:bold;
-}
+.member{color:#07549d;font-size:13px}
+.topic-status{margin-bottom:10px;font-size:14px}
+.hash{color:#1284ca;font-weight:bold}
 .topic-title{
   font-size:18px;
   font-weight:bold;
   line-height:1.7;
   margin-bottom:8px;
 }
-.topic-public{
-  color:#555;
-  font-size:14px;
-}
+.topic-public{color:#555;font-size:14px}
+
 .footer{
   text-align:center;
   padding:40px 20px;
@@ -253,7 +234,6 @@ a{color:inherit;text-decoration:none}
   .header{padding:0 18px}
   .logo{font-size:22px}
   .header-btn{font-size:12px;padding:7px 10px}
-
   .body-section{
     overflow:visible;
     background-position:center top;
@@ -269,7 +249,7 @@ a{color:inherit;text-decoration:none}
   .side-menu,
   .side-menu.absolute,
   .side-menu.fixed{
-    position:static !important;
+    position:static!important;
     width:auto;
     margin:0 0 50px;
   }
@@ -299,12 +279,12 @@ a{color:inherit;text-decoration:none}
   </div>
 </header>
 
-<nav class="page-switch">
-  <a href="?page=1" data-page="1">1</a>
-  <a href="?page=2" data-page="2">2</a>
-  <a href="?page=3" data-page="3">3</a>
-  <a href="?page=4" data-page="4">4</a>
-</nav>
+<div class="page-tabs">
+  <button type="button" data-page="1">1</button>
+  <button type="button" data-page="2">2</button>
+  <button type="button" data-page="3">3</button>
+  <button type="button" data-page="4">4</button>
+</div>
 
 <section class="hero">
   <img id="heroImage" src="./hero1.png" alt="Export Lab">
@@ -332,10 +312,12 @@ a{color:inherit;text-decoration:none}
         <div class="news-date">2026/04/16</div>
         <div class="news-text">✨ 新規機能追加のお知らせ ✨</div>
       </div>
+
       <div class="news-row">
         <div class="news-date">2026/04/01</div>
         <div class="news-text">🛠 機能修正のお知らせ</div>
       </div>
+
       <div class="news-row">
         <div class="news-date">2026/02/25</div>
         <div class="news-text">🛠 追加・修正機能のお知らせ</div>
@@ -357,7 +339,9 @@ a{color:inherit;text-decoration:none}
           <span>🏅</span>
         </div>
         <div class="topic-status"><span class="hash">#</span>　♟ 募集中</div>
-        <div class="topic-title">Q【米Amazon輸出】売れているのに利益が残らない原因は？FBA納品で見落としがちな発送バランス設計とは</div>
+        <div class="topic-title">
+          Q【米Amazon輸出】売れているのに利益が残らない原因は？FBA納品で見落としがちな発送バランス設計とは
+        </div>
         <div class="topic-public">会員以外にも公開</div>
       </article>
 
@@ -369,7 +353,9 @@ a{color:inherit;text-decoration:none}
           <span>🏅</span>
         </div>
         <div class="topic-status"><span class="hash">#</span>　♟ 募集中</div>
-        <div class="topic-title">Q 売上上位プレイヤーは知ってる 👀 利益商品を見つけるためのコツとは…？！</div>
+        <div class="topic-title">
+          Q 売上上位プレイヤーは知ってる 👀 利益商品を見つけるためのコツとは…？！
+        </div>
         <div class="topic-public">会員以外にも公開</div>
       </article>
 
@@ -380,7 +366,9 @@ a{color:inherit;text-decoration:none}
           <span class="member">SHiFT会員</span>
         </div>
         <div class="topic-status"><span class="hash">#</span>　♟ 募集中</div>
-        <div class="topic-title">Q【EP06】MES-AI-A　WEBアプリ化プロジェクト　リリース日と新ツール名称の発表 🎉</div>
+        <div class="topic-title">
+          Q【EP06】MES-AI-A　WEBアプリ化プロジェクト　リリース日と新ツール名称の発表 🎉
+        </div>
         <div class="topic-public">会員以外にも公開</div>
       </article>
 
@@ -399,7 +387,9 @@ a{color:inherit;text-decoration:none}
           <span class="member">SHiFT会員</span>
         </div>
         <div class="topic-status"><span class="hash">#</span>　♟ 募集中</div>
-        <div class="topic-title">Q【EP02】MES-AI-A WEBアプリ化プロジェクト　みなさまの声Q&amp;A ✨</div>
+        <div class="topic-title">
+          Q【EP02】MES-AI-A WEBアプリ化プロジェクト　みなさまの声Q&amp;A ✨
+        </div>
         <div class="topic-public">会員以外にも公開</div>
       </article>
 
@@ -409,8 +399,12 @@ a{color:inherit;text-decoration:none}
           <span>えるむぎさん</span>
           <span class="member">SHiFT会員</span>
         </div>
-        <div class="topic-status"><span class="hash">#</span>　✅ 解決済み　🚨 急いでいます</div>
-        <div class="topic-title">Q 関税についてご存じの方いらっしゃいますか？</div>
+        <div class="topic-status">
+          <span class="hash">#</span>　✅ 解決済み　🚨 急いでいます
+        </div>
+        <div class="topic-title">
+          Q 関税についてご存じの方いらっしゃいますか？
+        </div>
         <div class="topic-public">会員以外にも公開</div>
       </article>
 
@@ -421,7 +415,9 @@ a{color:inherit;text-decoration:none}
           <span class="member">SHiFT会員</span>
         </div>
         <div class="topic-status"><span class="hash">#</span>　♟ 募集中</div>
-        <div class="topic-title">Q 仕入れ商品のリサーチについて</div>
+        <div class="topic-title">
+          Q 仕入れ商品のリサーチについて
+        </div>
         <div class="topic-public">会員以外にも公開</div>
       </article>
 
@@ -438,45 +434,43 @@ a{color:inherit;text-decoration:none}
 </footer>
 
 <script>
-const pageData = {
-  1: {
-    hero: "./hero1.png",
-    body: "./body1.png"
-  },
-  2: {
-    hero: "./hero2.png",
-    body: "./body2.png"
-  },
-  3: {
-    hero: "./hero3.png",
-    body: "./body3.png"
-  },
-  4: {
-    hero: "./hero4.png",
-    body: "./body4.png"
-  }
+const pageImages = {
+  1:{hero:"./hero1.png",body:"./body1.png"},
+  2:{hero:"./hero2.png",body:"./body2.png"},
+  3:{hero:"./hero3.png",body:"./body3.png"},
+  4:{hero:"./hero4.png",body:"./body4.png"}
 };
-
-const params = new URLSearchParams(window.location.search);
-let currentPage = params.get("page") || "1";
-
-if(!pageData[currentPage]){
-  currentPage = "1";
-}
 
 const heroImage = document.getElementById("heroImage");
 const bodyImage = document.getElementById("bodyImage");
 const bodySection = document.getElementById("bodySection");
+const buttons = document.querySelectorAll(".page-tabs button");
 
-heroImage.src = pageData[currentPage].hero;
-bodyImage.src = pageData[currentPage].body;
+function setPage(page){
+  if(!pageImages[page]) page = "1";
 
-bodySection.style.backgroundImage = `url('${pageData[currentPage].body}')`;
+  heroImage.src = pageImages[page].hero;
+  bodyImage.src = pageImages[page].body;
 
-document.querySelectorAll(".page-switch a").forEach(link => {
-  if(link.dataset.page === currentPage){
-    link.classList.add("active");
-  }
+  bodySection.style.backgroundImage = `url("${pageImages[page].body}")`;
+
+  buttons.forEach(btn=>{
+    btn.classList.toggle("active",btn.dataset.page === page);
+  });
+
+  const url = new URL(window.location);
+  url.searchParams.set("page",page);
+  history.replaceState(null,"",url);
+}
+
+const params = new URLSearchParams(window.location.search);
+setPage(params.get("page") || "1");
+
+buttons.forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    setPage(btn.dataset.page);
+    window.scrollTo({top:0,behavior:"smooth"});
+  });
 });
 
 const sideMenu = document.getElementById("sideMenu");
@@ -506,9 +500,9 @@ function updateMenu(){
   }
 }
 
-window.addEventListener("scroll", updateMenu);
-window.addEventListener("resize", updateMenu);
-window.addEventListener("load", updateMenu);
+window.addEventListener("scroll",updateMenu);
+window.addEventListener("resize",updateMenu);
+window.addEventListener("load",updateMenu);
 updateMenu();
 </script>
 
