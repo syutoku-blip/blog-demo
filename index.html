@@ -2,27 +2,29 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Export Lab</title>
 
 <style>
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
 }
 
 html{
-    scroll-behavior:smooth;
+  scroll-behavior:smooth;
 }
 
 body{
-    font-family:"Noto Sans JP",sans-serif;
+  font-family:"Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif;
+  color:#333;
+  background:#fff;
+}
 
-    /* BODY背景 */
-    background:url("./body-bg.png");
-    background-repeat:repeat;
-    background-size:auto;
+a{
+  color:inherit;
+  text-decoration:none;
 }
 
 /* =========================
@@ -30,109 +32,51 @@ body{
 ========================= */
 
 .header{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:44px;
-    background:#fff;
-    z-index:9999;
-
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
-    padding:0 100px;
-
-    box-shadow:0 1px 4px rgba(0,0,0,.1);
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:44px;
+  background:#fff;
+  z-index:1000;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0 100px;
+  box-shadow:0 1px 4px rgba(0,0,0,.12);
 }
 
 .logo{
-    font-size:30px;
-    font-weight:bold;
-    color:#144b92;
+  color:#174f99;
+  font-family:Georgia,serif;
+  font-size:28px;
+  font-weight:bold;
+  letter-spacing:.3px;
 }
 
 .logo span{
-    color:#e74c3c;
+  color:#e53935;
 }
 
 .header-buttons{
-    display:flex;
-    gap:10px;
+  display:flex;
+  gap:12px;
 }
 
-.btn{
-    color:#fff;
-    text-decoration:none;
-    font-weight:bold;
-    font-size:14px;
-
-    padding:8px 16px;
-    border-radius:3px;
+.header-btn{
+  color:#fff;
+  font-weight:bold;
+  font-size:14px;
+  padding:8px 16px;
+  border-radius:3px;
 }
 
-.btn-register{
-    background:#ff6848;
+.register{
+  background:#ff6548;
 }
 
-.btn-login{
-    background:#0d84cb;
-}
-
-/* =========================
-   SIDE MENU
-========================= */
-
-.side-menu{
-    width:280px;
-
-    background:#1686c8;
-
-    border-radius:0 0 18px 18px;
-
-    padding:28px 22px;
-
-    color:#fff;
-
-    z-index:999;
-}
-
-.side-menu.fixed{
-    position:fixed;
-    left:50px;
-    top:60px;
-}
-
-.side-menu.absolute{
-    position:absolute;
-    left:50px;
-}
-
-.side-menu a{
-    display:block;
-    color:#fff;
-    text-decoration:none;
-    font-size:18px;
-    font-weight:700;
-
-    padding:18px 10px;
-}
-
-.menu-line{
-    border-bottom:1px solid rgba(255,255,255,.5);
-}
-
-.arrow{
-    float:right;
-}
-
-/* =========================
-   MAIN
-========================= */
-
-.main{
-    margin-left:360px;
+.login{
+  background:#1284ca;
 }
 
 /* =========================
@@ -140,22 +84,109 @@ body{
 ========================= */
 
 .hero{
-    height:620px;
+  width:100%;
+  margin-top:44px;
+  line-height:0;
+  background:#fff;
+}
 
-    margin-top:44px;
-
-    background:url("./hero.png");
-    background-position:center top;
-    background-repeat:no-repeat;
-    background-size:contain;
+.hero img{
+  display:block;
+  width:100%;
+  height:auto;
 }
 
 /* =========================
-   CONTENT
+   BODY AREA
 ========================= */
 
-.content{
-    padding:40px 80px 100px;
+.body-area{
+  position:relative;
+  width:100%;
+  min-height:100vh;
+  background-image:url("./body-bg.png");
+  background-repeat:repeat;
+  background-size:auto;
+  padding:70px 70px 130px 360px;
+}
+
+/* =========================
+   SIDE MENU
+========================= */
+
+.side-menu{
+  width:280px;
+  background:#1686c8;
+  color:#fff;
+  border-radius:0 0 18px 18px;
+  padding:28px 22px 24px;
+  z-index:900;
+}
+
+.side-menu.absolute{
+  position:absolute;
+  left:50px;
+}
+
+.side-menu.fixed{
+  position:fixed;
+  left:50px;
+  top:60px;
+}
+
+.side-menu a{
+  display:block;
+  color:#fff;
+  font-size:18px;
+  font-weight:800;
+  padding:17px 10px;
+}
+
+.side-menu .line{
+  border-bottom:1px solid rgba(255,255,255,.55);
+}
+
+.arrow{
+  float:right;
+}
+
+/* =========================
+   COMMON
+========================= */
+
+.section-title{
+  text-align:center;
+  font-size:48px;
+  font-weight:900;
+  font-style:italic;
+  line-height:1;
+  margin-bottom:48px;
+}
+
+.more-btn-wrap{
+  text-align:center;
+}
+
+.more-btn{
+  display:inline-block;
+  margin-top:24px;
+  color:#fff;
+  padding:12px 30px;
+  border-radius:4px;
+  font-size:15px;
+  font-weight:bold;
+}
+
+.blue-btn{
+  background:#07549d;
+}
+
+.green-btn{
+  background:#64bf45;
+}
+
+.red-btn{
+  background:#ff5b4f;
 }
 
 /* =========================
@@ -163,166 +194,187 @@ body{
 ========================= */
 
 .news{
-    text-align:center;
-    margin-bottom:100px;
+  text-align:center;
+  margin-bottom:115px;
 }
 
 .news h2{
-    color:#0b4f9d;
-    font-size:48px;
-    font-weight:900;
-    font-style:italic;
-
-    margin-bottom:50px;
+  color:#07549d;
 }
 
 .news-row{
-    display:flex;
-    justify-content:center;
-    gap:40px;
-
-    margin-bottom:30px;
-
-    font-size:18px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:42px;
+  margin-bottom:28px;
+  font-size:18px;
 }
 
-.more-btn{
-    display:inline-block;
+.news-date{
+  min-width:120px;
+  text-align:left;
+}
 
-    background:#074f9a;
-    color:#fff;
-
-    padding:12px 30px;
-
-    border-radius:4px;
-
-    text-decoration:none;
-    font-weight:bold;
-
-    margin-top:20px;
+.news-text{
+  min-width:360px;
+  text-align:left;
 }
 
 /* =========================
-   TOPIC
+   TOPICS
 ========================= */
 
-.section-title{
-    text-align:center;
-
-    font-size:48px;
-    font-weight:900;
-    font-style:italic;
-
-    margin-bottom:50px;
+.topic-section{
+  max-width:1200px;
+  margin:0 auto 120px;
 }
 
-.latest{
-    color:#68c248;
+.latest-title{
+  color:#64bf45;
 }
 
-.hot{
-    color:#ff5b4f;
-}
-
-.topic-wrap{
-    max-width:1200px;
-    margin:0 auto 120px;
+.hot-title{
+  color:#ff5b4f;
 }
 
 .topic-card{
-    background:#fff;
-
-    border-radius:15px;
-
-    padding:20px 25px;
-
-    margin-bottom:18px;
-
-    box-shadow:0 3px 10px rgba(0,0,0,.05);
+  background:#fff;
+  border-radius:15px;
+  padding:20px 25px 18px;
+  margin-bottom:18px;
+  box-shadow:0 3px 10px rgba(0,0,0,.05);
 }
 
 .topic-user{
-    display:flex;
-    align-items:center;
-    gap:10px;
-
-    margin-bottom:10px;
-
-    font-weight:bold;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px;
+  font-weight:bold;
+  font-size:15px;
 }
 
 .avatar{
-    width:40px;
-    height:40px;
-    border-radius:50%;
-    background:#d8d8d8;
+  width:40px;
+  height:40px;
+  flex:0 0 40px;
+  border-radius:50%;
+  background:#d8d8d8;
+  position:relative;
+}
+
+.avatar::before{
+  content:"";
+  position:absolute;
+  width:15px;
+  height:15px;
+  border-radius:50%;
+  background:#fff;
+  top:7px;
+  left:12px;
+}
+
+.avatar::after{
+  content:"";
+  position:absolute;
+  width:22px;
+  height:12px;
+  border-radius:12px 12px 0 0;
+  background:#fff;
+  left:9px;
+  bottom:7px;
 }
 
 .member{
-    color:#0c55a0;
-    font-size:13px;
+  color:#07549d;
+  font-size:13px;
 }
 
 .topic-status{
-    margin-bottom:10px;
+  margin-bottom:10px;
+  font-size:14px;
+}
+
+.hash{
+  color:#1284ca;
+  font-weight:bold;
 }
 
 .topic-title{
-    font-size:18px;
-    font-weight:bold;
-    margin-bottom:10px;
+  font-size:18px;
+  font-weight:bold;
+  line-height:1.7;
+  margin-bottom:8px;
 }
 
 .topic-public{
-    color:#666;
-}
-
-.green{
-    background:#68c248;
-}
-
-.red{
-    background:#ff5b4f;
+  color:#555;
+  font-size:14px;
 }
 
 /* =========================
-   MOBILE
+   FOOTER
 ========================= */
 
-@media(max-width:900px){
+.footer{
+  text-align:center;
+  padding:40px 20px;
+  color:#fff;
+  background:#1686c8;
+  font-size:14px;
+}
 
-    .header{
-        padding:0 15px;
-    }
+/* =========================
+   RESPONSIVE
+========================= */
 
-    .logo{
-        font-size:22px;
-    }
+@media(max-width:1000px){
 
-    .main{
-        margin-left:0;
-    }
+  .header{
+    padding:0 18px;
+  }
 
-    .hero{
-        height:300px;
-        background-size:cover;
-    }
+  .logo{
+    font-size:22px;
+  }
 
-    .side-menu{
-        position:static !important;
-        width:auto;
-        margin:20px;
-    }
+  .header-btn{
+    font-size:12px;
+    padding:7px 10px;
+  }
 
-    .content{
-        padding:20px;
-    }
+  .body-area{
+    padding:30px 18px 90px;
+  }
 
-    .news-row{
-        flex-direction:column;
-        gap:5px;
-    }
+  .side-menu,
+  .side-menu.absolute,
+  .side-menu.fixed{
+    position:static !important;
+    width:auto;
+    margin:0 0 50px;
+  }
 
+  .section-title{
+    font-size:38px;
+  }
+
+  .news-row{
+    flex-direction:column;
+    gap:5px;
+    font-size:15px;
+  }
+
+  .news-date,
+  .news-text{
+    min-width:0;
+    text-align:center;
+  }
+
+  .topic-title{
+    font-size:16px;
+  }
 }
 </style>
 </head>
@@ -330,191 +382,231 @@ body{
 <body>
 
 <header class="header">
+  <div class="logo">world SHi<span>F</span>T</div>
 
-    <div class="logo">
-        world SHi<span>F</span>T
-    </div>
-
-    <div class="header-buttons">
-        <a href="#" class="btn btn-register">
-            SHiFT会員登録
-        </a>
-
-        <a href="#" class="btn btn-login">
-            ログイン
-        </a>
-    </div>
-
+  <div class="header-buttons">
+    <a href="#" class="header-btn register">SHiFT会員登録</a>
+    <a href="#" class="header-btn login">ログイン</a>
+  </div>
 </header>
 
-<nav id="sideMenu" class="side-menu">
+<section class="hero">
+  <img src="./hero.png" alt="Export Lab">
+</section>
 
+<section class="body-area" id="bodyArea">
+
+  <nav class="side-menu absolute" id="sideMenu">
     <a href="#latest">LATEST TOPIC</a>
-
     <a href="#hot">HOT TOPIC</a>
-
     <a href="#">マイページ</a>
 
-    <a href="#" class="menu-line">
-        TAG
-        <span class="arrow">▼</span>
+    <a href="#" class="line">
+      TAG
+      <span class="arrow">▼</span>
     </a>
 
-    <a href="#" class="menu-line">
-        運営BLOG
-        <span class="arrow">▶</span>
+    <a href="#" class="line">
+      運営BLOG
+      <span class="arrow">▶</span>
     </a>
 
-    <a href="#" class="menu-line">
-        SHiFT塾とは？
-        <span class="arrow">▶</span>
+    <a href="#" class="line">
+      SHiFT塾とは？
+      <span class="arrow">▶</span>
     </a>
 
-    <a href="#" class="menu-line">
-        運営者情報
-        <span class="arrow">▶</span>
+    <a href="#" class="line">
+      運営者情報
+      <span class="arrow">▶</span>
     </a>
+  </nav>
 
-</nav>
+  <main class="content">
 
-<main class="main">
+    <section class="news" id="news">
+      <h2 class="section-title">NEWS</h2>
 
-    <section class="hero"></section>
+      <div class="news-row">
+        <div class="news-date">2026/04/16</div>
+        <div class="news-text">✨ 新規機能追加のお知らせ ✨</div>
+      </div>
 
-    <div class="content">
+      <div class="news-row">
+        <div class="news-date">2026/04/01</div>
+        <div class="news-text">🛠 機能修正のお知らせ</div>
+      </div>
 
-        <section class="news" id="news">
+      <div class="news-row">
+        <div class="news-date">2026/02/25</div>
+        <div class="news-text">🛠 追加・修正機能のお知らせ</div>
+      </div>
 
-            <h2>NEWS</h2>
+      <div class="more-btn-wrap">
+        <a href="#" class="more-btn blue-btn">⊞ もっと見る</a>
+      </div>
+    </section>
 
-            <div class="news-row">
-                <div>2026/04/16</div>
-                <div>✨ 新規機能追加のお知らせ ✨</div>
-            </div>
+    <section class="topic-section" id="latest">
+      <h2 class="section-title latest-title">▱ LATEST TOPIC</h2>
 
-            <div class="news-row">
-                <div>2026/04/01</div>
-                <div>🛠 機能修正のお知らせ</div>
-            </div>
+      <article class="topic-card">
+        <div class="topic-user">
+          <span class="avatar"></span>
+          <span>SHiFTLogisticsCenterさん</span>
+          <span class="member">SHiFT会員</span>
+          <span>🏅</span>
+        </div>
+        <div class="topic-status">
+          <span class="hash">#</span>　♟ 募集中
+        </div>
+        <div class="topic-title">
+          Q【米Amazon輸出】売れているのに利益が残らない原因は？FBA納品で見落としがちな発送バランス設計とは
+        </div>
+        <div class="topic-public">
+          会員以外にも公開
+        </div>
+      </article>
 
-            <div class="news-row">
-                <div>2026/02/25</div>
-                <div>🛠 追加・修正機能のお知らせ</div>
-            </div>
+      <article class="topic-card">
+        <div class="topic-user">
+          <span class="avatar"></span>
+          <span>SHiFT塾　サポート＆運営事務局さん</span>
+          <span class="member">SHiFT会員</span>
+          <span>🏅</span>
+        </div>
+        <div class="topic-status">
+          <span class="hash">#</span>　♟ 募集中
+        </div>
+        <div class="topic-title">
+          Q 売上上位プレイヤーは知ってる 👀 利益商品を見つけるためのコツとは…？！
+        </div>
+        <div class="topic-public">
+          会員以外にも公開
+        </div>
+      </article>
 
-            <a href="#" class="more-btn">
-                ⊞ もっと見る
-            </a>
+      <article class="topic-card">
+        <div class="topic-user">
+          <span class="avatar"></span>
+          <span>MES-AI-Aアプリ化担当Ｋ 🚀 さん</span>
+          <span class="member">SHiFT会員</span>
+        </div>
+        <div class="topic-status">
+          <span class="hash">#</span>　♟ 募集中
+        </div>
+        <div class="topic-title">
+          Q【EP06】MES-AI-A　WEBアプリ化プロジェクト　リリース日と新ツール名称の発表 🎉
+        </div>
+        <div class="topic-public">
+          会員以外にも公開
+        </div>
+      </article>
 
-        </section>
+      <div class="more-btn-wrap">
+        <a href="#" class="more-btn green-btn">⊞ もっと見る</a>
+      </div>
+    </section>
 
-        <section id="latest">
+    <section class="topic-section" id="hot">
+      <h2 class="section-title hot-title">🔥 HOT TOPIC</h2>
 
-            <h2 class="section-title latest">
-                LATEST TOPIC
-            </h2>
+      <article class="topic-card">
+        <div class="topic-user">
+          <span class="avatar"></span>
+          <span>MES-AI-Aアプリ化担当Ｋ 🚀 さん</span>
+          <span class="member">SHiFT会員</span>
+        </div>
+        <div class="topic-status">
+          <span class="hash">#</span>　♟ 募集中
+        </div>
+        <div class="topic-title">
+          Q【EP02】MES-AI-A WEBアプリ化プロジェクト　みなさまの声Q&amp;A ✨
+        </div>
+        <div class="topic-public">
+          会員以外にも公開
+        </div>
+      </article>
 
-            <div class="topic-wrap">
+      <article class="topic-card">
+        <div class="topic-user">
+          <span class="avatar"></span>
+          <span>えるむぎさん</span>
+          <span class="member">SHiFT会員</span>
+        </div>
+        <div class="topic-status">
+          <span class="hash">#</span>　✅ 解決済み　🚨 急いでいます
+        </div>
+        <div class="topic-title">
+          Q 関税についてご存じの方いらっしゃいますか？
+        </div>
+        <div class="topic-public">
+          会員以外にも公開
+        </div>
+      </article>
 
-                <div class="topic-card">
+      <article class="topic-card">
+        <div class="topic-user">
+          <span class="avatar"></span>
+          <span>anさん</span>
+          <span class="member">SHiFT会員</span>
+        </div>
+        <div class="topic-status">
+          <span class="hash">#</span>　♟ 募集中
+        </div>
+        <div class="topic-title">
+          Q 仕入れ商品のリサーチについて
+        </div>
+        <div class="topic-public">
+          会員以外にも公開
+        </div>
+      </article>
 
-                    <div class="topic-user">
-                        <div class="avatar"></div>
-                        SHiFTLogisticsCenterさん
-                        <span class="member">SHiFT会員</span>
-                    </div>
+      <div class="more-btn-wrap">
+        <a href="#" class="more-btn red-btn">⊞ もっと見る</a>
+      </div>
+    </section>
 
-                    <div class="topic-status">
-                        # 募集中
-                    </div>
+  </main>
+</section>
 
-                    <div class="topic-title">
-                        【米Amazon輸出】売れているのに利益が残らない原因は？
-                    </div>
-
-                    <div class="topic-public">
-                        会員以外にも公開
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-        <section id="hot">
-
-            <h2 class="section-title hot">
-                HOT TOPIC
-            </h2>
-
-            <div class="topic-wrap">
-
-                <div class="topic-card">
-
-                    <div class="topic-user">
-                        <div class="avatar"></div>
-                        MES-AI-Aアプリ化担当Ｋさん
-                    </div>
-
-                    <div class="topic-status">
-                        # 募集中
-                    </div>
-
-                    <div class="topic-title">
-                        WEBアプリ化プロジェクト Q&A
-                    </div>
-
-                    <div class="topic-public">
-                        会員以外にも公開
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-    </div>
-
-</main>
+<footer class="footer">
+  © World SHiFT, Inc.
+</footer>
 
 <script>
-
-const menu = document.getElementById("sideMenu");
+const sideMenu = document.getElementById("sideMenu");
+const bodyArea = document.getElementById("bodyArea");
 const news = document.getElementById("news");
 
 function updateMenu(){
+  if(window.innerWidth <= 1000){
+    sideMenu.classList.remove("fixed");
+    sideMenu.classList.add("absolute");
+    sideMenu.style.top = "";
+    return;
+  }
 
-    if(window.innerWidth <= 900){
-        return;
-    }
+  const bodyTop = bodyArea.offsetTop;
+  const newsTopInBody = news.offsetTop;
+  const menuTopInBody = newsTopInBody - 18;
+  const fixedTrigger = bodyTop + menuTopInBody - 60;
 
-    const newsTop =
-        news.offsetTop;
-
-    const menuStart =
-        newsTop - 20;
-
-    if(window.scrollY > menuStart){
-
-        menu.classList.remove("absolute");
-        menu.classList.add("fixed");
-
-    }else{
-
-        menu.classList.remove("fixed");
-        menu.classList.add("absolute");
-
-        menu.style.top =
-            menuStart + "px";
-    }
+  if(window.scrollY >= fixedTrigger){
+    sideMenu.classList.remove("absolute");
+    sideMenu.classList.add("fixed");
+    sideMenu.style.top = "";
+  }else{
+    sideMenu.classList.remove("fixed");
+    sideMenu.classList.add("absolute");
+    sideMenu.style.top = menuTopInBody + "px";
+  }
 }
 
-window.addEventListener("scroll",updateMenu);
-window.addEventListener("resize",updateMenu);
-window.addEventListener("load",updateMenu);
-
+window.addEventListener("scroll", updateMenu);
+window.addEventListener("resize", updateMenu);
+window.addEventListener("load", updateMenu);
+updateMenu();
 </script>
 
 </body>
