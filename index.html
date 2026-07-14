@@ -299,7 +299,7 @@ body.editor-open > .site{
 
 <aside class="visual-editor" id="visualEditor">
   <h1>Article Visual Editor</h1>
-  <div class="tip">編集開始後、文字・カード・画像・セクションをクリックして選択します。</div>
+  <div class="tip">編集開始後、文字・カード・画像・セクションをクリックして選択します。非表示要素は書き出し時に削除されます。</div>
 
   <button id="editToggle">編集を開始</button>
   <button id="saveBtn" class="secondary">ブラウザに保存</button>
@@ -359,6 +359,7 @@ body.editor-open > .site{
     <button id="duplicateBtn">複製</button>
     <button id="hideBtn">非表示</button>
   </div>
+  <button id="deleteBtn" class="danger">完全削除</button>
 
   <label class="file-label" for="imagePicker">画像を差し替える</label>
   <input id="imagePicker" type="file" accept="image/*" hidden>
@@ -690,6 +691,21 @@ body.editor-open > .site{
     selectedName.textContent = '非表示にしました';
   });
 
+
+  $('deleteBtn').addEventListener('click', () => {
+    if(!selected){
+      selectedName.textContent = '先に削除したい要素をクリックしてください';
+      return;
+    }
+    if(!confirm('選択中の要素を完全に削除しますか？')) return;
+    const next = selected.nextElementSibling || selected.previousElementSibling || selected.parentElement;
+    selected.remove();
+    selected = null;
+    clearSelection();
+    selectedName.textContent = '完全に削除しました';
+    if(next && next.closest && next.closest('.site')) selectElement(next);
+  });
+
   const picker = $('imagePicker');
   picker.addEventListener('change', () => {
     const file = picker.files && picker.files[0];
@@ -725,7 +741,8 @@ body.editor-open > .site{
   });
 
   $('saveBtn').addEventListener('click', () => {
-    const clone = site.cloneNode(true);
+    const clone = document.querySelector('.site').cloneNode(true);
+    clone.querySelectorAll('.hidden-block').forEach(el => el.remove());
     clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
     clone.querySelectorAll('.selected-element').forEach(el => el.classList.remove('selected-element'));
     localStorage.setItem('worldshift_article_editor', clone.outerHTML);
@@ -740,21 +757,35 @@ body.editor-open > .site{
 
   $('exportBtn').addEventListener('click', () => {
     setEditMode(false);
+
+    // Clone the current, edited DOM exactly as it appears now.
     const clone = document.documentElement.cloneNode(true);
 
+    // Remove editor UI and editor-only assets.
     clone.querySelector('#visualEditor')?.remove();
     clone.querySelector('#visual-editor-style')?.remove();
     clone.querySelector('#visual-editor-script')?.remove();
 
-    clone.querySelector('body')?.classList.remove('editor-open','edit-mode');
+    // Remove all elements hidden in the editor from the final HTML.
+    clone.querySelectorAll('.hidden-block').forEach(el => el.remove());
+
+    // Remove editor-only classes and attributes.
+    clone.querySelector('body')?.classList.remove('editor-open', 'edit-mode');
+    clone.querySelectorAll('.selected-element').forEach(el => el.classList.remove('selected-element'));
     clone.querySelectorAll('[data-editable]').forEach(el => el.removeAttribute('data-editable'));
     clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
-    clone.querySelectorAll('.selected-element').forEach(el => el.classList.remove('selected-element'));
+    clone.querySelectorAll('[spellcheck]').forEach(el => el.removeAttribute('spellcheck'));
 
-    const blob = new Blob(['<!DOCTYPE html>\n' + clone.outerHTML], {type:'text/html;charset=utf-8'});
+    // Remove any empty style/class attributes left behind.
+    clone.querySelectorAll('[style=""]').forEach(el => el.removeAttribute('style'));
+    clone.querySelectorAll('[class=""]').forEach(el => el.removeAttribute('class'));
+
+    const finalHtml = '<!DOCTYPE html>
+' + clone.outerHTML;
+    const blob = new Blob([finalHtml], {type:'text/html;charset=utf-8'});
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'worldshift-article-edited.html';
+    link.download = 'worldshift-article-edited-final.html';
     document.body.appendChild(link);
     link.click();
     link.remove();
