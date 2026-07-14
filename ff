@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorldShift Trade Watch｜回遊強化型記事ページ</title>
+<style>
+:root{
+  --navy:#0b2f63;
+  --blue:#1f65b5;
+  --orange:#ef7d2d;
+  --ink:#17243a;
+  --muted:#69778c;
+  --line:#dfe7f0;
+  --bg:#f4f7fb;
+  --card:#fff;
+  --soft:#eef5ff;
+  --soft2:#fff8ef;
+  --radius:18px;
+  --shadow:0 14px 36px rgba(13,48,94,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;
+  color:var(--ink);
+  background:var(--bg);
+}
+a{text-decoration:none;color:inherit}
+img{display:block;max-width:100%}
+button,input{font:inherit}
+.site{width:min(1440px,100%);margin:auto;background:#fff;min-height:100vh}
+.utility{
+  padding:8px 28px;border-bottom:1px solid var(--line);
+  font-size:12px;color:#5d6b80;background:#fafbfd
+}
+.header{
+  display:grid;grid-template-columns:280px 1fr 320px;gap:20px;align-items:center;
+  padding:18px 28px;border-bottom:1px solid var(--line)
+}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{
+  width:48px;height:48px;border-radius:14px;
+  background:linear-gradient(135deg,var(--navy),var(--blue));
+  color:#fff;display:grid;place-items:center;font-weight:900;font-size:22px
+}
+.brandname{font-size:22px;font-weight:900;line-height:1.05;color:var(--navy)}
+.sub{font-size:11px;color:var(--muted);margin-top:5px}
+.search{padding:12px 14px;border:1px solid var(--line);border-radius:10px;color:#8a95a5}
+.actions{display:flex;gap:10px;justify-content:flex-end}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:10px 15px;border:1px solid var(--line);border-radius:10px;
+  background:#fff;color:var(--navy);font-weight:800;cursor:pointer
+}
+.btn.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+.nav{
+  display:flex;gap:24px;align-items:center;height:54px;overflow:auto;white-space:nowrap;
+  padding:0 28px;border-bottom:1px solid var(--line);font-size:13px;font-weight:800
+}
+.nav .active{color:var(--orange)}
+.breadcrumb{
+  padding:14px 28px;font-size:12px;color:#718096;border-bottom:1px solid var(--line);background:#fbfcfe
+}
+.page{
+  display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:28px;
+  padding:30px 28px 50px;
+}
+.article{
+  min-width:0;
+}
+.article-head{
+  padding:26px;border:1px solid var(--line);border-radius:var(--radius);background:#fff;box-shadow:var(--shadow)
+}
+.article-head .label{
+  display:inline-flex;padding:5px 9px;border-radius:99px;background:#eaf2ff;
+  color:var(--blue);font-size:11px;font-weight:900
+}
+.article-head h1{font-size:36px;line-height:1.4;margin:15px 0 12px;color:var(--navy)}
+.article-meta{font-size:12px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap}
+.summary{
+  margin-top:20px;padding:18px;border-left:4px solid var(--orange);
+  border-radius:10px;background:var(--soft2);font-size:14px;line-height:1.8
+}
+.topic-map{
+  margin-top:18px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:#fbfcfe
+}
+.topic-map strong{display:block;color:var(--navy);margin-bottom:8px}
+.topic-map .path{font-size:12px;color:var(--muted)}
+.hero-image{margin:22px 0;border-radius:var(--radius);overflow:hidden}
+.hero-image img{width:100%;height:430px;object-fit:cover}
+
+.content{
+  border:1px solid var(--line);border-radius:var(--radius);background:#fff;
+  padding:30px;box-shadow:var(--shadow)
+}
+.content h2{font-size:25px;color:var(--navy);margin:34px 0 14px}
+.content h3{font-size:20px;color:var(--navy);margin:28px 0 12px}
+.content p{font-size:15px;line-height:1.95;color:#334258}
+.content ul{line-height:1.9;color:#334258}
+.content .highlight{
+  padding:18px;background:var(--soft);border:1px solid #d3e4fa;border-radius:12px;margin:24px 0
+}
+.content .highlight strong{display:block;color:var(--navy);margin-bottom:8px}
+.content .term{
+  color:var(--blue);font-weight:800;border-bottom:1px dashed var(--blue)
+}
+
+.mid-nav{
+  margin:28px 0;padding:20px;border:1px solid #d8e6f7;border-radius:16px;
+  background:linear-gradient(135deg,#f4f8ff,#eef5ff)
+}
+.mid-nav h3{margin:0 0 12px;font-size:18px}
+.mid-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.mid-card{
+  padding:14px;background:#fff;border:1px solid var(--line);border-radius:12px
+}
+.mid-card span{display:block;font-size:10px;font-weight:900;color:var(--orange);margin-bottom:5px}
+.mid-card strong{display:block;color:var(--navy);font-size:14px}
+.mid-card p{font-size:11px;line-height:1.55;margin:6px 0 0;color:var(--muted)}
+
+.next-step{
+  margin-top:26px;padding:24px;border:1px solid var(--line);border-radius:var(--radius);background:#fff;box-shadow:var(--shadow)
+}
+.section-title{display:flex;justify-content:space-between;gap:16px;align-items:end;margin-bottom:16px}
+.section-title h2{margin:0;font-size:24px;color:var(--navy)}
+.section-title p{margin:5px 0 0;font-size:12px;color:var(--muted)}
+
+.learning-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.flow-card{
+  position:relative;padding:18px;border:1px solid var(--line);border-radius:14px;background:#fff
+}
+.flow-card:after{
+  content:"→";position:absolute;right:-11px;top:50%;transform:translateY(-50%);
+  color:var(--orange);font-weight:900
+}
+.flow-card:last-child:after{display:none}
+.flow-card .step{
+  width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+  background:var(--navy);color:#fff;font-size:12px;font-weight:900;margin-bottom:10px
+}
+.flow-card strong{display:block;color:var(--navy);font-size:14px}
+.flow-card p{font-size:11px;line-height:1.6;color:var(--muted)}
+
+.purpose-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.purpose{
+  min-height:150px;padding:18px;border-radius:14px;border:1px solid var(--line);
+  background:#fff;display:flex;flex-direction:column;justify-content:space-between
+}
+.purpose .icon{font-size:28px}
+.purpose strong{color:var(--navy);font-size:15px}
+.purpose span{font-size:11px;color:var(--muted);line-height:1.55}
+
+.related-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.related{
+  border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff
+}
+.related img{width:100%;height:140px;object-fit:cover}
+.related-body{padding:14px}
+.related .meta{font-size:10px;color:var(--muted)}
+.related h3{font-size:15px;line-height:1.5;color:var(--navy);margin:6px 0}
+
+.newsletter{
+  margin-top:26px;padding:24px;border-radius:var(--radius);color:#fff;
+  background:linear-gradient(135deg,var(--navy),var(--blue));display:grid;grid-template-columns:1.3fr .7fr;gap:20px;align-items:center
+}
+.newsletter h2{margin:0 0 8px}
+.newsletter p{font-size:13px;line-height:1.7;color:#e7eef8}
+.newsletter-form{display:flex;gap:8px}
+.newsletter input{flex:1;padding:11px;border:0;border-radius:9px}
+
+.cta{
+  margin-top:22px;padding:24px;border-radius:var(--radius);
+  background:#fff7ed;border:1px solid #f2d4b5;display:grid;grid-template-columns:1.2fr .8fr;gap:18px;align-items:center
+}
+.cta h2{margin:0 0 8px;color:#9b4f17}
+.cta p{font-size:13px;line-height:1.7;color:#7d5a3f}
+.cta-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+
+.sidebar .box{
+  border:1px solid var(--line);border-radius:16px;background:#fff;
+  padding:18px;box-shadow:var(--shadow);margin-bottom:16px
+}
+.sidebar h3{margin:0 0 12px;color:var(--navy);font-size:17px}
+.rank{padding:10px 0;border-top:1px solid var(--line);font-size:12px;line-height:1.55}
+.rank:first-of-type{border-top:0}
+.category-list{display:grid;gap:8px}
+.category{
+  display:flex;justify-content:space-between;gap:10px;padding:10px 11px;
+  border:1px solid var(--line);border-radius:10px;font-size:12px;background:#fafbfd
+}
+.series{
+  background:linear-gradient(145deg,#0c315f,#1f65b5)!important;color:#fff
+}
+.series h3{color:#fff}
+.series p{font-size:12px;line-height:1.7;color:#e5eef8}
+.series .btn{width:100%;background:#fff;color:var(--navy)}
+
+.tags{display:flex;gap:7px;flex-wrap:wrap}
+.tag{padding:6px 9px;border-radius:99px;background:#eef4fb;border:1px solid var(--line);font-size:11px}
+
+.footer{padding:38px 28px;background:#071f46;color:#dce8f5}
+.footer-grid{display:grid;grid-template-columns:1.6fr repeat(4,1fr);gap:24px}
+.footer h3,.footer h4{color:#fff}
+.footer p,.footer li{font-size:12px;line-height:1.75}
+.footer ul{padding-left:18px}
+
+@media(max-width:1100px){
+  .header{grid-template-columns:1fr}.actions{justify-content:flex-start}
+  .page{grid-template-columns:1fr}
+  .sidebar{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .sidebar .box{margin-bottom:0}
+  .learning-flow,.purpose-grid{grid-template-columns:repeat(2,1fr)}
+  .related-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:760px){
+  .header,.nav,.breadcrumb,.page,.footer{padding-left:16px;padding-right:16px}
+  .article-head h1{font-size:28px}
+  .hero-image img{height:240px}
+  .content{padding:20px}
+  .mid-grid,.learning-flow,.purpose-grid,.related-grid,.sidebar,.newsletter,.cta,.footer-grid{grid-template-columns:1fr}
+  .flow-card:after{display:none}
+  .newsletter-form{flex-direction:column}
+  .cta-actions{justify-content:flex-start}
+}
+</style>
+
+<style id="visual-editor-style">
+:root{
+  --editor-panel-width:320px;
+}
+body.editor-open{
+  display:grid;
+  grid-template-columns:var(--editor-panel-width) minmax(0,1fr);
+}
+body.editor-open > .site{
+  width:100%;
+  max-width:none;
+  margin:0;
+}
+.visual-editor{
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow:auto;
+  background:#071a38;
+  color:#fff;
+  padding:18px;
+  z-index:9999;
+  box-shadow:8px 0 30px rgba(0,0,0,.18);
+}
+.visual-editor h1{font-size:18px;margin:0 0 10px}
+.visual-editor h2{font-size:13px;color:#b9d4f5;margin:18px 0 8px}
+.visual-editor label{display:block;font-size:12px;color:#d8e5f4;margin:9px 0 4px}
+.visual-editor input,.visual-editor select{
+  width:100%;
+  padding:9px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,.18);
+  background:#0d2a57;
+  color:#fff;
+}
+.visual-editor input[type="color"]{height:38px;padding:2px}
+.visual-editor input[type="range"]{padding:0}
+.visual-editor button,.visual-editor .file-label{
+  width:100%;
+  padding:10px;
+  border:0;
+  border-radius:8px;
+  margin-top:8px;
+  background:#fff;
+  color:#0b2f63;
+  font-weight:800;
+  cursor:pointer;
+  text-align:center;
+}
+.visual-editor .secondary{background:#cfe3ff}
+.visual-editor .danger{background:#ffe9e9;color:#a01818}
+.visual-editor .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.visual-editor .tip{font-size:11px;line-height:1.55;color:#9fb4ce}
+.edit-mode [data-editable]{
+  outline:2px dashed rgba(255,153,0,.8);
+  outline-offset:3px;
+}
+.selected-element{
+  outline:3px solid #ff9b2f !important;
+  outline-offset:4px !important;
+}
+.hidden-block{display:none!important}
+@media(max-width:1100px){
+  body.editor-open{display:block}
+  .visual-editor{position:relative;height:auto}
+}
+</style>
+
+</head>
+<body class="editor-open">
+
+<aside class="visual-editor" id="visualEditor">
+  <h1>Article Visual Editor</h1>
+  <div class="tip">編集開始後、文字・カード・画像・セクションをクリックして選択します。</div>
+
+  <button id="editToggle">編集を開始</button>
+  <button id="saveBtn" class="secondary">ブラウザに保存</button>
+  <button id="exportBtn">HTMLを書き出す</button>
+  <button id="resetBtn" class="danger">初期状態に戻す</button>
+
+  <h2>選択中の要素</h2>
+  <div id="selectedName" class="tip">未選択</div>
+
+  <div class="row">
+    <div><label>背景色</label><input type="color" id="bgColor"></div>
+    <div><label>文字色</label><input type="color" id="textColor"></div>
+  </div>
+
+  <label>内側余白</label>
+  <input type="range" min="0" max="80" value="20" id="paddingRange">
+
+  <label>外側余白</label>
+  <input type="range" min="0" max="80" value="0" id="marginRange">
+
+  <label>角丸</label>
+  <input type="range" min="0" max="40" value="18" id="radiusRange">
+
+  <label>横幅</label>
+  <select id="widthSelect">
+    <option value="">自動</option>
+    <option value="25%">25%</option>
+    <option value="33.333%">33%</option>
+    <option value="50%">50%</option>
+    <option value="66.666%">66%</option>
+    <option value="75%">75%</option>
+    <option value="100%">100%</option>
+  </select>
+
+  <label>影</label>
+  <select id="shadowSelect">
+    <option value="">なし</option>
+    <option value="0 8px 24px rgba(13,48,94,.08)">弱い</option>
+    <option value="0 14px 36px rgba(13,48,94,.14)">標準</option>
+    <option value="0 22px 50px rgba(13,48,94,.20)">強い</option>
+  </select>
+
+  <label>文字配置</label>
+  <select id="alignSelect">
+    <option value="">そのまま</option>
+    <option value="left">左</option>
+    <option value="center">中央</option>
+    <option value="right">右</option>
+  </select>
+
+  <div class="row">
+    <button id="moveUpBtn">上へ移動</button>
+    <button id="moveDownBtn">下へ移動</button>
+  </div>
+
+  <div class="row">
+    <button id="duplicateBtn">複製</button>
+    <button id="hideBtn">非表示</button>
+  </div>
+
+  <label class="file-label" for="imagePicker">画像を差し替える</label>
+  <input id="imagePicker" type="file" accept="image/*" hidden>
+
+  <h2>ページ全体</h2>
+  <div class="row">
+    <div><label>メイン色</label><input type="color" id="primaryColor" value="#0b2f63"></div>
+    <div><label>背景色</label><input type="color" id="pageBgColor" value="#f4f7fb"></div>
+  </div>
+
+  <label>編集パネル幅</label>
+  <input type="range" min="260" max="440" value="320" id="panelWidthRange">
+</aside>
+
+<div class="site">
+  <div class="utility">WorldShift Trade Watch｜米国輸出の最新情報と実務知識</div>
+
+  <header class="header">
+    <div class="brand">
+      <div class="logo">W</div>
+      <div><div class="brandname">WorldShift<br>Trade Watch</div><div class="sub">米国輸出のニュースと実務知識</div></div>
+    </div>
+    <div class="search">キーワード・制度名・商品名で検索</div>
+    <div class="actions"><button class="btn">ニュースレター登録</button><button class="btn primary">無料相談</button></div>
+  </header>
+
+  <nav class="nav">
+    <span>TOP</span><span>最新NEWS</span><span class="active">通商・関税</span><span>FDA</span><span>米Amazon輸出</span><span>アメリカ物流</span><span>教科書・ガイド</span><span>用語集</span>
+  </nav>
+
+  <div class="breadcrumb">TOP ＞ 通商・関税 ＞ Section 301 ＞ 日本も対象・12.5％案</div>
+
+  
+<div style="padding:16px 28px;background:#eef5ff;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
+  <div>
+    <strong style="color:var(--navy);font-size:18px;">FDA対象商品ですか？</strong><br>
+    <span style="color:var(--muted);font-size:13px;">食品・化粧品を輸出する方は、FDA専用ポータルで必要な対応を確認できます。</span>
+  </div>
+  <a href="FDA.html" class="btn primary">FDAポータルを見る →</a>
+</div>
+
+<div class="page">
+    <main class="article">
+      <section class="article-head">
+        <span class="label">通商・関税</span>
+        <h1>米国、強制労働を理由に新Section 301関税を提案</h1>
+        <div class="article-meta"><span>公開日：2026.06.02</span><span>更新日：2026.07.13</span><span>WorldShift編集部</span></div>
+        <div class="summary">
+          <strong>この記事の要点</strong><br>
+          日本を含む複数国に追加関税案が示されています。現時点では正式発動前であり、対象国・税率・発動時期を分けて確認する必要があります。
+        </div>
+        <div class="topic-map">
+          <strong>この記事の位置づけ</strong>
+          <div class="path">通商・関税ガイド ＞ Section 301 ＞ 強制労働を理由とした追加関税案　← 今ここ</div>
+        </div>
+      </section>
+
+      <div class="hero-image">
+        <img src="https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=1400&q=85" alt="">
+      </div>
+
+      <article class="content">
+        <h2>今回の発表で何が起きたのか</h2>
+        <p>米国通商代表部は、強制労働に関する対応を理由として、新たな追加関税案を公表しました。日本も対象国の一つとして示されていますが、現時点では提案段階です。</p>
+
+        <div class="highlight">
+          <strong>日本企業がまず確認すべきこと</strong>
+          対象国、対象品目、税率、正式発動日が確定しているかを分けて確認してください。記事公開時点の提案内容と、実際の輸入時点の適用内容は一致しない可能性があります。
+        </div>
+
+        <h2>Section 301とは</h2>
+        <p><span class="term">Section 301</span>は、外国の不公正な貿易慣行などに対して、米国が調査や対抗措置を行うための制度です。</p>
+
+        <div class="mid-nav">
+          <h3>ここまで読んだ方におすすめ</h3>
+          <div class="mid-grid">
+            <a class="mid-card"><span>基礎から確認</span><strong>Section 301とは？</strong><p>制度の仕組みと発動までの流れを整理。</p></a>
+            <a class="mid-card"><span>比較して理解</span><strong>Section 232との違い</strong><p>発動理由・対象・手続きの違いを比較。</p></a>
+            <a class="mid-card"><span>自社への影響</span><strong>関税・HSコードを確認</strong><p>商品別に追加関税の対象を確認。</p></a>
+          </div>
+        </div>
+
+        <h2>日本企業への影響</h2>
+        <p>影響は、商品の原産国、HSコード、輸入者、契約条件によって変わります。単純に「日本製品すべてに12.5％」と捉えるのではなく、対象範囲を確認する必要があります。</p>
+
+        <h3>実務で確認する項目</h3>
+        <ul>
+          <li>対象となる国・地域</li>
+          <li>対象品目とHSコード</li>
+          <li>追加関税率</li>
+          <li>発動日と適用除外</li>
+          <li>輸入者との費用負担</li>
+        </ul>
+
+        <div class="highlight">
+          <strong>用語を深く知る</strong>
+          「原産国」「HTSコード」「追加関税」「輸入者」は、それぞれ用語集から詳しく確認できます。
+        </div>
+
+        <h2>今後の流れ</h2>
+        <p>公聴会、意見募集、最終判断を経て、実際の措置内容が確定する可能性があります。WorldShiftでは続報を更新し、確定事項と提案内容を分けて掲載します。</p>
+      </article>
+
+      <section class="next-step">
+        <div class="section-title"><div><h2>次に読むならこちら</h2><p>この記事の理解を、基礎・比較・実務へつなげます。</p></div></div>
+        <div class="learning-flow">
+          <a class="flow-card"><div class="step">1</div><strong>Section 301の基礎</strong><p>制度の仕組みと調査から発動まで。</p></a>
+          <a class="flow-card"><div class="step">2</div><strong>Section 232との違い</strong><p>安全保障措置との違いを比較。</p></a>
+          <a class="flow-card"><div class="step">3</div><strong>現在の追加関税一覧</strong><p>発動済み・提案中を整理。</p></a>
+          <a class="flow-card"><div class="step">4</div><strong>自社商品への影響</strong><p>HSコード・輸入条件を確認。</p></a>
+        </div>
+      </section>
+
+      <section class="next-step">
+        <div class="section-title"><div><h2>目的から探す</h2><p>読者の立場に合わせて、関連情報へ移動できます。</p></div></div>
+        <div class="purpose-grid">
+          <a class="purpose"><div class="icon">🥫</div><strong>食品を輸出している</strong><span>FDA、関税、通関、ラベルを確認。</span></a>
+          <a class="purpose"><div class="icon">🧴</div><strong>化粧品を輸出している</strong><span>MoCRA、成分、関税、物流を確認。</span></a>
+          <a class="purpose"><div class="icon">🛒</div><strong>Amazonで販売している</strong><span>FBA納品、関税、利益計算を確認。</span></a>
+          <a class="purpose"><div class="icon">🚚</div><strong>物流・通関を見直したい</strong><span>IOR、インボイス、輸送方法を確認。</span></a>
+<a href="FDA.html" class="purpose" style="border:2px solid var(--blue);background:linear-gradient(135deg,#eef5ff,#ffffff)">
+  <div class="icon">🧪</div>
+  <strong>FDA対応を確認する</strong>
+  <span>食品・化粧品のFDA教科書、商品判定、輸出後リスク、最新NEWSはこちら。</span>
+</a>
+
+        </div>
+      </section>
+
+      <section class="next-step">
+        <div class="section-title"><div><h2>関連する記事</h2><p>同じテーマの最新ニュースと解説</p></div></div>
+        <div class="related-grid">
+          <article class="related"><img src="https://images.unsplash.com/photo-1505664194779-8beaceb93744?auto=format&fit=crop&w=700&q=80"><div class="related-body"><div class="meta">通商・関税</div><h3>Section 232関税の対象国と対象品目</h3></div></article>
+          <article class="related"><img src="https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=700&q=80"><div class="related-body"><div class="meta">通商・関税</div><h3>米国追加関税の最新状況まとめ</h3></div></article>
+          <article class="related"><img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=700&q=80"><div class="related-body"><div class="meta">物流・通関</div><h3>関税増加時に物流コストをどう見直すか</h3></div></article>
+        </div>
+      </section>
+
+      <section class="newsletter">
+        <div><h2>関税・通商ニュースを見逃さない</h2><p>重要な制度変更を、日本企業への影響とともに週1回まとめてお届けします。</p></div>
+        <div class="newsletter-form"><input placeholder="メールアドレス"><button class="btn">無料で登録</button></div>
+      </section>
+
+      <section class="cta">
+        <div><h2>自社商品への影響を確認したい方へ</h2><p>HSコード、原産国、販売方法を確認し、関税・通関・物流への影響を整理します。</p></div>
+        <div class="cta-actions"><button class="btn">関連サービスを見る</button><button class="btn primary">無料相談を予約</button></div>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="box">
+        <h3>この記事の目次</h3>
+        <div class="rank">今回の発表で何が起きたのか</div>
+        <div class="rank">Section 301とは</div>
+        <div class="rank">日本企業への影響</div>
+        <div class="rank">今後の流れ</div>
+      </div>
+
+      <div class="box series">
+        <h3>関税ガイド</h3>
+        <p>Section 301、232、IEEPA、AD/CVDなどを体系的に学べます。</p>
+        <button class="btn">関税ガイドを見る</button>
+      </div>
+
+      <div class="box">
+        <h3>カテゴリから探す</h3>
+        <div class="category-list">
+          <div class="category"><span>通商・関税</span><span>126</span></div>
+          <div class="category"><span>FDA</span><span>98</span></div>
+          <div class="category"><span>米Amazon輸出</span><span>74</span></div>
+          <div class="category"><span>アメリカ物流</span><span>63</span></div>
+        </div>
+      </div>
+
+      <div class="box">
+        <h3>関連キーワード</h3>
+        <div class="tags"><span class="tag">Section 301</span><span class="tag">追加関税</span><span class="tag">日本</span><span class="tag">HTSコード</span><span class="tag">USTR</span></div>
+      </div>
+
+      <div class="box">
+        <h3>人気の記事</h3>
+        <div class="rank">米国向け食品輸出の流れ</div>
+        <div class="rank">FDA施設登録とは</div>
+        <div class="rank">FBA納品と通関の基本</div>
+        <div class="rank">関税・送料・手数料の利益計算</div>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-grid">
+      <div><h3>WorldShift Trade Watch</h3><p>米国輸出の最新情報と実務知識を、日本企業向けに提供する専門ポータルです。</p></div>
+      <div><h4>ニュース</h4><ul><li>最新NEWS</li><li>通商・関税</li></ul></div>
+      <div><h4>専門情報</h4><ul><li>FDA</li><li>物流・通関</li></ul></div>
+      <div><h4>学ぶ</h4><ul><li>教科書・ガイド</li><li>用語集</li></ul></div>
+      <div><h4>サポート</h4><ul><li>ニュースレター</li><li>無料相談</li></ul></div>
+    </div>
+  </footer>
+</div>
+
+<script id="visual-editor-script">
+(() => {
+  'use strict';
+
+  const body = document.body;
+  body.classList.add('editor-open');
+
+  const site = document.querySelector('.site');
+  const editableSelectors = [
+    '.utility','.header','.brand','.logo','.brandname','.sub','.search','.actions',
+    '.nav','.breadcrumb','.page','.article','.article-head','.label','.article-meta',
+    '.summary','.topic-map','.hero-image','.content','.highlight','.mid-nav','.mid-card',
+    '.next-step','.flow-card','.purpose','.related','.related-body','.newsletter','.cta',
+    '.sidebar','.box','.rank','.category','.tag','.footer','.footer-grid',
+    'h1','h2','h3','h4','p','span','strong','li','button','input','img'
+  ];
+
+  document.querySelectorAll(editableSelectors.join(',')).forEach(el => {
+    el.setAttribute('data-editable','true');
+  });
+
+  let editMode = false;
+  let selected = null;
+
+  const $ = id => document.getElementById(id);
+  const selectedName = $('selectedName');
+
+  function rgbToHex(rgb){
+    if(!rgb || rgb === 'transparent' || rgb.includes('rgba(0, 0, 0, 0)')) return '#ffffff';
+    const m = rgb.match(/\d+/g);
+    if(!m) return '#ffffff';
+    return '#' + m.slice(0,3).map(v => Number(v).toString(16).padStart(2,'0')).join('');
+  }
+
+  function clearSelection(){
+    document.querySelectorAll('.selected-element').forEach(el => el.classList.remove('selected-element'));
+  }
+
+  function selectElement(el){
+    clearSelection();
+    selected = el;
+    if(!selected){
+      selectedName.textContent = '未選択';
+      return;
+    }
+    selected.classList.add('selected-element');
+    selectedName.textContent = `${selected.tagName} ${(selected.className || '').toString()}`.slice(0,100);
+
+    const cs = getComputedStyle(selected);
+    $('bgColor').value = rgbToHex(cs.backgroundColor);
+    $('textColor').value = rgbToHex(cs.color);
+    $('paddingRange').value = parseInt(cs.paddingTop,10) || 0;
+    $('marginRange').value = parseInt(cs.marginTop,10) || 0;
+    $('radiusRange').value = parseInt(cs.borderRadius,10) || 0;
+  }
+
+  function setEditMode(enabled){
+    editMode = enabled;
+    body.classList.toggle('edit-mode', enabled);
+    $('editToggle').textContent = enabled ? '編集を終了' : '編集を開始';
+
+    document.querySelectorAll('[data-editable]').forEach(el => {
+      const isTextElement = /^(H1|H2|H3|H4|P|SPAN|STRONG|LI|BUTTON|DIV)$/.test(el.tagName);
+      if(isTextElement){
+        el.setAttribute('contenteditable', enabled ? 'true' : 'false');
+        el.setAttribute('spellcheck','false');
+      }
+    });
+
+    if(!enabled){
+      clearSelection();
+      selected = null;
+      selectedName.textContent = '未選択';
+    }
+  }
+
+  function applyStyle(prop, value){
+    if(!selected){
+      selectedName.textContent = '先に編集したい要素をクリックしてください';
+      return;
+    }
+    selected.style[prop] = value;
+  }
+
+  $('editToggle').addEventListener('click', () => setEditMode(!editMode));
+
+  document.addEventListener('click', event => {
+    if(!editMode || event.target.closest('#visualEditor')) return;
+    const target = event.target.closest('[data-editable]');
+    if(!target || !target.closest('.site')) return;
+    selectElement(target);
+    if(!/^(INPUT|TEXTAREA)$/.test(target.tagName)) event.preventDefault();
+  });
+
+  $('bgColor').addEventListener('input', e => applyStyle('backgroundColor', e.target.value));
+  $('textColor').addEventListener('input', e => applyStyle('color', e.target.value));
+  $('paddingRange').addEventListener('input', e => applyStyle('padding', `${e.target.value}px`));
+  $('marginRange').addEventListener('input', e => applyStyle('margin', `${e.target.value}px`));
+  $('radiusRange').addEventListener('input', e => applyStyle('borderRadius', `${e.target.value}px`));
+  $('widthSelect').addEventListener('change', e => applyStyle('width', e.target.value));
+  $('shadowSelect').addEventListener('change', e => applyStyle('boxShadow', e.target.value));
+  $('alignSelect').addEventListener('change', e => applyStyle('textAlign', e.target.value));
+
+  $('moveUpBtn').addEventListener('click', () => {
+    if(selected && selected.previousElementSibling){
+      selected.parentElement.insertBefore(selected, selected.previousElementSibling);
+    }
+  });
+
+  $('moveDownBtn').addEventListener('click', () => {
+    if(selected && selected.nextElementSibling){
+      selected.parentElement.insertBefore(selected.nextElementSibling, selected);
+    }
+  });
+
+  $('duplicateBtn').addEventListener('click', () => {
+    if(!selected || !selected.parentElement) return;
+    const clone = selected.cloneNode(true);
+    clone.classList.remove('selected-element');
+    selected.parentElement.insertBefore(clone, selected.nextSibling);
+    selectElement(clone);
+  });
+
+  $('hideBtn').addEventListener('click', () => {
+    if(!selected) return;
+    selected.classList.add('hidden-block');
+    selected.classList.remove('selected-element');
+    selected = null;
+    selectedName.textContent = '非表示にしました';
+  });
+
+  const picker = $('imagePicker');
+  picker.addEventListener('change', () => {
+    const file = picker.files && picker.files[0];
+    if(!file || !selected) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      if(selected.tagName === 'IMG'){
+        selected.src = e.target.result;
+      }else{
+        selected.style.backgroundImage = `url("${e.target.result}")`;
+        selected.style.backgroundSize = 'cover';
+        selected.style.backgroundPosition = 'center';
+      }
+    };
+    reader.readAsDataURL(file);
+    picker.value = '';
+  });
+
+  document.querySelector('.file-label').addEventListener('click', () => {
+    if(selected) picker.click();
+  });
+
+  $('primaryColor').addEventListener('input', e => {
+    document.documentElement.style.setProperty('--navy', e.target.value);
+  });
+
+  $('pageBgColor').addEventListener('input', e => {
+    document.documentElement.style.setProperty('--bg', e.target.value);
+  });
+
+  $('panelWidthRange').addEventListener('input', e => {
+    document.documentElement.style.setProperty('--editor-panel-width', `${e.target.value}px`);
+  });
+
+  $('saveBtn').addEventListener('click', () => {
+    const clone = site.cloneNode(true);
+    clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+    clone.querySelectorAll('.selected-element').forEach(el => el.classList.remove('selected-element'));
+    localStorage.setItem('worldshift_article_editor', clone.outerHTML);
+    selectedName.textContent = 'ブラウザに保存しました';
+  });
+
+  $('resetBtn').addEventListener('click', () => {
+    if(!confirm('保存内容を削除して初期状態に戻しますか？')) return;
+    localStorage.removeItem('worldshift_article_editor');
+    location.reload();
+  });
+
+  $('exportBtn').addEventListener('click', () => {
+    setEditMode(false);
+    const clone = document.documentElement.cloneNode(true);
+
+    clone.querySelector('#visualEditor')?.remove();
+    clone.querySelector('#visual-editor-style')?.remove();
+    clone.querySelector('#visual-editor-script')?.remove();
+
+    clone.querySelector('body')?.classList.remove('editor-open','edit-mode');
+    clone.querySelectorAll('[data-editable]').forEach(el => el.removeAttribute('data-editable'));
+    clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+    clone.querySelectorAll('.selected-element').forEach(el => el.classList.remove('selected-element'));
+
+    const blob = new Blob(['<!DOCTYPE html>\n' + clone.outerHTML], {type:'text/html;charset=utf-8'});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'worldshift-article-edited.html';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+  });
+
+  const saved = localStorage.getItem('worldshift_article_editor');
+  if(saved){
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(saved,'text/html');
+    const savedSite = doc.querySelector('.site');
+    if(savedSite && site){
+      site.replaceWith(savedSite);
+    }
+  }
+
+  setEditMode(false);
+})();
+</script>
+
+</body>
+</html>
