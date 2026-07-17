@@ -288,6 +288,20 @@ body.editor-open > .site{
   outline-offset:4px !important;
 }
 .hidden-block{display:none!important}
+
+/* Added parts */
+.editor-part{position:relative;min-height:24px}
+.editor-text-box{padding:18px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.editor-frame{min-height:120px;padding:20px;border:2px solid var(--blue);border-radius:14px;background:#fff}
+.editor-line{height:0!important;min-height:0!important;border-top:2px solid var(--navy);margin:22px 0;padding:0!important}
+.editor-rectangle{width:180px;height:100px;background:var(--soft);border:2px solid var(--blue);border-radius:10px}
+.editor-circle{width:110px;height:110px;background:var(--soft2);border:2px solid var(--orange);border-radius:50%}
+.editor-button{display:inline-flex;align-items:center;justify-content:center;padding:12px 20px;border-radius:10px;background:var(--navy);color:#fff;font-weight:800;min-width:140px}
+.editor-spacer{height:40px;border:1px dashed #b9c6d7;background:repeating-linear-gradient(45deg,#fafbfd,#fafbfd 8px,#f2f5f9 8px,#f2f5f9 16px)}
+.visual-editor .part-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.visual-editor .part-grid button{margin-top:0;font-size:12px;padding:9px 6px}
+.visual-editor .small-note{font-size:10px;color:#9fb4ce;line-height:1.45;margin-top:6px}
+
 @media(max-width:1100px){
   body.editor-open{display:block}
   .visual-editor{position:relative;height:auto}
@@ -309,6 +323,18 @@ body.editor-open > .site{
   <h2>選択中の要素</h2>
   <div id="selectedName" class="tip">未選択</div>
 
+  <h2>要素を追加</h2>
+  <div class="part-grid">
+    <button type="button" data-add-part="text">テキスト枠</button>
+    <button type="button" data-add-part="frame">囲み枠</button>
+    <button type="button" data-add-part="line">横線</button>
+    <button type="button" data-add-part="rectangle">四角形</button>
+    <button type="button" data-add-part="circle">円形</button>
+    <button type="button" data-add-part="button">ボタン</button>
+    <button type="button" data-add-part="spacer">余白</button>
+  </div>
+  <div class="small-note">選択中の要素の直後に追加します。未選択の場合は、記事本文の末尾に追加します。</div>
+
   <div class="row">
     <div><label>背景色</label><input type="color" id="bgColor"></div>
     <div><label>文字色</label><input type="color" id="textColor"></div>
@@ -321,7 +347,15 @@ body.editor-open > .site{
   <input type="range" min="0" max="80" value="0" id="marginRange">
 
   <label>角丸</label>
-  <input type="range" min="0" max="40" value="18" id="radiusRange">
+  <input type="range" min="0" max="80" value="18" id="radiusRange">
+
+  <div class="row">
+    <div><label>枠線色</label><input type="color" id="borderColor"></div>
+    <div><label>枠線幅</label><input type="range" min="0" max="12" value="1" id="borderWidthRange"></div>
+  </div>
+
+  <label>高さ</label>
+  <input type="range" min="0" max="500" value="0" id="heightRange">
 
   <label>横幅</label>
   <select id="widthSelect">
@@ -598,6 +632,61 @@ body.editor-open > .site{
     document.querySelectorAll('.selected-element').forEach(el => el.classList.remove('selected-element'));
   }
 
+  function makeEditable(root){
+    if(!root) return;
+    const nodes = [root, ...root.querySelectorAll('*')];
+    nodes.forEach(el => {
+      el.setAttribute('data-editable','true');
+      const isTextElement = /^(H1|H2|H3|H4|P|SPAN|STRONG|LI|BUTTON|DIV|A)$/.test(el.tagName);
+      if(isTextElement){
+        el.setAttribute('contenteditable', editMode ? 'true' : 'false');
+        el.setAttribute('spellcheck','false');
+      }
+    });
+  }
+
+  function insertionParent(){
+    if(selected && selected.parentElement) return {parent:selected.parentElement, before:selected.nextSibling};
+    const content = document.querySelector('.article .content');
+    return {parent:content || document.querySelector('.article') || document.querySelector('.site'), before:null};
+  }
+
+  function createPart(type){
+    let el;
+    if(type === 'text'){
+      el = document.createElement('div');
+      el.className = 'editor-part editor-text-box';
+      el.innerHTML = '<strong>新しいテキスト枠</strong><p>ここに文章を入力してください。</p>';
+    }else if(type === 'frame'){
+      el = document.createElement('div');
+      el.className = 'editor-part editor-frame';
+      el.innerHTML = '<strong>新しい囲み枠</strong><p>内容を入力してください。</p>';
+    }else if(type === 'line'){
+      el = document.createElement('div');
+      el.className = 'editor-part editor-line';
+    }else if(type === 'rectangle'){
+      el = document.createElement('div');
+      el.className = 'editor-part editor-rectangle';
+    }else if(type === 'circle'){
+      el = document.createElement('div');
+      el.className = 'editor-part editor-circle';
+    }else if(type === 'button'){
+      el = document.createElement('a');
+      el.className = 'editor-part editor-button';
+      el.href = '#';
+      el.textContent = '新しいボタン';
+    }else if(type === 'spacer'){
+      el = document.createElement('div');
+      el.className = 'editor-part editor-spacer';
+    }
+    if(!el) return;
+    const point = insertionParent();
+    point.parent.insertBefore(el, point.before);
+    makeEditable(el);
+    selectElement(el);
+    el.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+
   function selectElement(el){
     clearSelection();
     selected = el;
@@ -614,6 +703,9 @@ body.editor-open > .site{
     $('paddingRange').value = parseInt(cs.paddingTop,10) || 0;
     $('marginRange').value = parseInt(cs.marginTop,10) || 0;
     $('radiusRange').value = parseInt(cs.borderRadius,10) || 0;
+    $('borderColor').value = rgbToHex(cs.borderTopColor);
+    $('borderWidthRange').value = parseInt(cs.borderTopWidth,10) || 0;
+    $('heightRange').value = parseInt(cs.height,10) || 0;
   }
 
   function setEditMode(enabled){
@@ -622,7 +714,7 @@ body.editor-open > .site{
     $('editToggle').textContent = enabled ? '編集を終了' : '編集を開始';
 
     document.querySelectorAll('[data-editable]').forEach(el => {
-      const isTextElement = /^(H1|H2|H3|H4|P|SPAN|STRONG|LI|BUTTON|DIV)$/.test(el.tagName);
+      const isTextElement = /^(H1|H2|H3|H4|P|SPAN|STRONG|LI|BUTTON|DIV|A)$/.test(el.tagName);
       if(isTextElement){
         el.setAttribute('contenteditable', enabled ? 'true' : 'false');
         el.setAttribute('spellcheck','false');
@@ -646,6 +738,10 @@ body.editor-open > .site{
 
   $('editToggle').addEventListener('click', () => setEditMode(!editMode));
 
+  document.querySelectorAll('[data-add-part]').forEach(btn => {
+    btn.addEventListener('click', () => createPart(btn.dataset.addPart));
+  });
+
   document.addEventListener('click', event => {
     if(!editMode || event.target.closest('#visualEditor')) return;
     const target = event.target.closest('[data-editable]');
@@ -659,6 +755,12 @@ body.editor-open > .site{
   $('paddingRange').addEventListener('input', e => applyStyle('padding', `${e.target.value}px`));
   $('marginRange').addEventListener('input', e => applyStyle('margin', `${e.target.value}px`));
   $('radiusRange').addEventListener('input', e => applyStyle('borderRadius', `${e.target.value}px`));
+  $('borderColor').addEventListener('input', e => applyStyle('borderColor', e.target.value));
+  $('borderWidthRange').addEventListener('input', e => {
+    applyStyle('borderStyle', Number(e.target.value) > 0 ? 'solid' : 'none');
+    applyStyle('borderWidth', `${e.target.value}px`);
+  });
+  $('heightRange').addEventListener('input', e => applyStyle('height', Number(e.target.value) ? `${e.target.value}px` : 'auto'));
   $('widthSelect').addEventListener('change', e => applyStyle('width', e.target.value));
   $('shadowSelect').addEventListener('change', e => applyStyle('boxShadow', e.target.value));
   $('alignSelect').addEventListener('change', e => applyStyle('textAlign', e.target.value));
@@ -680,6 +782,7 @@ body.editor-open > .site{
     const clone = selected.cloneNode(true);
     clone.classList.remove('selected-element');
     selected.parentElement.insertBefore(clone, selected.nextSibling);
+    makeEditable(clone);
     selectElement(clone);
   });
 
@@ -798,6 +901,7 @@ body.editor-open > .site{
     const savedSite = doc.querySelector('.site');
     if(savedSite && site){
       site.replaceWith(savedSite);
+      makeEditable(savedSite);
     }
   }
 
